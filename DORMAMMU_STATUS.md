@@ -1,46 +1,41 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Capability & Resource Discovery — foundational implementation**
+**Capability & Resource Discovery — controlled lifecycle + runtime integration**
 
 ## Truth Rule
-This file describes repository state; implementation claims are based on code/tests/CI evidence, not documentation alone.
+This file describes repository state; implementation claims are based on code/tests/CI evidence, not documentation alone. The latest checkpoint remains **verification pending** until CI run 477 completes.
 
 ## Verified Foundations
-- Systems #1–#10, plugin/specialist framework, core orchestration, permissions, security/truth, autonomy, education, and provider routing are present in the repository and covered by the existing test suite.
+- Core systems, plugin/specialist framework, orchestration, permissions, security/truth, autonomy, education, and provider routing remain in the repository.
 - Live provider adapters exist for keyless Wikipedia retrieval and optional Gemini generation.
-- Runtime now exposes canonical `DORMAMMURuntime`; `DEVINTELRuntime` remains only as a compatibility alias.
-- CI run 453 passed before the capability-discovery commits in this checkpoint; it does **not** verify the newer capability-discovery files.
+- Canonical `DORMAMMURuntime` exists; `DEVINTELRuntime` remains only as a compatibility alias.
+- Capability discovery contracts, registries, deterministic evaluation gates, and free-first policy are implemented.
 
-## Capability Discovery Implemented
-- Typed capability requirements, gaps, descriptors, resource descriptors, evaluation results, and lifecycle states.
-- Thread-safe capability, gap, and resource registries.
-- Pluggable capability scout contract.
-- Deterministic evaluator covering trust, security, compatibility, performance, license, cost, and permission gates.
-- Free-first default policy; paid candidates require explicit policy enablement.
-- Registration requires all evaluation gates to pass.
-- Discovery is advisory: it does not install, execute, download, authenticate, or grant authority to discovered candidates.
+## Newly Implemented
+- Controlled capability lifecycle state machine: `DISCOVERED → EVALUATED → APPROVED → REGISTERED → CANARY → ACTIVE`, with explicit degradation and rollback paths.
+- Owner permission is required before lifecycle approval.
+- Safe read-only local inventory for CPU, RAM, storage, and declared GPU resources.
+- Runtime composition now owns capability/resource registries and the capability discovery service.
+- Runtime exposes capability/resource observations to bounded autonomy as data-only observations.
+- Runtime exposes discovery and inventory APIs without automatically installing, executing, authenticating, or granting authority.
+- Regression tests cover lifecycle ordering, explicit approval, canary/activation/rollback, local inventory, and autonomy observation bridging.
 
-Implementation: `devintel/capabilities/`
-Tests: `tests/test_capability_discovery.py`
-
-## Identity Boundary
-DORMAMMU is the only public product identity. `devintel/` and `DEVINTELRuntime` are compatibility surfaces only. No mass rename is being performed because existing imports must remain stable.
+## Important Repository Correction
+A previous project-state record claimed runtime capability methods were present before they were actually in `devintel/runtime/app.py`. Repository inspection caught that inconsistency. The runtime integration is now implemented rather than merely documented.
 
 ## Known Gaps
-- No external capability marketplace/scout is enabled yet.
-- Resource inventory is not yet connected to live CPU/GPU/RAM/storage telemetry.
-- Discovery results are not yet fed into the AutonomousEngine as capability/resource observations.
-- Capability lifecycle persistence, canary monitoring, and rollback orchestration are not yet implemented.
+- Latest CI for the newest checkpoint is still running; do not claim this checkpoint verified until it succeeds.
+- No external capability marketplace/scout is enabled.
+- Local inventory is intentionally conservative and does not invent GPU availability.
+- Lifecycle records are currently in-memory; durable persistence is pending.
+- Canary/rollback state transitions exist, but automated health-driven rollback orchestration is pending.
+- Discovery results are available to autonomy, but observation-driven capability acquisition/planning is not yet autonomous.
 - Wikipedia remains retrieval/snippet evidence, not a general web research engine.
 - Gemini remains optional and requires an owner-supplied credential.
 
-## Next Action
-1. Verify the capability-discovery tests in CI.
-2. Add a safe built-in local resource/capability inventory.
-3. Feed capability gaps and resource observations into bounded autonomy.
-4. Add lifecycle/version/rollback records before enabling any real external scout.
-5. Connect verified research retrieval to Research/Truth and generation to Conversation/Education.
+## Next Engineering Target
+After CI verification: durable lifecycle/audit records, monitored canary health, and a bounded observation-driven capability decision path. External scouts remain disabled until those controls are verified.
 
 ## Completion Standard
 Capability discovery is not complete until discovery, evaluation, permissions, security, compatibility, cost, resource requirements, lifecycle, observability, fallback, rollback, and integration are implemented and verified.
