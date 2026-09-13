@@ -80,11 +80,11 @@ class ResourceManager:
             if request.required_permission and request.required_permission not in resource.permissions:
                 continue
             available = self._available(resource)
-            if available is not None and available < request.quantity:
+            if available is None or available < request.quantity:
                 continue
             candidates.append(resource)
         if not candidates:
-            return ResourceDecision(False, None, "no registered resource satisfies the request")
+            return ResourceDecision(False, None, "no registered resource with known sufficient capacity satisfies the request")
         chosen = sorted(candidates, key=lambda item: (item.cost, item.resource_id))[0]
         return ResourceDecision(True, chosen.resource_id, "registered resource satisfies the request")
 
