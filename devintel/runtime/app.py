@@ -32,12 +32,8 @@ class RuntimeSnapshot:
     monitoring_state: str
     audit_events: int
 
-class DEVINTELRuntime:
-    """Single composition root for DORMAMMU bounded subsystems.
-
-    ``DEVINTELRuntime`` remains the public Python class name for backward
-    compatibility. DORMAMMU is the canonical product identity.
-    """
+class DORMAMMURuntime:
+    """Single composition root for DORMAMMU bounded subsystems."""
     def __init__(self) -> None:
         self.context = RuntimeContext()
         self.audit = AuditLog()
@@ -132,3 +128,7 @@ class DEVINTELRuntime:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
         return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
+
+
+# Compatibility symbol for existing consumers during the namespace migration.
+DEVINTELRuntime = DORMAMMURuntime
