@@ -118,3 +118,6 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
+
+# Backward-compatible legacy import; DORMAMMU remains the canonical runtime identity.
+DEVINTELRuntime = DORMAMMURuntime
