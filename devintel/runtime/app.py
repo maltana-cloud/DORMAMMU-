@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import os
-from typing import Any
+from typing import Any, Sequence
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.contracts import Observation
 from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest)
@@ -21,6 +21,7 @@ from ..modules.education.outcomes import EducationFeedbackBridge, OutcomeEngine,
 from ..modules.education.teaching import TeachingEngine, TeachingProfile, TeachingResponse
 from ..modules.monitoring.engine import MonitoringEngine
 from ..modules.plugins.service import PluginService
+from ..modules.research import Claim, KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim
 from ..modules.security.orchestrator import SecurityOrchestrator
 from ..modules.security.recovery import CryptographicRecovery, RecoveryRequest
 from ..modules.specialists.education import EducationSpecialist
@@ -45,7 +46,7 @@ class DORMAMMURuntime:
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_manager = ResourceManager(self.resource_registry); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
         self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.refresh_local_inventory()
-        self.executive = ExecutiveEngine(self)
+        self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
@@ -67,13 +68,10 @@ class DORMAMMURuntime:
     def operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryHealth | None: return self.operation_store.health(capability_id, window=window, min_samples=min_samples)
     def evaluate_operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryDecision:
         health = self.operational_health(capability_id, window=window, min_samples=min_samples)
-        if health is None:
-            raise RuntimeError("insufficient operational observations for health evaluation")
+        if health is None: raise RuntimeError("insufficient operational observations for health evaluation")
         capability = self.capability_registry.get(capability_id)
-        if capability is None:
-            raise KeyError(capability_id)
-        if capability.status is CapabilityStatus.ACTIVE and health.healthy:
-            return CanaryDecision(capability_id, CapabilityStatus.ACTIVE, False, False, "operational health verified from recorded observations")
+        if capability is None: raise KeyError(capability_id)
+        if capability.status is CapabilityStatus.ACTIVE and health.healthy: return CanaryDecision(capability_id, CapabilityStatus.ACTIVE, False, False, "operational health verified from recorded observations")
         return self.evaluate_canary(capability_id, health)
     def create_capability_gap(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> CapabilityGap: return self.capability_discovery.discover(requirement, gap_id=gap_id).gap
     def resolve_capability_gap(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult: return self.capability_discovery.discover(requirement, gap_id=gap_id)
@@ -84,6 +82,9 @@ class DORMAMMURuntime:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         return (Observation(scope_id, "capability_inventory", tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())), Observation(scope_id, "resource_inventory", self.resource_registry.all()), Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())), Observation(scope_id, "resource_reservations", self.resource_manager.active_reservations()))
     def lifecycle_history(self, capability_id: str | None = None): return self.lifecycle_store.history(capability_id)
+    def synthesize_knowledge(self, topic: str, claims: Sequence[VerifiedClaim], *, excluded_claims: int = 0) -> SynthesisResult:
+        """Expose conservative evidence synthesis without granting execution authority."""
+        return self.knowledge_synthesis.synthesize(topic, claims, excluded_claims=excluded_claims)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def close(self) -> None:
@@ -103,8 +104,7 @@ class DORMAMMURuntime:
     def bounded_operation_engine(self):
         from ..operations.bounded import BoundedOperationEngine
         return BoundedOperationEngine(self)
-    def run_bounded_operation(self, operation: Any, **kwargs: Any):
-        return self.bounded_operation_engine().run(operation, **kwargs)
+    def run_bounded_operation(self, operation: Any, **kwargs: Any): return self.bounded_operation_engine().run(operation, **kwargs)
     def plan_objective(self, objective: Objective, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan: return self.executive.plan(objective, tasks)
     def run_objective(self, objective: Objective, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute(objective, tasks, **kwargs)
     def autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, observer, planner, verifier, recorder)
@@ -118,17 +118,3 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
-    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
-        from ..providers.contracts import ProviderCapability
-        self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
-    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
-        from ..providers.contracts import ProviderCapability
-        self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
-    def snapshot(self, scope_id: str) -> RuntimeSnapshot:
-        if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
-        plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
-        return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
-
-# Backward compatibility: legacy internal imports remain valid while DORMAMMU
-# is the canonical public identity.
-DEVINTELRuntime = DORMAMMURuntime
