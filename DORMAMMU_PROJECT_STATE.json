@@ -1,29 +1,30 @@
 {
-  "schema_version": "1.5",
+  "schema_version": "1.6",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "latest_repository_commit": "d0eaa5db2257d1773784b80c2aea1258d9b3aade",
-  "latest_verified_code_commit": "d0eaa5db2257d1773784b80c2aea1258d9b3aade",
+  "latest_repository_commit": "58a3afe21a18c7a826da3f635c73da6ec244a625",
+  "latest_verified_code_commit": "58a3afe21a18c7a826da3f635c73da6ec244a625",
   "verification": {
-    "latest_ci_run": 537,
+    "latest_ci_run": 555,
     "latest_ci_status": "success",
+    "executive_branch_ci_run": 554,
     "resource_management_ci_run": 535,
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "repository_state_checked": true,
     "open_pull_requests_at_checkpoint": 0,
-    "open_issues_at_checkpoint": 1,
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
   },
   "capabilities": [
     {"capability":"DORMAMMU identity migration","status":"IMPLEMENTED","implementation_path":"DORMAMMU_CHARTER.md; DORMAMMU_* docs; devintel/runtime/","tests":"tests/test_capability_runtime.py and compatibility coverage","ci_evidence":"run 507 success","dependencies":"legacy compatibility boundaries","security_status":"protected identity boundary; no blind rename","known_limitations":"devintel namespace and legacy DEVINTEL_* names remain","next_action":"remove legacy naming only where compatibility permits","version":"1.0","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
     {"capability":"Capability & Resource Discovery","status":"TESTED","implementation_path":"devintel/capabilities/contracts.py; discovery.py; registry.py; decision.py","tests":"tests/test_capability_discovery.py; tests/test_capability_decision.py; runtime tests","ci_evidence":"runs 521/522 success","dependencies":"registries; evaluator; runtime","security_status":"advisory; no install/auth/execute/authority grant","known_limitations":"trusted external scouts are not production-integrated","next_action":"add provenance-aware trusted scouts and integration adapters","version":"1.0","last_verified_commit":"cae16d70023ed181780f14f8bdc99bb4783d5eda"},
-    {"capability":"Resource / Compute Management","status":"TESTED","implementation_path":"devintel/capabilities/resources.py; inventory.py; runtime/app.py; operations/bounded.py","tests":"tests/test_resource_manager.py; tests/test_capability_runtime.py; tests/test_bounded_operation.py","ci_evidence":"run 535 success","dependencies":"resource registry; local inventory; permission boundary","security_status":"fail-closed capacity; reservation only; no provisioning/spending","known_limitations":"reservations are in-memory; no multi-host scheduler or durable lease system","next_action":"add durable scoped leases and real telemetry","version":"1.0","last_verified_commit":"585e82d1f77197cd42193a50674ff5bd66d61af9"},
+    {"capability":"Resource / Compute Management","status":"TESTED","implementation_path":"devintel/capabilities/resources.py; inventory.py; runtime/app.py; operations/bounded.py","tests":"tests/test_resource_manager.py; tests/test_capability_runtime.py; tests/test_bounded_operation.py","ci_evidence":"run 535 success; main run 537 success","dependencies":"resource registry; local inventory; permission boundary","security_status":"fail-closed capacity; reservation only; no provisioning/spending","known_limitations":"reservations are in-memory; no multi-host scheduler or durable lease system","next_action":"add durable scoped leases and real telemetry","version":"1.0","last_verified_commit":"d0eaa5db2257d1773784b80c2aea1258d9b3aade"},
     {"capability":"Domain Intelligence","status":"TESTED","implementation_path":"devintel/modules/","tests":"existing domain/module suite","ci_evidence":"run 507 success","dependencies":"core runtime; providers","security_status":"bounded by core/security","known_limitations":"coverage uneven across domains","next_action":"connect domain services to executive operating path","version":"1.0","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
     {"capability":"Ecosystem Awareness","status":"PARTIAL","implementation_path":"research/providers; publishing/product-facing modules","tests":"research/provider/publishing tests","ci_evidence":"run 507 success","dependencies":"live adapters; truth/provenance","security_status":"external content remains untrusted","known_limitations":"no complete cross-platform awareness loop","next_action":"build aggregation, freshness, importance pipeline","version":"0.1","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
     {"capability":"Knowledge synthesis / cross-domain reasoning","status":"PARTIAL","implementation_path":"research/truth; autonomy/planning foundations","tests":"research/truth/autonomy tests","ci_evidence":"run 507 success","dependencies":"verified evidence; planning; provider routing","security_status":"truth/provenance boundaries present","known_limitations":"no complete cross-domain synthesis engine","next_action":"implement evidence-backed synthesis contract","version":"0.1","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
-    {"capability":"Full autonomous operating path","status":"TESTED","implementation_path":"devintel/operations/bounded.py; runtime/app.py","tests":"tests/test_bounded_operation.py","ci_evidence":"run 535 success; main post-merge run 537 success","dependencies":"capability decision; lifecycle; canary; resources; core execution","security_status":"permission and approval boundaries preserved","known_limitations":"bounded execution only; not full objective-level autonomy","next_action":"add goal understanding, decomposition, routing, outcomes","version":"0.1","last_verified_commit":"d0eaa5db2257d1773784b80c2aea1258d9b3aade"},
+    {"capability":"Executive cognition foundation","status":"TESTED","implementation_path":"devintel/executive/contracts.py; devintel/executive/engine.py; devintel/runtime/app.py","tests":"tests/test_executive_engine.py","ci_evidence":"runs 554/555 success","dependencies":"bounded operations; capability/resource decision; permission; canary; verification","security_status":"explicit scope; per-capability approval; delegates to bounded execution","known_limitations":"default interpreter only normalizes explicit fields; decomposition is explicit, not inferred from arbitrary natural language","next_action":"add evidence-backed goal understanding and model/agent/specialist routing","version":"0.1","last_verified_commit":"58a3afe21a18c7a826da3f635c73da6ec244a625"},
+    {"capability":"Full autonomous operating path","status":"PARTIAL","implementation_path":"devintel/executive/; devintel/operations/; devintel/capabilities/; runtime","tests":"tests/test_executive_engine.py; tests/test_bounded_operation.py","ci_evidence":"run 555 success","dependencies":"executive cognition; capability/resource management; permission; canary; verification","security_status":"bounded and permission-gated","known_limitations":"not yet full objective-level autonomy; no reflection/learning loop or operational telemetry feedback","next_action":"add real telemetry, durable outcomes, reflection and learning","version":"0.2","last_verified_commit":"58a3afe21a18c7a826da3f635c73da6ec244a625"},
     {"capability":"Model Training & Evolution","status":"PLANNED","implementation_path":"architecture direction only","tests":"none dedicated","ci_evidence":"baseline run 507 only","dependencies":"datasets; compute; evaluation; safety governance","security_status":"unrestricted self-modification prohibited","known_limitations":"training/evolution loop not built","next_action":"define isolated training/evaluation contracts","version":"0.1","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
     {"capability":"Engineering / Coding Intelligence","status":"PARTIAL","implementation_path":"developer/domain modules; tool-builder direction","tests":"existing module tests","ci_evidence":"run 507 success","dependencies":"core; tools; controlled execution","security_status":"generated code must remain controlled","known_limitations":"no complete coding-agent loop","next_action":"connect coding specialist to bounded execution and verification","version":"0.1","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
     {"capability":"Language & Speech Intelligence","status":"PLANNED","implementation_path":"no complete subsystem identified","tests":"none dedicated","ci_evidence":"baseline run 507 only","dependencies":"model/provider routing; platform I/O","security_status":"audio credentials and platform authority must remain scoped","known_limitations":"no production speech subsystem","next_action":"define language/speech provider contracts","version":"0.1","last_verified_commit":"a3c7308256eeec36c31d7840e899a6aea199fc47"},
@@ -41,6 +42,8 @@
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
     "Lifecycle transitions are explicit and state-validated; capability approval requires permission.",
+    "Executive tasks must explicitly declare objective scope.",
+    "Capability approval is explicit and may be scoped per capability ID.",
     "Resource management only reserves registered resources; unknown quantitative capacity fails closed.",
     "Core action execution remains behind the permission boundary.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
@@ -49,8 +52,8 @@
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "next_execution_target": {
-    "name":"executive cognition foundation",
-    "flow":"OBJECTIVE → GOAL UNDERSTANDING → REQUIREMENTS → TASK DECOMPOSITION → CAPABILITY DECISION → PERMISSION → EXECUTE → VERIFY → RECORD → REFLECT",
+    "name":"operational telemetry and outcome recording",
+    "flow":"OBJECTIVE → UNDERSTAND → DECOMPOSE → CAPABILITY/RESOURCE DECISION → PERMISSION → ACT → MEASURE → VERIFY → RECORD → REFLECT",
     "status":"PLANNED"
   }
 }
