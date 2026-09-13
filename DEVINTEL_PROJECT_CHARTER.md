@@ -1,12 +1,12 @@
-# DEVINTEL PROJECT CHARTER
+# DORMAMMU PROJECT CHARTER
 
-## 1. What DEVINTEL Is
+## 1. What DORMAMMU Is
 
-DEVINTEL is a **general-purpose autonomous intelligence and ecosystem platform**.
+DORMAMMU is a **general-purpose autonomous intelligence and ecosystem platform**.
 
 It is not merely a news bot, Telegram bot, developer bot, scraper, chatbot, or publishing scheduler. Those are possible interfaces or capabilities built on top of the intelligence engine.
 
-DEVINTEL's long-term purpose is to continuously:
+DORMAMMU's long-term purpose is to continuously:
 
 **OBSERVE → DISCOVER → UNDERSTAND → VERIFY → IDENTIFY DEMAND → CREATE → DISTRIBUTE → CREATE AWARENESS → MONETIZE → MEASURE → EVOLVE**
 
@@ -14,7 +14,7 @@ while preserving truth, safety, owner control, modularity, and graceful degradat
 
 ## 2. What It Is Being Built To Do
 
-DEVINTEL should eventually be able to:
+DORMAMMU should eventually be able to:
 
 - discover useful information across many domains;
 - understand and organize that information;
@@ -60,7 +60,7 @@ A domain is a configuration and capability composition, not a reason to duplicat
 
 ## 4. Natural Intelligence and Publishing
 
-DEVINTEL must not behave like a blind scheduled poster.
+DORMAMMU must not behave like a blind scheduled poster.
 
 The intended behavior is:
 
@@ -95,11 +95,11 @@ Each channel/community must have isolated configuration and operational state, i
 
 A failure or compromise in one channel must not automatically compromise the core, owner controls, other channels, or unrelated revenue state.
 
-Community participation must respect platform rules, permissions, rate limits, anti-spam requirements, and human/community boundaries. DEVINTEL must not use fake engagement, vote manipulation, deceptive identity, or spam.
+Community participation must respect platform rules, permissions, rate limits, anti-spam requirements, and human/community boundaries. DORMAMMU must not use fake engagement, vote manipulation, deceptive identity, or spam.
 
 ## 6. Opportunity Creation and Business
 
-DEVINTEL is intended to **manufacture usefulness, not engagement**.
+DORMAMMU is intended to **manufacture usefulness, not engagement**.
 
 It should not merely report opportunities. When it identifies a genuine unmet need, it may eventually:
 
@@ -116,15 +116,15 @@ It should not merely report opportunities. When it identifies a genuine unmet ne
 
 Money must never override truth. Sponsored, affiliate, or commercial recommendations must remain relevant and appropriately disclosed. The highest-paying option must not automatically become the recommended option.
 
-DEVINTEL starts with a **₦0 budget**. Revenue may later be reinvested into infrastructure, providers, tools, distribution, and other bottlenecks with owner-controlled financial boundaries.
+DORMAMMU starts with a **₦0 budget**. Revenue may later be reinvested into infrastructure, providers, tools, distribution, and other bottlenecks with owner-controlled financial boundaries.
 
 ## 7. Autonomous Action Boundary
 
 Intelligence and authority are separate.
 
-DEVINTEL may automatically perform routine, low-risk, approved work. Safeguarded work requires stronger checks. Spending money, sensitive account connections, major architecture changes, commercial agreements, and high-risk or irreversible actions require owner approval unless a separately approved policy explicitly says otherwise.
+DORMAMMU may automatically perform routine, low-risk, approved work. Safeguarded work requires stronger checks. Spending money, sensitive account connections, major architecture changes, commercial agreements, and high-risk or irreversible actions require owner approval unless a separately approved policy explicitly says otherwise.
 
-DEVINTEL must never acquire unrestricted authority merely because it can technically execute an action.
+DORMAMMU must never acquire unrestricted authority merely because it can technically execute an action.
 
 ## 8. Security Philosophy
 
@@ -146,7 +146,7 @@ Providers, platforms, AI models, databases, and external services should be repl
 
 A failure in one subsystem should degrade that subsystem rather than destroy unrelated capabilities.
 
-Git history, tests, `DEVINTEL_STATUS.md`, and this charter together provide continuity between human and AI contributors.
+Git history, tests, `DEVINTEL_STATUS.md`, and this charter together provide continuity between human and AI contributors. The legacy status filename is retained for compatibility; the canonical product identity is DORMAMMU.
 
 ## 10. Current Build Order
 
@@ -196,8 +196,8 @@ Health, queues, channel state, security state, finances, strategic reporting, ap
 
 Before doing any work, every AI MUST understand:
 
-1. **What DEVINTEL is:** a broad autonomous intelligence and ecosystem platform.
-2. **What DEVINTEL is not:** a single-purpose news bot or a collection of unrelated scripts.
+1. **What DORMAMMU is:** a broad autonomous intelligence and ecosystem platform.
+2. **What DORMAMMU is not:** a single-purpose news bot or a collection of unrelated scripts.
 3. **The complete mission:** the capabilities described in this charter.
 4. **The current milestone:** read `DEVINTEL_STATUS.md`.
 5. **The architecture:** inspect the relevant code, tests, and recent commits.
@@ -226,4 +226,4 @@ Completion requires:
 
 ## Final Principle
 
-**DEVINTEL exists to continuously turn verified understanding into useful action and sustainable value — without sacrificing truth, safety, owner control, or the ability to evolve.**
+**DORMAMMU exists to continuously turn verified understanding into useful action and sustainable value — without sacrificing truth, safety, owner control, or the ability to evolve.**
