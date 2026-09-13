@@ -33,12 +33,11 @@ Read `AGENTS.md`, `DORMAMMU_CHARTER.md`, and `AI_WORKING_RULES.md` before archit
 
 Documentation is not implementation proof. Unit tests are not automatically production verification.
 
-## Current verified checkpoint
+## Current repository checkpoint
 
-Main commit: `6d061efae23d98d689058c01ce65cb63c56ba647`.
-GitHub Actions run **#575**: **success**.
+Knowledge synthesis feature was merged to `main` as `19d4d3ae0682cf4a34f80db0a0da7d6fd6379aae` after feature-head CI run **#603** passed on `c78dfeae0f5de5f027d8fd1f44333d902948e694`. Post-merge main CI has not yet been independently observed, so the synthesis milestone remains `TESTED` rather than `VERIFIED`.
 
-Implemented/tested foundation now includes:
+## Implemented/tested foundation
 
 - core state/tasks/planning/events/permissions;
 - security, containment, owner control, cryptographic recovery;
@@ -49,7 +48,8 @@ Implemented/tested foundation now includes:
 - bounded operation execution and verification;
 - explicit executive objective/goal/task contracts and dependency/scope validation;
 - SQLite-backed operational telemetry and derived health;
-- telemetry-fed operational health path into the existing canary/lifecycle boundary.
+- telemetry-fed operational health path into the existing canary/lifecycle boundary;
+- evidence-backed knowledge synthesis with verified-claim gating, provenance preservation, contradiction detection, uncertainty, and executive-requirement filtering.
 
 ## Repository map
 
@@ -59,7 +59,7 @@ Implemented/tested foundation now includes:
 - `devintel/executive/` — objective understanding and task decomposition/execution.
 - `devintel/operations/` — bounded execution and telemetry.
 - `devintel/capabilities/` — capability/resource discovery, inventory, lifecycle, canary, decisions.
-- `devintel/modules/research/` — research and provenance.
+- `devintel/modules/research/` — research, provenance, synthesis.
 - `devintel/providers/` — provider contracts/routing/live adapters.
 - `devintel/modules/education/` — education lifecycle.
 - `DORMAMMU_CHARTER.md` — architectural constitution.
@@ -75,8 +75,11 @@ Legacy `DEVINTEL_*` names and the `devintel/` namespace remain only where compat
 Current bounded path:
 `OBJECTIVE → GOAL UNDERSTANDING → TASK DECOMPOSITION → CAPABILITY DECISION → RESOURCE DECISION → PERMISSION → LIFECYCLE/CANARY WHEN NEEDED → ACT → MEASURE → VERIFY → RECORD`
 
+Evidence path now available:
+`RESEARCH → VERIFY EVIDENCE → NORMALIZE CLAIMS → SYNTHESIZE → CHECK CONTRADICTIONS → EXPOSE PROVENANCE/UNCERTAINTY → EXECUTIVE REQUIREMENTS`
+
 Broader target:
-`OBJECTIVE → UNDERSTAND → DECOMPOSE → CAPABILITY DISCOVERY → MODEL/AGENT SELECTION → SPECIALIST COLLABORATION → EXECUTE → VERIFY → REFLECT → LEARN → OUTCOME`
+`OBJECTIVE → UNDERSTAND → DECOMPOSE → EVIDENCE SYNTHESIS → CAPABILITY DISCOVERY → MODEL/AGENT SELECTION → SPECIALIST COLLABORATION → EXECUTE → VERIFY → REFLECT → LEARN → OUTCOME`
 
 Capability expansion:
 `DISCOVER GAP → DEFINE CONTRACT → ISOLATE → PERMISSION → SECURITY CHECK → BUILD/INTEGRATE → TEST → VERIFY → REGISTER/VERSION → CANARY → MONITOR → KEEP OR ROLLBACK`
@@ -92,7 +95,7 @@ Protect core authority, security, truth, owner control, recovery, auditability, 
 
 ### 2. Bounded operating path — tested
 
-Capability and resource decisions are now connected to permission, lifecycle/canary, action execution, verification, and recording.
+Capability and resource decisions are connected to permission, lifecycle/canary, action execution, verification, and recording.
 
 ### 3. Executive cognition — tested foundation
 
@@ -102,27 +105,31 @@ Capability and resource decisions are now connected to permission, lifecycle/can
 
 Execution observations are durable in SQLite and include duration, success, verification, stage, and resource reservation metadata. Health requires a minimum sample count. Healthy active capabilities can be verified without reactivation; unhealthy active health goes through existing canary/lifecycle handling.
 
-### 5. Next: evidence-backed knowledge synthesis
+### 5. Evidence-backed knowledge synthesis — tested
 
-Build stable contracts for:
+`devintel/modules/research/synthesis.py` combines verified claims conservatively, canonicalizes provenance, detects contradictions after normalization, exposes uncertainty, excludes unsupported inputs, and prevents contradictory/low-confidence signals from becoming executive requirements. Runtime integration is present. Feature-head CI #603 passed; post-merge main CI remains to be observed.
 
-`RESEARCH → VERIFY EVIDENCE → NORMALIZE CLAIMS → SYNTHESIZE → CHECK CONTRADICTIONS → EXPOSE PROVENANCE/UNCERTAINTY → FEED EXECUTIVE REQUIREMENTS`
+### 6. Next: evidence-backed executive intelligence
 
-This must never convert model output into truth or authority.
+Build the adapter between synthesis and executive planning:
 
-### 6. Then: evidence-backed executive intelligence
+`SYNTHESIS → REQUIREMENTS/SUCCESS CRITERIA → SCOPE/DEPENDENCIES → PLAN → BOUNDED EXECUTION → VERIFY`
 
-Add safe structured/unstructured goal understanding, requirements extraction, success criteria, model/agent routing, specialist collaboration, and reflection through bounded contracts.
+It must preserve provenance and uncertainty and reject contradictory/insufficient evidence. Evidence must never grant authority.
 
-### 7. Trusted external capability/resource expansion
+### 7. Durable resource leases
+
+Move active resource reservations from process-local memory toward durable, scoped, crash-safe leases with expiry, release, recovery, and audit semantics before heterogeneous multi-host orchestration.
+
+### 8. Trusted external capability/resource expansion
 
 External scouts/adapters must be evaluated for provenance/trust, license/terms, dependencies, compatibility, security, performance, resources, cost, permissions, maintainability, rollback, and observability before use.
 
-### 8. Ecosystem expansion
+### 9. Ecosystem expansion
 
 Progressively integrate communication, education, creation, software/tool building, media, community, opportunity/product/service discovery, analytics, distribution, and monetization behind the same boundaries.
 
-### 9. Advanced evolution
+### 10. Advanced evolution
 
 Later add training/evaluation, AI/ML research, controlled self-improvement, new-domain expansion, and resource optimization. Privileged systems remain explicitly bounded and reviewable.
 
@@ -152,8 +159,9 @@ A meaningful capability needs a stable contract, runtime integration, happy/fail
 
 ## Not yet done
 
+- post-merge verification of the synthesis merge checkpoint;
+- evidence-backed executive requirements/success-criteria integration;
 - arbitrary natural-language objective understanding/decomposition;
-- complete evidence-backed cross-domain synthesis;
 - durable resource leases;
 - broad trusted external capability acquisition;
 - complete model/agent/specialist routing;
