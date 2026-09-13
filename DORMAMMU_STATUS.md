@@ -1,45 +1,51 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**DORMAMMU identity, architecture continuity, and extensibility lock**
+**Canonical identity + architecture continuity + extensibility foundation**
 
 ## Completed
-- [x] Master DORMAMMU architecture charter established.
+- [x] DORMAMMU master architecture charter exists and defines the locked-but-extensible architecture.
+- [x] DORMAMMU project charter added as the canonical concise builder reference.
 - [x] README identifies DORMAMMU as the product/project identity.
-- [x] Runtime now exposes the canonical `DORMAMMURuntime` name.
-- [x] Legacy `DEVINTELRuntime` remains as a temporary compatibility alias so existing consumers are not broken during migration.
-- [x] Python package metadata/docstring identifies DORMAMMU; the `devintel/` path remains temporarily for backward compatibility.
-- [x] Architecture explicitly defines additive future capability support.
-- [x] Future capabilities are required to use stable contracts, isolated state/lifecycle, permissions, security boundaries, tests, versioning, observability, fallback/degraded behavior, rollback, and migration paths where needed.
-- [x] Capability/resource discovery is defined as a capability-gap process rather than uncontrolled installation.
-- [x] Agents, models, providers, compute, tools, datasets, and platforms remain replaceable capabilities rather than authorities.
-- [x] Existing provider routing remains bounded, health-aware, priority-based, and fallback-capable.
+- [x] Agent constitution migrated to DORMAMMU naming and canonical filenames.
+- [x] Multi-AI working rules migrated to DORMAMMU naming.
+- [x] Canonical `DORMAMMURuntime` runtime identity added.
+- [x] Historical `DEVINTELRuntime` remains as a compatibility alias so existing consumers are not broken.
+- [x] Package metadata/docstring now identifies DORMAMMU while preserving the historical `devintel/` import path temporarily.
+- [x] Legacy `DEVINTEL_STATUS.md` converted into a compatibility redirect instead of competing status documentation.
+- [x] Future capability addition is explicitly protected as a first-class architectural requirement.
 
-## Extensibility Lock
+## Extensibility Contract
 
-**Locked architecture does not mean frozen functionality.** DORMAMMU's principles, authority hierarchy, security constitution, owner-control boundaries, truth boundary, and recovery protections are stable. The capability surface remains intentionally open for future domains, agents, models, tools, providers, platforms, media systems, business systems, compute resources, and other useful capabilities.
+DORMAMMU is **locked in principles, authority boundaries, security constitution, truth boundary, owner control, recovery protections, and architectural direction**. It is deliberately **not frozen in functionality**.
 
-New capability rule:
+Future domains, agents, models, tools, providers, platforms, datasets, compute resources, media/music/film systems, games, education capabilities, languages, business models, and capabilities not yet known may be added later.
+
+Every new capability should follow:
 
 `DISCOVER GAP → DEFINE CONTRACT → ISOLATE → PERMISSION → SECURITY CHECK → BUILD/INTEGRATE → TEST → VERIFY → REGISTER/VERSION → CANARY → MONITOR → KEEP OR ROLLBACK`
 
-A future feature must not require rewriting the DORMAMMU brain when a modular extension can solve the problem. Existing capabilities should continue operating while a new capability is introduced.
+Existing capabilities should remain operational while new capabilities are introduced whenever practical. New functionality must not silently rewrite protected foundations or acquire authority merely because it exists.
 
-## Current Implementation Boundary
+## Identity Migration Boundary
 
-The public product identity is DORMAMMU. The repository still contains the historical `devintel/` implementation namespace because changing every import/path in one unverified operation would create unnecessary breakage. The namespace migration is therefore being performed incrementally with compatibility preserved.
+DORMAMMU is the only public product identity. The historical `devintel/` package namespace and `DEVINTELRuntime` symbol are temporary compatibility surfaces. They must not be used for new product-facing documentation or architecture.
 
-This is deliberate migration state, not a second product identity.
+A complete namespace migration should happen as a separate tested compatibility milestone rather than through an unsafe mass rename.
 
-## Verification
+## Verification State
 
-The identity migration changes were applied to the active `feat/dormammu-charter-and-capability-evolution` branch. Existing implementation behavior was preserved through the `DEVINTELRuntime = DORMAMMURuntime` compatibility alias.
+The current identity/documentation changes are committed to the active feature branch. Existing runtime compatibility is preserved by the explicit legacy alias.
 
-A full repository test/CI verification is required before this milestone is merged. No test result is claimed here until CI exposes it.
+The branch still requires full automated test/CI verification before merge. No unobserved test result is claimed.
 
-## Next Action
+## Next Engineering Work
 
-Continue the DORMAMMU identity migration safely: rename remaining public documentation/status references, then add the capability/resource discovery implementation with contracts, registry, evaluation policy, scoped lifecycle, and tests. After that, connect the controlled provider layer to real research/model adapters and build the first real autonomous operating path.
+1. Run and verify the full test suite for this migration.
+2. Complete the remaining safe public-facing `DEVINTEL` documentation cleanup.
+3. Introduce the first implementation of Capability & Resource Discovery: contracts, registry, evaluation policy, scoped lifecycle, and tests.
+4. Connect controlled provider routing to real research/model adapters.
+5. Integrate Education/Conversation/Research/Truth/Distribution into the first real autonomous operating path.
 
 ## Non-Negotiable Rule
 
