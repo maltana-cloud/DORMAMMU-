@@ -39,7 +39,7 @@ def test_failed_or_unverified_operations_reduce_health():
         health = store.health("capability.test", window=5, min_samples=5)
         assert health is not None
         assert health.success_rate == 0.8
-        assert health.error_rate == 0.2
+        assert abs(health.error_rate - 0.2) < 1e-12
         assert health.latency_ms == 6000.0
         assert not health.healthy
     finally:
