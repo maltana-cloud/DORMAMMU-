@@ -1,4 +1,4 @@
-"""Composition root connecting DEVINTEL's bounded subsystems."""
+"""Composition root connecting DORMAMMU's bounded subsystems."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -31,8 +31,8 @@ class RuntimeSnapshot:
     monitoring_state: str
     audit_events: int
 
-class DEVINTELRuntime:
-    """Single composition root for DEVINTEL bounded subsystems."""
+class DORMAMMURuntime:
+    """Single composition root for DORMAMMU bounded subsystems."""
     def __init__(self) -> None:
         self.context = RuntimeContext()
         self.audit = AuditLog()
@@ -119,3 +119,7 @@ class DEVINTELRuntime:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
         return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
+
+
+# Backward-compatible symbol during the package namespace migration. New code should use DORMAMMURuntime.
+DEVINTELRuntime = DORMAMMURuntime
