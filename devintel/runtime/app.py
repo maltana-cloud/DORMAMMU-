@@ -9,7 +9,7 @@ from ..autonomy.contracts import Observation
 from ..capabilities import (
     CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle,
     CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor,
-    ResourceRegistry,
+    ResourceRegistry, LifecycleStore,
 )
 from ..capabilities.inventory import local_capabilities, local_resources
 from ..control.service import OwnerControlCenter
@@ -41,7 +41,7 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory__") -> None:
         self.context = RuntimeContext()
         self.audit = AuditLog()
         self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
@@ -54,7 +54,8 @@ class DORMAMMURuntime:
         self.capability_registry = CapabilityRegistry()
         self.resource_registry = ResourceRegistry()
         self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
-        self.capability_lifecycle = CapabilityLifecycle(self.capability_registry)
+        self.lifecycle_store = LifecycleStore(lifecycle_store_path)
+        self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record)
         self.refresh_local_inventory()
         self.education = EducationEngine()
         self.education_specialist = EducationSpecialist(self.plugins, self.education)
@@ -72,33 +73,22 @@ class DORMAMMURuntime:
             self.register_generation_provider(gemini.provider_id, gemini, priority=1000)
 
     def refresh_local_inventory(self) -> tuple[ResourceDescriptor, ...]:
-        """Refresh read-only host resources without installing or changing anything."""
         resources = local_resources()
-        for resource in resources:
-            self.resource_registry.register(resource)
-        for capability in local_capabilities():
-            self.capability_registry.register(capability)
+        for resource in resources: self.resource_registry.register(resource)
+        for capability in local_capabilities(): self.capability_registry.register(capability)
         return resources
 
-    def register_capability(self, capability: CapabilityDescriptor) -> None:
-        self.capability_registry.register(capability)
-
-    def register_resource(self, resource: ResourceDescriptor) -> None:
-        self.resource_registry.register(resource)
-
+    def register_capability(self, capability: CapabilityDescriptor) -> None: self.capability_registry.register(capability)
+    def register_resource(self, resource: ResourceDescriptor) -> None: self.resource_registry.register(resource)
     def create_capability_gap(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> CapabilityGap:
         return self.capability_discovery.discover(requirement, gap_id=gap_id).gap
-
     def resolve_capability_gap(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult:
         return self.capability_discovery.discover(requirement, gap_id=gap_id)
-
     def discover_capabilities(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult:
         return self.resolve_capability_gap(requirement, gap_id=gap_id)
 
     def capability_observations(self, scope_id: str) -> tuple[Observation, ...]:
-        """Expose registry state to autonomy as data only; no authority is implied."""
-        if not isinstance(scope_id, str) or not scope_id.strip():
-            raise ValueError("scope_id is required")
+        if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         resources = self.resource_registry.all()
         capabilities = tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())
         return (
@@ -106,6 +96,12 @@ class DORMAMMURuntime:
             Observation(scope_id, "resource_inventory", resources),
             Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())),
         )
+
+    def lifecycle_history(self, capability_id: str | None = None):
+        return self.lifecycle_store.history(capability_id)
+
+    def close(self) -> None:
+        self.lifecycle_store.close()
 
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
@@ -115,71 +111,33 @@ class DORMAMMURuntime:
         return {"scope_id": progress.scope_id, "learner_id": progress.learner_id, "domain": progress.domain, "mastered_skills": progress.mastered_skills}
 
     def record_education_assessment(self, assessment: Assessment, *, owner_approved: bool = False):
-        """Record verified learning feedback through the core permission path."""
         from ..core.contracts import ActionRequest, ActionRisk
         request = ActionRequest("education.record_assessment", ActionRisk.LOW, "record learner assessment", {"scope_id": assessment.scope_id, "assessment": assessment})
         return self.execute(request, owner_approved=owner_approved)
-
-    def education_outcome_summary(self, scope_id: str, learner_id: str, domain: str) -> OutcomeSummary:
-        return self.outcomes.summary(scope_id, learner_id, domain)
-
-    def education_feedback_observer(self, scope_id: str):
-        return self.education_feedback.observe(scope_id)
-
-    def register_action(self, action: str, handler: Any) -> None:
-        self.orchestrator.register(action, handler)
-
-    def execute(self, request: Any, *, owner_approved: bool = False, value: float = 0.0):
-        return self.orchestrator.execute(request, owner_approved=owner_approved, value=value)
-
-    def autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine:
-        return AutonomousEngine(self.orchestrator, observer, planner, verifier, recorder)
-
-    def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine:
-        return AutonomousEngine(self.orchestrator, self.education_feedback_observer, planner, verifier, recorder)
-
-    def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine:
-        return AutonomousEngine(self.orchestrator, self.capability_observations, planner, verifier, recorder)
-
-    def education_integration(self, **adapters: object) -> EducationSubsystemIntegration:
-        return EducationSubsystemIntegration(**adapters)
-
-    def education_signals(self, scope_id: str, domain: str, *, learner_id: str = "", **adapters: object) -> EducationIntegrationResult:
-        return self.education_integration(**adapters).collect(scope_id, domain, learner_id=learner_id)
-
-    def register_teaching_profile(self, profile: TeachingProfile) -> TeachingProfile:
-        return self.teaching.register_profile(profile)
-
-    def teaching_profile(self, channel_id: str) -> TeachingProfile | None:
-        return self.teaching.profile(channel_id)
-
-    def teach(self, scope_id: str, learner_id: str, profile: TeachingProfile, lesson: Any, *, mode: EducationMode = EducationMode.COURSE, progress: Any = None) -> TeachingResponse:
-        return self.teaching.teach(scope_id, learner_id, profile, lesson, mode=mode, progress=progress)
-
-    def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str:
-        return self.teaching.mentor_prompt(profile, goal, progress)
-
-    def generate(self, request: GenerationRequest):
-        """Generate through the provider router; output is not truth-verified here."""
-        return self.live_providers.generate(request)
-
-    def research(self, request: ResearchRequest):
-        """Retrieve research through replaceable providers; verification stays separate."""
-        return self.live_providers.research(request)
-
+    def education_outcome_summary(self, scope_id: str, learner_id: str, domain: str) -> OutcomeSummary: return self.outcomes.summary(scope_id, learner_id, domain)
+    def education_feedback_observer(self, scope_id: str): return self.education_feedback.observe(scope_id)
+    def register_action(self, action: str, handler: Any) -> None: self.orchestrator.register(action, handler)
+    def execute(self, request: Any, *, owner_approved: bool = False, value: float = 0.0): return self.orchestrator.execute(request, owner_approved=owner_approved, value=value)
+    def autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, observer, planner, verifier, recorder)
+    def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, self.education_feedback_observer, planner, verifier, recorder)
+    def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, self.capability_observations, planner, verifier, recorder)
+    def education_integration(self, **adapters: object) -> EducationSubsystemIntegration: return EducationSubsystemIntegration(**adapters)
+    def education_signals(self, scope_id: str, domain: str, *, learner_id: str = "", **adapters: object) -> EducationIntegrationResult: return self.education_integration(**adapters).collect(scope_id, domain, learner_id=learner_id)
+    def register_teaching_profile(self, profile: TeachingProfile) -> TeachingProfile: return self.teaching.register_profile(profile)
+    def teaching_profile(self, channel_id: str) -> TeachingProfile | None: return self.teaching.profile(channel_id)
+    def teach(self, scope_id: str, learner_id: str, profile: TeachingProfile, lesson: Any, *, mode: EducationMode = EducationMode.COURSE, progress: Any = None) -> TeachingResponse: return self.teaching.teach(scope_id, learner_id, profile, lesson, mode=mode, progress=progress)
+    def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
+    def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
+    def research(self, request: ResearchRequest): return self.live_providers.research(request)
     def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
         from ..providers.contracts import ProviderCapability
         self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
-
     def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
         from ..providers.contracts import ProviderCapability
         self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
-
     def snapshot(self, scope_id: str) -> RuntimeSnapshot:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
         return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
 
-
-# Compatibility symbol for existing consumers during the namespace migration.
 DEVINTELRuntime = DORMAMMURuntime
