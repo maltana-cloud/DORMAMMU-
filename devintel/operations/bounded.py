@@ -4,11 +4,12 @@ This module composes existing DORMAMMU boundaries without granting new authority
 It plans a goal, checks capabilities, optionally reserves declared resources,
 requires explicit capability approval when a new candidate is needed, gates
 activation through canary health, executes through the core permission path,
-verifies the result, and records the outcome.
+verifies the result, measures the operation, and records the outcome.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+from time import perf_counter
 from typing import TYPE_CHECKING, Any, Callable
 from uuid import uuid4
 
@@ -67,6 +68,7 @@ class BoundedOperationEngine:
         verifier: Verifier | None = None,
     ) -> OperationResult:
         operation_id = str(uuid4())
+        started = perf_counter()
         self.runtime.context.events.publish(Event("operation.requested", {"operation_id": operation_id, "goal": operation.goal}))
         decision = self.runtime.decide_capability(operation.requirement)
 
@@ -106,32 +108,38 @@ class BoundedOperationEngine:
                 return self._finish(operation_id, "capability", False, "selected existing capability is not active", decision)
 
         reservation_id: str | None = None
+        resource_id: str | None = None
+        resource_quantity: float | None = None
         if operation.resource_request is not None:
             reservation = self.runtime.reserve_resource(operation.resource_request)
             if not reservation.granted or reservation.reservation_id is None:
                 return self._finish(operation_id, "resource", False, reservation.reason, decision)
             reservation_id = reservation.reservation_id
-            self.runtime.context.events.publish(Event("operation.resource_reserved", {"operation_id": operation_id, "resource_id": reservation.resource_id, "reservation_id": reservation_id}))
+            resource_id = reservation.resource_id
+            resource_quantity = operation.resource_request.quantity
+            self.runtime.context.events.publish(Event("operation.resource_reserved", {"operation_id": operation_id, "resource_id": resource_id, "reservation_id": reservation_id}))
         try:
             action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
             if not action_result.success:
-                return self._finish_with_release(operation_id, reservation_id, "act", False, action_result.message, decision, action_result)
+                return self._finish_with_release(operation_id, reservation_id, "act", False, action_result.message, decision, action_result, started, resource_id, resource_quantity)
             verified = True if verifier is None else bool(verifier(action_result.data.get("output")))
             if not verified:
                 self.runtime.context.events.publish(Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id}))
-                return self._finish_with_release(operation_id, reservation_id, "verify", False, "operation result failed verification", decision, action_result, False)
+                return self._finish_with_release(operation_id, reservation_id, "verify", False, "operation result failed verification", decision, action_result, False, started, resource_id, resource_quantity)
             self.runtime.context.events.publish(Event("operation.completed", {"operation_id": operation_id, "capability_id": capability_id}))
-            return self._finish_with_release(operation_id, reservation_id, "record", True, "bounded operation completed and verified", decision, action_result, True)
-        except Exception:
+            return self._finish_with_release(operation_id, reservation_id, "record", True, "bounded operation completed and verified", decision, action_result, True, started, resource_id, resource_quantity)
+        except Exception as exc:
             if reservation_id is not None:
                 self.runtime.release_resource(reservation_id)
                 self.runtime.context.events.publish(Event("operation.resource_released", {"operation_id": operation_id, "reservation_id": reservation_id}))
+            self.runtime.record_operation_observation_from_result(operation_id, capability_id, "exception", False, False, (perf_counter() - started) * 1000.0, str(exc), resource_id, resource_quantity)
             raise
 
-    def _finish_with_release(self, operation_id: str, reservation_id: str | None, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
+    def _finish_with_release(self, operation_id: str, reservation_id: str | None, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None, verified: bool, started: float, resource_id: str | None, resource_quantity: float | None) -> OperationResult:
         if reservation_id is not None:
             self.runtime.release_resource(reservation_id)
             self.runtime.context.events.publish(Event("operation.resource_released", {"operation_id": operation_id, "reservation_id": reservation_id}))
+        self.runtime.record_operation_observation_from_result(operation_id, decision.capability_id or "unknown", stage, success, verified, (perf_counter() - started) * 1000.0, message, resource_id, resource_quantity)
         return self._finish(operation_id, stage, success, message, decision, action_result, verified)
 
     def _finish(self, operation_id: str, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
