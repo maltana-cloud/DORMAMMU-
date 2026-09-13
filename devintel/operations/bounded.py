@@ -115,17 +115,24 @@ class BoundedOperationEngine:
         try:
             action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
             if not action_result.success:
-                return self._finish(operation_id, "act", False, action_result.message, decision, action_result)
+                return self._finish_with_release(operation_id, reservation_id, "act", False, action_result.message, decision, action_result)
             verified = True if verifier is None else bool(verifier(action_result.data.get("output")))
             if not verified:
                 self.runtime.context.events.publish(Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id}))
-                return self._finish(operation_id, "verify", False, "operation result failed verification", decision, action_result, False)
+                return self._finish_with_release(operation_id, reservation_id, "verify", False, "operation result failed verification", decision, action_result, False)
             self.runtime.context.events.publish(Event("operation.completed", {"operation_id": operation_id, "capability_id": capability_id}))
-            return self._finish(operation_id, "record", True, "bounded operation completed and verified", decision, action_result, True)
-        finally:
+            return self._finish_with_release(operation_id, reservation_id, "record", True, "bounded operation completed and verified", decision, action_result, True)
+        except Exception:
             if reservation_id is not None:
                 self.runtime.release_resource(reservation_id)
                 self.runtime.context.events.publish(Event("operation.resource_released", {"operation_id": operation_id, "reservation_id": reservation_id}))
+            raise
+
+    def _finish_with_release(self, operation_id: str, reservation_id: str | None, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
+        if reservation_id is not None:
+            self.runtime.release_resource(reservation_id)
+            self.runtime.context.events.publish(Event("operation.resource_released", {"operation_id": operation_id, "reservation_id": reservation_id}))
+        return self._finish(operation_id, stage, success, message, decision, action_result, verified)
 
     def _finish(self, operation_id: str, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
         self.runtime.context.events.publish(Event("operation.recorded", {"operation_id": operation_id, "stage": stage, "success": success, "message": message, "capability_id": decision.capability_id or ""}))
