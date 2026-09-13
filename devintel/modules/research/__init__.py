@@ -1,4 +1,4 @@
-"""Knowledge and research primitives for DEVINTEL."""
+"""Knowledge and research primitives for DORMAMMU."""
 
 from .contracts import ResearchCandidate, ResearchDocument, ResearchObservation, canonicalize_url, content_digest
 from .knowledge import Claim, Entity, Relationship
@@ -9,6 +9,7 @@ from .persistent_store import SQLiteResearchStore
 from .pipeline import ResearchBatch, ResearchPipeline, ResearchRoute, SourceProvider
 from .providers import RSSProvider, StaticProvider
 from .store import InMemoryResearchStore, ResearchStore
+from .synthesis import Contradiction, KnowledgeSynthesisEngine, SynthesisResult, SynthesisSignal, VerifiedClaim
 from .verification import ProvenanceVerifier, ResearchVerifier, VerificationResult
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "ResearchBatch", "ResearchPipeline", "ResearchRoute", "SourceProvider", "RSSProvider", "StaticProvider",
     "ResearchStore", "InMemoryResearchStore", "SQLiteResearchStore",
     "ResearchVerifier", "ProvenanceVerifier", "VerificationResult",
+    "VerifiedClaim", "Contradiction", "SynthesisSignal", "SynthesisResult", "KnowledgeSynthesisEngine",
 ]
