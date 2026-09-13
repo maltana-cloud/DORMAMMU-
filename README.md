@@ -1,14 +1,18 @@
-# DEVINTEL
+# DORMAMMU
 
 **Autonomous Developer Intelligence & Community Ecosystem**
 
-DEVINTEL is a modular, verification-first developer intelligence system designed to discover, verify, explain, publish, converse, build useful tools, and grow a trusted developer community.
+DORMAMMU is a modular, verification-first autonomous intelligence system designed to discover, verify, explain, publish, converse, build useful tools, and grow trusted communities.
+
+## Canonical Name
+
+**DORMAMMU** is the canonical product/project name. The existing `devintel/` Python package namespace is retained temporarily for backward compatibility so the rename does not silently break imports or existing integrations.
 
 ## Core Principles
 
 - **Truth before reach** — verified information outranks engagement.
 - **Evidence before confidence** — facts, analysis, speculation, and uncertainty stay distinct.
-- **Useful before commercial** — monetization follows genuine developer needs.
+- **Useful before commercial** — monetization follows genuine needs.
 - **Autonomous, but bounded** — routine work is automated; sensitive actions require permission.
 - **Modular by design** — new capabilities are added without rewriting the core.
 - **Observable and reversible** — actions are recorded, health is monitored, and failures can be isolated or rolled back.
@@ -20,7 +24,7 @@ DEVINTEL is a modular, verification-first developer intelligence system designed
 
 ## Current Runtime
 
-DEVINTEL now has a provider-neutral live boundary:
+DORMAMMU has a provider-neutral live boundary:
 
 `REQUEST → HEALTH CHECK → PRIORITY ROUTE → FALLBACK → RESULT`
 
@@ -29,31 +33,15 @@ The runtime can register real external adapters without coupling the core to a v
 ## Architecture
 
 ```text
-DEVINTEL/
+DORMAMMU/
 ├── core/
-│   ├── conversation/
-│   ├── memory/
-│   ├── planner/
-│   ├── permissions/
-│   └── orchestration/
 ├── modules/
-│   ├── research/
-│   ├── verification/
-│   ├── community/
-│   ├── publishing/
-│   ├── growth/
-│   ├── monetization/
-│   └── tool_builder/
 ├── providers/
 │   ├── contracts.py
 │   ├── live.py
 │   ├── live_adapters.py
 │   └── registry.py
 ├── tools/
-│   ├── telegram/
-│   ├── github/
-│   ├── web/
-│   └── registry/
 ├── storage/
 ├── config/
 ├── tests/
@@ -89,12 +77,12 @@ Security incidents, suspicious behavior, repeated failures, or policy violations
 
 ## Trust Model
 
-Every important intelligence item should carry provenance and confidence information. DEVINTEL should prefer primary sources, corroborate consequential claims, detect stale information, identify duplicates, and clearly label uncertainty.
+Every important intelligence item should carry provenance and confidence information. DORMAMMU should prefer primary sources, corroborate consequential claims, detect stale information, identify duplicates, and clearly label uncertainty.
 
-DEVINTEL must never claim to have personally tested, deployed, contacted, or observed something unless the system actually performed that action and has evidence for it.
+DORMAMMU must never claim to have personally tested, deployed, contacted, or observed something unless the system actually performed that action and has evidence for it.
 
 ## Status
 
-The repository's canonical product name is **DEVINTEL**. The remaining GitHub repository slug is `DORMAMMU-` because the connected GitHub integration available to this session does not expose a repository-rename operation. No code or documentation should treat DORMAMMU as the product name.
+The active milestone is the live provider layer and the next engineering target is the real autonomous operating path across Education, Conversation, Research, Truth, and Distribution.
 
-The current milestone is the live provider layer and the next engineering target is the real autonomous operating path across Education, Conversation, Research, Truth, and Distribution.
+Legacy filenames and the internal `devintel` Python namespace are compatibility artifacts only; they do not change the canonical product name: **DORMAMMU**.
