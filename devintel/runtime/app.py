@@ -89,3 +89,7 @@ class DORMAMMURuntime:
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
     def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_generation(provider_id, provider, priority=priority)
     def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_research(provider_id, provider, priority=priority)
+
+# Backward compatibility: legacy internal imports remain valid while DORMAMMU
+# is the canonical public identity.
+DEVINTELRuntime = DORMAMMURuntime
