@@ -71,9 +71,6 @@ class BoundedOperationEngine:
         capability_id = decision.capability_id
         if not capability_id:
             return self._finish(operation_id, "capability", False, "capability decision did not identify a capability", decision)
-        capability = self.runtime.capability_registry.get(capability_id)
-        if capability is None:
-            return self._finish(operation_id, "capability", False, "selected capability is not registered", decision)
 
         if decision.action == "request_approval":
             if not capability_approved:
@@ -97,8 +94,12 @@ class BoundedOperationEngine:
             canary = self.runtime.evaluate_canary(capability_id, canary_health)
             if not canary.activated:
                 return self._finish(operation_id, "canary", False, canary.reason, decision)
-        elif capability.status is not CapabilityStatus.ACTIVE:
-            return self._finish(operation_id, "capability", False, "selected existing capability is not active", decision)
+        else:
+            capability = self.runtime.capability_registry.get(capability_id)
+            if capability is None:
+                return self._finish(operation_id, "capability", False, "selected capability is not registered", decision)
+            if capability.status is not CapabilityStatus.ACTIVE:
+                return self._finish(operation_id, "capability", False, "selected existing capability is not active", decision)
 
         action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
         if not action_result.success:
