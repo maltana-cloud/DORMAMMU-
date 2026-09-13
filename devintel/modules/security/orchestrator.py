@@ -11,6 +11,7 @@ from ...core.events import EventBus, RuntimeEvent
 from ...core.state import RuntimeState, StateStore
 from .containment import ContainmentManager
 from .contracts import RecoveryRecord, SecurityEvent, SecurityState, ThreatLevel
+from .recovery import CryptographicRecovery, RecoveryRequest
 
 
 _TARGETS = {
@@ -30,7 +31,7 @@ class SecurityAction:
 
 
 class SecurityOrchestrator:
-    """Coordinate detection, containment and recovery without granting authority."""
+    """Coordinate detection, containment and cryptographically authorized recovery."""
 
     def __init__(
         self,
@@ -39,11 +40,13 @@ class SecurityOrchestrator:
         events: EventBus | None = None,
         audit: AuditLog | None = None,
         runtime_state: StateStore | None = None,
+        recovery: CryptographicRecovery | None = None,
     ) -> None:
         self.containment = containment or ContainmentManager()
         self.events = events or EventBus()
         self.audit = audit or AuditLog()
         self.runtime_state = runtime_state
+        self.recovery = recovery
         self._lock = RLock()
 
     @staticmethod
@@ -81,8 +84,6 @@ class SecurityOrchestrator:
 
     def _contain(self, scope: str, reason: str) -> SecurityAction:
         record = self.containment.contain(scope, reason)
-        # Scoped incidents must remain isolated. Only an explicit core-scoped
-        # incident is allowed to change the global runtime state.
         if scope == "core":
             self._sync_runtime(RuntimeState.CONTAINMENT)
         self.events.publish(RuntimeEvent("security.contained", {
@@ -96,7 +97,13 @@ class SecurityOrchestrator:
         ))
         return SecurityAction(scope, record.state, record.revoked_capabilities, reason)
 
-    def begin_recovery(self, scope: str) -> RecoveryRecord:
+    def begin_recovery(self, scope: str, authorization: RecoveryRequest) -> RecoveryRecord:
+        """Enter recovery only after independent cryptographic authorization."""
+        if self.recovery is None:
+            raise RuntimeError("cryptographic recovery is not configured")
+        if authorization.scope != scope:
+            raise RuntimeError("recovery authorization scope mismatch")
+        self.recovery.verify(authorization)
         record = self.containment.begin_recovery(scope)
         if scope == "core":
             self._sync_runtime(RuntimeState.RECOVERY)
@@ -136,9 +143,6 @@ class SecurityOrchestrator:
         try:
             self.runtime_state.transition(target)
         except Exception:
-            # Security must not fail open because the optional core mirror cannot
-            # follow a transition. The security subsystem remains authoritative
-            # for its own scoped containment decision.
             self.audit.record(AuditRecord(
                 "security.runtime_sync_failed", "state_sync", False,
                 {"current": current.value, "target": target.value},
