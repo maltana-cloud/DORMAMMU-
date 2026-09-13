@@ -1,20 +1,42 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "last_verified_commit": "60a67f0c59300e41e4cdf469a0346c0fbb03287b",
-  "verification": {"ci_run": 466, "ci_status": "success", "tests": "GitHub Actions test job passed for capability discovery, canonical runtime/package changes, and state record"},
-  "identity": {"public_name":"DORMAMMU","legacy_python_namespace":"devintel","legacy_runtime_symbol":"DEVINTELRuntime","legacy_surfaces":"compatibility only"},
+  "last_code_commit": "1f94ec90cf00cf0c28ca38ed4a08ab447df6a697",
+  "verification": {
+    "latest_ci_run": 477,
+    "latest_ci_status": "in_progress",
+    "last_completed_verified_ci_run": 470,
+    "last_completed_verified_ci_status": "success",
+    "truth_rule": "Do not mark the latest code VERIFIED until its CI run completes successfully."
+  },
+  "identity": {
+    "public_name": "DORMAMMU",
+    "legacy_python_namespace": "devintel",
+    "legacy_runtime_symbol": "DEVINTELRuntime",
+    "legacy_surfaces": "compatibility only"
+  },
   "capabilities": [
-    {"capability":"core foundations","status":"TESTED","implementation_path":"core/","tests":"existing core/system tests","ci_evidence":"run 466 success","dependencies":"Python stdlib","blockers":[],"next_action":"integrate higher-level operating path","version":"foundation","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"specialists and domain services","status":"TESTED","implementation_path":"devintel/modules/","tests":"specialist/module tests","ci_evidence":"run 466 success","dependencies":"core contracts","blockers":[],"next_action":"connect real operating path","version":"current","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"bounded autonomy","status":"TESTED","implementation_path":"devintel/autonomy/","tests":"autonomy tests","ci_evidence":"run 466 success","dependencies":"orchestrator, permissions","blockers":[],"next_action":"consume capability/resource observations","version":"current","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"education lifecycle","status":"TESTED","implementation_path":"devintel/modules/education/","tests":"education tests","ci_evidence":"run 466 success","dependencies":"core, specialists","blockers":[],"next_action":"connect provider-backed teaching decisions","version":"current","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"provider routing","status":"TESTED","implementation_path":"devintel/providers/","tests":"provider/router/live-adapter tests","ci_evidence":"run 466 success","dependencies":"stdlib HTTP","blockers":[],"next_action":"integrate Research/Truth and Conversation/Education","version":"current","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"live external adapters","status":"PARTIAL","implementation_path":"devintel/providers/live_adapters.py","tests":"adapter parsing/configuration tests","ci_evidence":"run 466 success","dependencies":"Wikipedia; optional Gemini credential","blockers":["Wikipedia is retrieval/snippet evidence, not a general research engine","Gemini requires owner-supplied credential"],"next_action":"connect to Truth/Conversation boundaries","version":"v1","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"canonical DORMAMMU identity","status":"PARTIAL","implementation_path":"README.md; DORMAMMU_* docs; devintel/runtime/","tests":"CI and compatibility imports","ci_evidence":"run 466 success","dependencies":"legacy devintel namespace","blockers":["legacy DEVINTEL strings remain in internal docstrings/filenames and require deliberate cleanup"],"next_action":"clean public-facing legacy documentation safely","version":"migration-1","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"capability and resource discovery","status":"TESTED","implementation_path":"devintel/capabilities/","tests":"tests/test_capability_discovery.py","ci_evidence":"run 466 success","dependencies":"Python stdlib","blockers":["no external scout enabled","no live resource telemetry","lifecycle/canary/rollback orchestration still pending"],"next_action":"add built-in inventory and autonomy observation bridge","version":"v0.1","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"},
-    {"capability":"production autonomous ecosystem","status":"PLANNED","implementation_path":"cross-subsystem integration","tests":"not yet sufficient","ci_evidence":"none","dependencies":"verified research/truth, distribution, platform adapters, capability discovery","blockers":["integration gaps remain"],"next_action":"build first end-to-end bounded operating path","version":"future","last_verified_commit":"60a67f0c59300e41e4cdf469a0346c0fbb03287b"}
+    {"capability":"core foundations","status":"TESTED","implementation_path":"core/","next_action":"integrate higher-level operating path"},
+    {"capability":"specialists and domain services","status":"TESTED","implementation_path":"devintel/modules/","next_action":"connect real operating path"},
+    {"capability":"bounded autonomy","status":"TESTED","implementation_path":"devintel/autonomy/","next_action":"consume capability/resource observations"},
+    {"capability":"education lifecycle","status":"TESTED","implementation_path":"devintel/modules/education/","next_action":"connect provider-backed teaching decisions"},
+    {"capability":"provider routing","status":"TESTED","implementation_path":"devintel/providers/","next_action":"integrate Research/Truth and Conversation/Education"},
+    {"capability":"live external adapters","status":"PARTIAL","implementation_path":"devintel/providers/live_adapters.py","next_action":"connect verified research retrieval and generation boundaries"},
+    {"capability":"canonical DORMAMMU identity","status":"PARTIAL","implementation_path":"README.md; DORMAMMU_* docs; devintel/runtime/","next_action":"deliberate cleanup of remaining internal legacy strings"},
+    {"capability":"capability and resource discovery","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/","next_action":"add external scouts only after lifecycle and security verification"},
+    {"capability":"controlled capability lifecycle","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/lifecycle.py","next_action":"persist lifecycle events and add monitored canary orchestration"},
+    {"capability":"safe local inventory","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/inventory.py","next_action":"add platform-specific telemetry through read-only adapters"},
+    {"capability":"autonomy capability/resource observation bridge","status":"IMPLEMENTED","implementation_path":"devintel/runtime/app.py","next_action":"connect observation-driven planning to bounded capability decisions"},
+    {"capability":"production autonomous ecosystem","status":"PLANNED","implementation_path":"cross-subsystem integration","next_action":"build first end-to-end bounded operating path"}
+  ],
+  "safety_boundaries": [
+    "Discovery never installs, executes, authenticates, or grants authority.",
+    "Lifecycle transitions are explicit and state-validated.",
+    "Owner permission is required for capability approval.",
+    "Local inventory is read-only.",
+    "Autonomy observations carry data only and never grant authority.",
+    "No unrestricted self-modification or automatic paid acquisition."
   ]
 }
