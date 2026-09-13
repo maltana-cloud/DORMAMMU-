@@ -18,15 +18,14 @@ def _memory_bytes() -> int | None:
 
 
 def local_resources() -> tuple[ResourceDescriptor, ...]:
-    resources: list[ResourceDescriptor] = []
-    resources.append(ResourceDescriptor(
+    resources: list[ResourceDescriptor] = [ResourceDescriptor(
         "host:cpu", ResourceKind.CPU, platform.processor() or platform.machine(),
         capacity=str(os.cpu_count() or 1), availability="ready",
         metadata={"logical_cores": str(os.cpu_count() or 1), "architecture": platform.machine()},
-    ))
+    )]
     memory = _memory_bytes()
     resources.append(ResourceDescriptor(
-        "host:ram", ResourceKind.OTHER, "system memory", capacity=str(memory or 0),
+        "host:ram", ResourceKind.RAM, "system memory", capacity=str(memory or 0),
         availability="ready" if memory else "unknown", metadata={"bytes": str(memory or 0)},
     ))
     try:
