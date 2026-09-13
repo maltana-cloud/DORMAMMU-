@@ -32,7 +32,12 @@ from ..providers.registry import ProviderRegistry
 
 @dataclass(frozen=True)
 class RuntimeSnapshot:
-    scope_id: str; runtime_state: str; metrics: dict[str, int]; plugin_status: tuple[tuple[str, str, int], ...]; monitoring_state: str; audit_events: int
+    scope_id: str
+    runtime_state: str
+    metrics: dict[str, int]
+    plugin_status: tuple[tuple[str, str, int], ...]
+    monitoring_state: str
+    audit_events: int
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
@@ -57,6 +62,13 @@ class DORMAMMURuntime:
         resources = local_resources(); [self.resource_registry.register(r) for r in resources]; [self.capability_registry.register(c) for c in local_capabilities()]; return resources
     def register_capability(self, capability: CapabilityDescriptor) -> None: self.capability_registry.register(capability)
     def register_resource(self, resource: ResourceDescriptor) -> None: self.resource_registry.register(resource)
+    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_research_provider(provider_id, provider, priority=priority)
+    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_generation_provider(provider_id, provider, priority=priority)
+    def snapshot(self, scope_id: str) -> RuntimeSnapshot:
+        if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
+        plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
+        monitoring = self.monitoring.overall_state(scope_id).value
+        return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, monitoring, len(self.audit.history()))
     def decide_resource(self, request: ResourceRequest) -> ResourceDecision: return self.resource_manager.decide(request)
     def reserve_resource(self, request: ResourceRequest) -> ResourceDecision: return self.resource_manager.reserve(request)
     def release_resource(self, reservation_id: str) -> None: self.resource_manager.release(reservation_id)
@@ -87,8 +99,7 @@ class DORMAMMURuntime:
         return self.knowledge_synthesis.synthesize(topic, claims, excluded_claims=excluded_claims)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
-    def close(self) -> None:
-        self.operation_store.close(); self.lifecycle_store.close()
+    def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")
@@ -118,12 +129,6 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
-    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
-        from ..providers.contracts import ProviderCapability
-        self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
-    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
-        from ..providers.contracts import ProviderCapability
-        self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
 
-# Backward-compatible legacy import; DORMAMMU remains the canonical runtime identity.
+# Backward-compatible legacy import; DORMAMMU remains the canonical public identity.
 DEVINTELRuntime = DORMAMMURuntime
