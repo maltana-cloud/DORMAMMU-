@@ -1,64 +1,58 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Foundation locked in direction and safety boundaries; canonical builder control plane established; next target is the first end-to-end bounded operating path.**
+**First bounded operating path is implemented and resource-aware; capability/resource discovery and controlled lifecycle are integrated with core execution.**
 
 ## Truth Rule
-This file describes repository state. Implementation claims require code, meaningful tests, and successful CI evidence. The latest verified code checkpoint is commit `a3c7308256eeec36c31d7840e899a6aea199fc47`, validated by GitHub Actions run **507**.
+This file describes repository state. Implementation claims require code, meaningful tests, and successful CI evidence. Main commit `d0eaa5db2257d1773784b80c2aea1258d9b3aade` passed GitHub Actions run **537**. The resource-management branch head `585e82d1f77197cd42193a50674ff5bd66d61af9` passed branch CI run **535** before merge.
 
 ## Foundation Lock
-The foundational architecture is now **LOCKED** in its identity, authority, security, truth, owner-control, recovery, permission, auditability, modularity, backward-compatibility, and safe-evolution direction.
+The foundational architecture is **LOCKED** in identity, authority, security, truth, owner-control, recovery, permission, auditability, modularity, backward compatibility, and safe-evolution direction. Locked does not mean every future capability exists; future capabilities must plug into these boundaries.
 
-Locked does **not** mean every future capability exists. It means future capabilities must plug into these boundaries rather than silently weakening or replacing them.
-
-## Verified Foundations
-- Core systems, specialist/domain framework, orchestration, permissions, security/truth, autonomy, education, and provider routing remain in the repository.
-- Live provider adapters exist for keyless Wikipedia retrieval and optional Gemini generation.
+## Verified / Tested Foundations
+- Core engine, state, tasks, planning, events, permission boundaries, specialist/domain framework, bounded autonomy, research/truth, education, provider routing, security, owner control, and recovery remain integrated.
 - Canonical `DORMAMMURuntime` exists; `DEVINTELRuntime` remains only as a compatibility alias.
-- Capability/resource discovery, deterministic evaluation gates, free-first policy, controlled lifecycle, lifecycle event storage, safe local inventory, cryptographic recovery authorization, canary health monitoring/rollback, and bounded capability decisions are implemented and tested.
-- The runtime foundation integration suite now verifies actual lifecycle-event persistence across close/reopen.
-- GitHub Actions run 507 passed on the resulting code checkpoint.
+- Capability/resource contracts, registries, discovery/evaluation, free-first policy, controlled lifecycle, lifecycle event storage, conservative local inventory, cryptographic recovery authorization, canary health evaluation/rollback, and bounded capability decisions are implemented and tested.
+- The first bounded operating path now composes capability decision → approval/lifecycle → canary → resource reservation → core permission/execution → verification → outcome recording.
+- Resource reservations are released before the final operation-record event, including action/verification failure paths and exceptions.
+- Quantitative resource requests fail closed when capacity is unknown.
+- Main post-merge CI run **537** completed successfully for `d0eaa5db2257d1773784b80c2aea1258d9b3aade`.
 
-## Canonical Builder Control Plane
-`DORMAMMU_ENGINEERING_MAP.md` is the canonical builder entry point.
+## Capability Matrix
+`DORMAMMU_CAPABILITY_MATRIX.md` is the detailed truthful matrix. It records status, implementation path, tests, CI evidence, dependencies, security status, limitations, next action, version, and last verified commit for the current major capabilities.
 
-A new builder should be able to enter the repository cold and determine:
+Status vocabulary:
+`PLANNED / DESIGNED / PARTIAL / IMPLEMENTED / TESTED / VERIFIED / DEPLOYED / BLOCKED`.
 
-`WHAT IS DORMAMMU? → WHAT MUST NEVER CHANGE? → WHAT EXISTS? → WHAT IS VERIFIED? → WHAT IS PARTIAL? → WHAT IS NOT BUILT? → WHAT COMES NEXT? → WHAT DEPENDS ON WHAT? → HOW IS IT TESTED? → WHAT IS DONE? → HOW DOES IT REACH THE NORTH STAR?`
+The matrix deliberately distinguishes missing implementation from genuinely externally blocked work. No current major capability is marked `BLOCKED`.
 
-Builders must still verify code, tests, CI, and recent history rather than trusting documentation blindly.
+## Current Engineering Gaps
+1. **Executive cognition:** goal understanding → decomposition → planning → model/agent routing → specialist collaboration → outcomes.
+2. **Operational telemetry:** canary health must be derived from real execution observations, not only caller-supplied health.
+3. **Durable operational state:** lifecycle events can use persistent SQLite, but resource reservations and operation outcomes are still in-memory.
+4. **Trusted external capability acquisition:** external scouts/adapters need end-to-end provenance, license/terms, security, compatibility, permissions, resource, cost, rollback, and observability controls.
+5. **Evidence-backed knowledge synthesis:** connect research/truth/provenance into a stable cross-domain synthesis contract.
+6. **Broad ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
 
-## Verified Safety Boundaries
-- Discovery does not install, execute, authenticate, or grant authority.
+## Safety Boundaries
+- Discovery never installs, executes, authenticates, spends money, or grants authority.
 - Lifecycle transitions are explicit and state-validated; approval requires permission.
-- Local resource inventory is read-only and conservative.
-- Autonomy capability observations are data-only and do not grant authority.
-- Recovery uses an externally supplied cryptographic secret, with tamper, expiry, and replay protection.
-- Canary failure can produce bounded degradation/rollback rather than silent activation.
-- No unrestricted self-modification or automatic paid acquisition.
+- Resource management only reserves already-registered resources and fails closed on unknown capacity.
+- Local inventory is read-only and conservative.
+- Core action execution remains behind the permission boundary.
+- Recovery uses externally supplied cryptographic authorization with tamper, expiry, and replay protection.
+- Canary failure can produce bounded rollback rather than silent activation.
+- No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass.
 - External content cannot promote itself into instructions, credentials, permissions, or owner authority.
 
-## Remaining Engineering Work
-- Build the first real end-to-end bounded operating path:
-  `GOAL → REQUIREMENTS → CAPABILITY DECISION → PERMISSION CHECK → APPROVAL WHEN REQUIRED → LIFECYCLE → CANARY → ACT → VERIFY → RECORD`.
-- Connect real operational health metrics to canary monitoring before claiming production autonomous rollout.
-- Configure durable lifecycle storage explicitly in deployed runtimes.
-- Add trusted external capability scouts and integration adapters only after their complete security/permission/licensing/rollback path is verified.
-- Connect executive cognition: goal understanding, decomposition, planning, model/agent routing, specialist collaboration, execution, verification, reflection, and outcomes.
-- Progressively integrate ecosystem capabilities, creation, distribution, awareness, monetization, resource orchestration, model training/evaluation, and controlled self-improvement.
-
 ## Not Yet Complete
-DORMAMMU is **not** being represented as a finished autonomous ecosystem. Full production autonomy, broad external capability acquisition, complete executive cognition, full ecosystem loops, and ecosystem-scale controlled learning remain future engineering work.
-
-## Engineering Rule
-`PLANNED ≠ DESIGNED ≠ PARTIAL ≠ IMPLEMENTED ≠ TESTED ≠ VERIFIED ≠ DEPLOYED`
-
-Every builder must leave a truthful, test-backed checkpoint. Never claim a capability because a document describes it.
+DORMAMMU is **not** a finished autonomous ecosystem. Full objective-level autonomy, executive cognition, trusted external acquisition, real operational telemetry, broad ecosystem integration, production resource orchestration, model training/evolution, and ecosystem-scale controlled learning remain unfinished.
 
 ## Next Execution Target
-**First end-to-end bounded operating path.**
+**Executive cognition foundation:** connect explicit goal understanding and task decomposition to the existing bounded capability decision and operating path, without bypassing permission/security/verification.
 
-Do not start an unrelated feature before this dependency is connected and verified.
+Preferred flow:
+`OBJECTIVE → GOAL UNDERSTANDING → REQUIREMENTS → TASK DECOMPOSITION → CAPABILITY DECISION → PERMISSION → EXECUTE → VERIFY → RECORD → REFLECT`
 
 ## Verification Note
-GitHub repository branch-protection/ruleset enforcement could not be independently verified through the available integration, so repository-level protection is not claimed here. The architectural lock refers to the code-enforced foundation and its verified engineering boundaries, not an unverified GitHub administration setting.
+GitHub repository branch-protection/ruleset enforcement has not been independently verified through the available integration, so repository-level protection is not claimed. Architectural lock refers to code-enforced foundation and verified engineering boundaries.
