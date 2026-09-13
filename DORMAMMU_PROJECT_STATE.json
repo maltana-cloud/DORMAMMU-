@@ -1,40 +1,33 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "last_code_commit": "1f94ec90cf00cf0c28ca38ed4a08ab447df6a697",
+  "last_code_commit": "eb6d892e7b05f6301da850008405a239fdbd2c6b",
   "verification": {
-    "latest_ci_run": 477,
-    "latest_ci_status": "in_progress",
-    "last_completed_verified_ci_run": 470,
-    "last_completed_verified_ci_status": "success",
-    "truth_rule": "Do not mark the latest code VERIFIED until its CI run completes successfully."
-  },
-  "identity": {
-    "public_name": "DORMAMMU",
-    "legacy_python_namespace": "devintel",
-    "legacy_runtime_symbol": "DEVINTELRuntime",
-    "legacy_surfaces": "compatibility only"
+    "latest_ci_status": "pending",
+    "truth_rule": "Do not mark the newest code VERIFIED until its CI run completes successfully."
   },
   "capabilities": [
     {"capability":"core foundations","status":"TESTED","implementation_path":"core/","next_action":"integrate higher-level operating path"},
     {"capability":"specialists and domain services","status":"TESTED","implementation_path":"devintel/modules/","next_action":"connect real operating path"},
-    {"capability":"bounded autonomy","status":"TESTED","implementation_path":"devintel/autonomy/","next_action":"consume capability/resource observations"},
+    {"capability":"bounded autonomy","status":"TESTED","implementation_path":"devintel/autonomy/","next_action":"consume bounded capability decisions"},
     {"capability":"education lifecycle","status":"TESTED","implementation_path":"devintel/modules/education/","next_action":"connect provider-backed teaching decisions"},
-    {"capability":"provider routing","status":"TESTED","implementation_path":"devintel/providers/","next_action":"integrate Research/Truth and Conversation/Education"},
-    {"capability":"live external adapters","status":"PARTIAL","implementation_path":"devintel/providers/live_adapters.py","next_action":"connect verified research retrieval and generation boundaries"},
-    {"capability":"canonical DORMAMMU identity","status":"PARTIAL","implementation_path":"README.md; DORMAMMU_* docs; devintel/runtime/","next_action":"deliberate cleanup of remaining internal legacy strings"},
-    {"capability":"capability and resource discovery","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/","next_action":"add external scouts only after lifecycle and security verification"},
-    {"capability":"controlled capability lifecycle","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/lifecycle.py","next_action":"persist lifecycle events and add monitored canary orchestration"},
-    {"capability":"safe local inventory","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/inventory.py","next_action":"add platform-specific telemetry through read-only adapters"},
-    {"capability":"autonomy capability/resource observation bridge","status":"IMPLEMENTED","implementation_path":"devintel/runtime/app.py","next_action":"connect observation-driven planning to bounded capability decisions"},
+    {"capability":"provider routing","status":"TESTED","implementation_path":"devintel/providers/","next_action":"integrate verified research/generation boundaries"},
+    {"capability":"live external adapters","status":"PARTIAL","implementation_path":"devintel/providers/live_adapters.py","next_action":"expand verified retrieval/provider coverage"},
+    {"capability":"canonical DORMAMMU identity","status":"PARTIAL","implementation_path":"README.md; DORMAMMU_* docs; devintel/runtime/","next_action":"deliberate cleanup of remaining legacy strings"},
+    {"capability":"capability and resource discovery","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/","next_action":"bounded external scouts after security verification"},
+    {"capability":"controlled capability lifecycle","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/lifecycle.py","next_action":"health-driven canary decisions"},
+    {"capability":"durable lifecycle records","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/store.py","next_action":"integrate durable operational event retention"},
+    {"capability":"safe local inventory","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/inventory.py","next_action":"platform-specific read-only telemetry"},
+    {"capability":"autonomy capability/resource observation bridge","status":"IMPLEMENTED","implementation_path":"devintel/runtime/app.py","next_action":"bounded observation-driven planning"},
     {"capability":"production autonomous ecosystem","status":"PLANNED","implementation_path":"cross-subsystem integration","next_action":"build first end-to-end bounded operating path"}
   ],
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, or grants authority.",
     "Lifecycle transitions are explicit and state-validated.",
     "Owner permission is required for capability approval.",
+    "Lifecycle events can be persisted without granting authority.",
     "Local inventory is read-only.",
     "Autonomy observations carry data only and never grant authority.",
     "No unrestricted self-modification or automatic paid acquisition."
