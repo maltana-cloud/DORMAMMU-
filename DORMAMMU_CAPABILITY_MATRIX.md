@@ -6,17 +6,18 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Matrix checkpoint:** main commit `d0eaa5db2257d1773784b80c2aea1258d9b3aade`; resource branch head `585e82d1f77197cd42193a50674ff5bd66d61af9` was validated by CI run **535**. Main post-merge CI run **537** was still in progress when this matrix was prepared.
+**Matrix checkpoint:** main commit `58a3afe21a18c7a826da3f635c73da6ec244a625` passed GitHub Actions run **555**. Executive branch CI run **554** also passed. Resource-management CI run **535** passed before merge.
 
 | Capability | Status | Implementation path | Tests | CI evidence | Dependencies | Security status | Known limitations | Next action | Version | Last verified commit |
 |---|---|---|---|---|---|---|---|---|---|---|
 | DORMAMMU identity migration | IMPLEMENTED | `DORMAMMU_CHARTER.md`; `DORMAMMU_*`; `devintel/runtime/` | `tests/test_capability_runtime.py`; compatibility coverage | #507 success | legacy namespace compatibility | Protected; no blind rename | `devintel/` and legacy `DEVINTEL_*` names remain intentionally | Remove legacy naming only where compatibility permits | 1.0 | `a3c730...` |
 | Capability & Resource Discovery | TESTED | `devintel/capabilities/contracts.py`, `discovery.py`, `registry.py`, `decision.py` | `tests/test_capability_discovery.py`, `test_capability_decision.py`, runtime tests | #521/#522 success | registries, evaluator, runtime | Advisory only; no install/auth/execute | External scouts are not yet production-trusted | Add provenance-aware trusted scouts and integration adapters | 1.0 | `cae16d7...` |
-| Resource / Compute Management | TESTED | `devintel/capabilities/resources.py`, `inventory.py`; runtime integration; bounded operations | `tests/test_resource_manager.py`, `test_capability_runtime.py`, `test_bounded_operation.py` | #535 success | resource registry, local inventory, permission boundary | Fail-closed capacity; no provisioning/spending | Reservations are in-memory; no multi-host scheduler yet | Add durable/scoped resource leases and real telemetry | 1.0 | `585e82d...` |
+| Resource / Compute Management | TESTED | `devintel/capabilities/resources.py`, `inventory.py`; runtime integration; bounded operations | `tests/test_resource_manager.py`, `test_capability_runtime.py`, `test_bounded_operation.py` | #535 success; #537 success | resource registry, local inventory, permission boundary | Fail-closed capacity; no provisioning/spending | Reservations are in-memory; no multi-host scheduler or durable lease system | Add durable scoped leases and real telemetry | 1.0 | `d0eaa5d...` |
 | Domain Intelligence | TESTED | `devintel/modules/`, research, education, specialists | domain/module test suite | #507 success | core runtime, providers | Domain modules remain behind core/security boundaries | Broad domain coverage is uneven | Connect domain services to executive operating path | 1.0 | `a3c730...` |
 | Ecosystem Awareness | PARTIAL | research/providers, publishing/product-facing modules | research/provider/publishing tests | #507 success | live adapters, truth/provenance | External content treated as untrusted | No complete cross-platform awareness loop | Build source aggregation + freshness/importance pipeline | 0.1 | `a3c730...` |
 | Knowledge synthesis / cross-domain reasoning | PARTIAL | research/truth + autonomy/planning foundations | research/truth/autonomy tests | #507 success | verified evidence, planning, provider routing | Truth/provenance boundaries exist | No complete cross-domain synthesis engine | Implement evidence-backed synthesis contract | 0.1 | `a3c730...` |
-| Full autonomous operating path | TESTED | `devintel/operations/bounded.py`, runtime | `tests/test_bounded_operation.py` | #535 success; #537 post-merge pending | capability decision, lifecycle, canary, resources, core execution | Permission and capability approval preserved | This is bounded execution, not full objective autonomy | Add goal understanding/decomposition and outcome persistence | 0.1 | `585e82d...` |
+| Executive cognition foundation | TESTED | `devintel/executive/contracts.py`; `devintel/executive/engine.py`; runtime | `tests/test_executive_engine.py` | #554/#555 success | bounded operations; capability/resource decision; permission; canary; verification | Explicit scope and per-capability approval; no new authority | Default interpreter only normalizes explicit fields; decomposition is explicit | Add evidence-backed goal understanding and model/agent/specialist routing | 0.1 | `58a3afe...` |
+| Full autonomous operating path | PARTIAL | `devintel/executive/`; `devintel/operations/`; `devintel/capabilities/`; runtime | executive + bounded operation tests | #555 success | executive cognition; capability/resource management; permission; canary; verification | Bounded and permission-gated | No arbitrary natural-language decomposition, telemetry feedback, reflection, learning, or durable outcomes | Add measurement → outcome persistence → reflection/learning | 0.2 | `58a3afe...` |
 | Model Training & Evolution | PLANNED | architecture direction only | no dedicated implementation test | baseline only | datasets, compute, evaluation, safety governance | No unrestricted self-modification | Training/evolution loop not built | Define isolated training/evaluation contracts | 0.1 | `a3c730...` |
 | Engineering / Coding Intelligence | PARTIAL | existing developer/domain modules and tool-builder direction | existing module tests | #507 success | core, tools, sandbox execution | Generated code must remain controlled | No complete coding-agent loop | Connect coding specialist to bounded execution + verification | 0.1 | `a3c730...` |
 | Language & Speech Intelligence | PLANNED | no complete subsystem identified in current foundation | no dedicated implementation test | baseline only | model/provider routing, platform I/O | Must isolate microphone/audio credentials and platform authority | No production speech subsystem | Define language/speech provider contracts | 0.1 | `a3c730...` |
@@ -33,11 +34,12 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 ## Highest-priority gaps
 
-1. **Executive cognition:** goal understanding → decomposition → planning → routing → specialist collaboration → outcome recording.
-2. **Operational telemetry:** feed real health metrics into canary decisions instead of caller-supplied health only.
-3. **Durable operational state:** lifecycle events have a reusable SQLite store, but deployed runtimes must explicitly configure persistent storage; operation outcomes/resource leases are not yet durable.
-4. **Trusted external capability acquisition:** scouts/adapters need provenance, license/terms, security, compatibility, permission, resource, cost, rollback, and observability controls end-to-end.
-5. **Evidence-backed knowledge synthesis:** connect research/truth/provenance into a stable cross-domain synthesis contract.
+1. **Operational telemetry:** derive canary health from real execution observations instead of caller-supplied health only.
+2. **Durable operational state:** lifecycle events have reusable SQLite persistence, but operation outcomes/resource reservations are not yet durable.
+3. **Evidence-backed goal understanding:** the current default interpreter normalizes explicit fields; it does not infer arbitrary goals or success criteria from unstructured requests.
+4. **Model/agent/specialist routing:** executive tasks do not yet dynamically select the best available intelligence capability.
+5. **Trusted external capability acquisition:** scouts/adapters need provenance, license/terms, security, compatibility, permission, resource, cost, rollback, and observability controls end-to-end.
+6. **Evidence-backed knowledge synthesis:** connect research/truth/provenance into a stable cross-domain synthesis contract.
 
 ## Blocked vs not built
 
@@ -47,4 +49,4 @@ At this checkpoint no listed core capability is marked `BLOCKED`; several are si
 
 ## Verification rule
 
-A status of `TESTED` means meaningful repository tests exist and have passed. `VERIFIED` requires the stronger integration/operational evidence appropriate to the capability. `DEPLOYED` requires an authorized real deployment. This matrix never treats documentation, imports, or a green unit test alone as production proof.
+A status of `TESTED` means meaningful repository tests exist and have passed. `VERIFIED` requires stronger integration/operational evidence appropriate to the capability. `DEPLOYED` requires an authorized real deployment. This matrix never treats documentation, imports, or a green unit test alone as production proof.
