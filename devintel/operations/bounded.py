@@ -1,9 +1,10 @@
 """First bounded end-to-end operating path.
 
 This module composes existing DORMAMMU boundaries without granting new authority.
-It plans a goal, checks capabilities, requires explicit capability approval when a
-new candidate is needed, gates activation through canary health, executes through
-the core permission path, verifies the result, and records the outcome.
+It plans a goal, checks capabilities, optionally reserves declared resources,
+requires explicit capability approval when a new candidate is needed, gates
+activation through canary health, executes through the core permission path,
+verifies the result, and records the outcome.
 """
 from __future__ import annotations
 
@@ -11,7 +12,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
 from uuid import uuid4
 
-from ..capabilities import CapabilityDecision, CapabilityRequirement, CapabilityStatus, CanaryHealth
+from ..capabilities import CapabilityDecision, CapabilityRequirement, CapabilityStatus, CanaryHealth, ResourceRequest
 from ..core.contracts import ActionRequest, ActionResult, Event
 
 if TYPE_CHECKING:
@@ -26,6 +27,7 @@ class BoundedOperation:
     requirement: CapabilityRequirement
     action: ActionRequest
     value: float = 0.0
+    resource_request: ResourceRequest | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.goal, str) or not self.goal.strip():
@@ -34,6 +36,8 @@ class BoundedOperation:
             raise TypeError("requirement must be a CapabilityRequirement")
         if not isinstance(self.action, ActionRequest):
             raise TypeError("action must be an ActionRequest")
+        if self.resource_request is not None and not isinstance(self.resource_request, ResourceRequest):
+            raise TypeError("resource_request must be a ResourceRequest")
 
 
 @dataclass(frozen=True)
@@ -101,15 +105,34 @@ class BoundedOperationEngine:
             if capability.status is not CapabilityStatus.ACTIVE:
                 return self._finish(operation_id, "capability", False, "selected existing capability is not active", decision)
 
-        action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
-        if not action_result.success:
-            return self._finish(operation_id, "act", False, action_result.message, decision, action_result)
-        verified = True if verifier is None else bool(verifier(action_result.data.get("output")))
-        if not verified:
-            self.runtime.context.events.publish(Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id}))
-            return self._finish(operation_id, "verify", False, "operation result failed verification", decision, action_result, False)
-        self.runtime.context.events.publish(Event("operation.completed", {"operation_id": operation_id, "capability_id": capability_id}))
-        return self._finish(operation_id, "record", True, "bounded operation completed and verified", decision, action_result, True)
+        reservation_id: str | None = None
+        if operation.resource_request is not None:
+            reservation = self.runtime.reserve_resource(operation.resource_request)
+            if not reservation.granted or reservation.reservation_id is None:
+                return self._finish(operation_id, "resource", False, reservation.reason, decision)
+            reservation_id = reservation.reservation_id
+            self.runtime.context.events.publish(Event("operation.resource_reserved", {"operation_id": operation_id, "resource_id": reservation.resource_id, "reservation_id": reservation_id}))
+        try:
+            action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
+            if not action_result.success:
+                return self._finish_with_release(operation_id, reservation_id, "act", False, action_result.message, decision, action_result)
+            verified = True if verifier is None else bool(verifier(action_result.data.get("output")))
+            if not verified:
+                self.runtime.context.events.publish(Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id}))
+                return self._finish_with_release(operation_id, reservation_id, "verify", False, "operation result failed verification", decision, action_result, False)
+            self.runtime.context.events.publish(Event("operation.completed", {"operation_id": operation_id, "capability_id": capability_id}))
+            return self._finish_with_release(operation_id, reservation_id, "record", True, "bounded operation completed and verified", decision, action_result, True)
+        except Exception:
+            if reservation_id is not None:
+                self.runtime.release_resource(reservation_id)
+                self.runtime.context.events.publish(Event("operation.resource_released", {"operation_id": operation_id, "reservation_id": reservation_id}))
+            raise
+
+    def _finish_with_release(self, operation_id: str, reservation_id: str | None, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
+        if reservation_id is not None:
+            self.runtime.release_resource(reservation_id)
+            self.runtime.context.events.publish(Event("operation.resource_released", {"operation_id": operation_id, "reservation_id": reservation_id}))
+        return self._finish(operation_id, stage, success, message, decision, action_result, verified)
 
     def _finish(self, operation_id: str, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
         self.runtime.context.events.publish(Event("operation.recorded", {"operation_id": operation_id, "stage": stage, "success": success, "message": message, "capability_id": decision.capability_id or ""}))

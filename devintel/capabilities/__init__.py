@@ -9,6 +9,7 @@ from .discovery import CapabilityDiscovery, DefaultEvaluator, DiscoveryPolicy
 from .inventory import local_capabilities, local_resources
 from .lifecycle import CapabilityLifecycle, LifecycleEvent
 from .registry import CapabilityRegistry, GapRegistry, ResourceRegistry
+from .resources import ResourceDecision, ResourceManager, ResourceRequest
 from .store import LifecycleStore
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "CapabilityDiscovery", "DefaultEvaluator", "DiscoveryPolicy",
     "CapabilityLifecycle", "LifecycleEvent", "LifecycleStore", "local_capabilities", "local_resources",
     "CapabilityRegistry", "GapRegistry", "ResourceRegistry",
+    "ResourceDecision", "ResourceManager", "ResourceRequest",
 ]
