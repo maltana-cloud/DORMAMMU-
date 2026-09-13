@@ -46,6 +46,29 @@ def test_existing_capability_runs_through_action_and_verification():
         runtime.close()
 
 
+def test_bounded_execution_feeds_derived_operational_health():
+    runtime = DORMAMMURuntime()
+    try:
+        runtime.register_action("test.echo", lambda payload: {"echo": payload["value"]})
+        for index in range(5):
+            operation = BoundedOperation(
+                f"echo {index}",
+                CapabilityRequirement("runtime-local", "run locally", ("runtime",)),
+                ActionRequest("test.echo", ActionRisk.LOW, "telemetry test", {"value": index}),
+            )
+            result = runtime.run_bounded_operation(operation, verifier=lambda output: isinstance(output, dict))
+            assert result.success
+        history = runtime.operation_history("runtime.local", limit=5)
+        assert len(history) == 5
+        health = runtime.operational_health("runtime.local", window=5, min_samples=5)
+        assert health is not None and health.success_rate == 1.0 and health.error_rate == 0.0
+        decision = runtime.evaluate_operational_health("runtime.local", window=5, min_samples=5)
+        assert decision.status is CapabilityStatus.ACTIVE
+        assert not decision.rolled_back
+    finally:
+        runtime.close()
+
+
 def test_high_risk_action_stops_at_permission_boundary():
     runtime = DORMAMMURuntime()
     try:
@@ -112,5 +135,7 @@ def test_failed_verification_is_recorded_as_failure():
         assert result.stage == "verify"
         assert not result.verified
         assert any(event.name == "operation.verification_failed" for event in runtime.context.events.history())
+        history = runtime.operation_history("runtime.local")
+        assert history and not history[0].success and not history[0].verified
     finally:
         runtime.close()
