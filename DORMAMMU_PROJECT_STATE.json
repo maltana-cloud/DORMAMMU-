@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "project": "DORMAMMU",
+  "repository": "maltana-cloud/DORMAMMU-",
+  "branch": "main",
+  "last_verified_commit": "4c46bd8a91583b1bb77ee4ad6b6add01b3056053",
+  "verification": {
+    "ci_run": 453,
+    "ci_status": "success",
+    "tests": "170+ existing suite; capability discovery tests added and pending CI observation"
+  },
+  "identity": {
+    "public_name": "DORMAMMU",
+    "legacy_python_namespace": "devintel",
+    "legacy_runtime_symbol": "DEVINTELRuntime",
+    "legacy_surfaces": "compatibility only"
+  },
+  "capabilities": [
+    {"capability":"core foundations","status":"TESTED","implementation_path":"core/","tests":"tests/core and system tests","ci_evidence":"run 453 success","dependencies":"Python stdlib","blockers":[],"next_action":"integrate with higher-level operating path","version":"foundation","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"specialists and domain services","status":"TESTED","implementation_path":"devintel/modules/","tests":"specialist/module tests","ci_evidence":"run 453 success","dependencies":"core contracts","blockers":[],"next_action":"connect real operating path","version":"current","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"bounded autonomy","status":"TESTED","implementation_path":"devintel/autonomy/","tests":"autonomy tests","ci_evidence":"run 453 success","dependencies":"orchestrator, permissions","blockers":[],"next_action":"feed verified capability/resource observations into planning","version":"current","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"education lifecycle","status":"TESTED","implementation_path":"devintel/modules/education/","tests":"education tests","ci_evidence":"run 453 success","dependencies":"core, specialists","blockers":[],"next_action":"connect provider-backed teaching decisions","version":"current","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"provider routing","status":"TESTED","implementation_path":"devintel/providers/","tests":"provider/router/live-adapter tests","ci_evidence":"run 453 success","dependencies":"stdlib HTTP for live adapters","blockers":[],"next_action":"integrate Research/Truth and Conversation/Education paths","version":"current","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"live external adapters","status":"PARTIAL","implementation_path":"devintel/providers/live_adapters.py","tests":"adapter parsing/configuration tests","ci_evidence":"run 453 success","dependencies":"Wikipedia; optional Gemini credential","blockers":["Wikipedia is retrieval/snippet evidence, not a general research engine","Gemini requires owner-supplied API key"],"next_action":"connect to Truth/Conversation boundaries","version":"v1","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"canonical DORMAMMU identity","status":"PARTIAL","implementation_path":"README.md; DORMAMMU_* docs; devintel/runtime/app.py","tests":"CI plus import compatibility","ci_evidence":"run 453 success","dependencies":"legacy devintel namespace","blockers":["legacy DEVINTEL filenames/package references remain for compatibility"],"next_action":"finish safe public-facing identity cleanup without mass rename","version":"migration-1","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"capability and resource discovery","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/","tests":"tests/test_capability_discovery.py","ci_evidence":"added after run 453; next CI run must verify","dependencies":"Python stdlib","blockers":["no external scout is enabled yet","registration is advisory and does not install/execute candidates"],"next_action":"add safe built-in resource/capability inventory and integrate observations with autonomy","version":"v0.1","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"},
+    {"capability":"production autonomous ecosystem","status":"PLANNED","implementation_path":"cross-subsystem integration","tests":"not yet sufficient","ci_evidence":"none","dependencies":"verified research/truth, distribution, platform adapters, capability discovery","blockers":["integration gaps remain"],"next_action":"build first real end-to-end bounded operating path","version":"future","last_verified_commit":"4c46bd8a91583b1bb77ee4ad6b6add01b3056053"}
+  ]
+}
