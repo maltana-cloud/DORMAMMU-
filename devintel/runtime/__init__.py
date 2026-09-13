@@ -1,5 +1,5 @@
-"""Public runtime integration API for DEVINTEL."""
+"""Public runtime integration API for DORMAMMU."""
 
-from .app import DEVINTELRuntime, RuntimeSnapshot
+from .app import DORMAMMURuntime, RuntimeSnapshot, DEVINTELRuntime
 
-__all__ = ["DEVINTELRuntime", "RuntimeSnapshot"]
+__all__ = ["DORMAMMURuntime", "RuntimeSnapshot", "DEVINTELRuntime"]
