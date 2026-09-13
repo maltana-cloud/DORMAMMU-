@@ -13,6 +13,7 @@ import hmac
 import os
 import secrets
 import time
+from threading import RLock
 
 
 class RecoveryAuthorizationError(RuntimeError):
@@ -46,6 +47,7 @@ class CryptographicRecovery:
             raise ValueError("recovery secret must contain at least 32 bytes")
         self.max_age_seconds = max_age_seconds
         self._used_nonces: set[str] = set()
+        self._lock = RLock()
 
     @staticmethod
     def _load_secret() -> bytes:
@@ -79,15 +81,16 @@ class CryptographicRecovery:
     def verify(self, request: RecoveryRequest, *, now: int | None = None) -> None:
         """Verify authenticity, freshness, and single-use nonce semantics."""
         current = int(time.time()) if now is None else int(now)
-        if abs(current - request.issued_at) > self.max_age_seconds:
-            raise RecoveryAuthorizationError("recovery request is expired")
-        if request.nonce in self._used_nonces:
-            raise RecoveryAuthorizationError("recovery request nonce has already been used")
-        expected = hmac.new(
-            self._secret,
-            self._payload(request.scope, request.nonce, request.issued_at),
-            hashlib.sha256,
-        ).hexdigest()
-        if not hmac.compare_digest(expected, request.signature):
-            raise RecoveryAuthorizationError("invalid recovery authorization")
-        self._used_nonces.add(request.nonce)
+        with self._lock:
+            if abs(current - request.issued_at) > self.max_age_seconds:
+                raise RecoveryAuthorizationError("recovery request is expired")
+            if request.nonce in self._used_nonces:
+                raise RecoveryAuthorizationError("recovery request nonce has already been used")
+            expected = hmac.new(
+                self._secret,
+                self._payload(request.scope, request.nonce, request.issued_at),
+                hashlib.sha256,
+            ).hexdigest()
+            if not hmac.compare_digest(expected, request.signature):
+                raise RecoveryAuthorizationError("invalid recovery authorization")
+            self._used_nonces.add(request.nonce)
