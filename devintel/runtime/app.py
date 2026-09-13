@@ -5,6 +5,13 @@ from dataclasses import dataclass
 from typing import Any
 
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
+from ..autonomy.contracts import Observation
+from ..capabilities import (
+    CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle,
+    CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor,
+    ResourceRegistry,
+)
+from ..capabilities.inventory import local_capabilities, local_resources
 from ..control.service import OwnerControlCenter
 from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
@@ -44,6 +51,11 @@ class DORMAMMURuntime:
         self.providers = ProviderRegistry()
         self.live_providers = ProviderRouter()
         self._configure_live_providers()
+        self.capability_registry = CapabilityRegistry()
+        self.resource_registry = ResourceRegistry()
+        self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
+        self.capability_lifecycle = CapabilityLifecycle(self.capability_registry)
+        self.refresh_local_inventory()
         self.education = EducationEngine()
         self.education_specialist = EducationSpecialist(self.plugins, self.education)
         self.teaching = TeachingEngine()
@@ -58,6 +70,42 @@ class DORMAMMURuntime:
         self.register_research_provider(wikipedia.provider_id, wikipedia, priority=1000)
         if gemini is not None:
             self.register_generation_provider(gemini.provider_id, gemini, priority=1000)
+
+    def refresh_local_inventory(self) -> tuple[ResourceDescriptor, ...]:
+        """Refresh read-only host resources without installing or changing anything."""
+        resources = local_resources()
+        for resource in resources:
+            self.resource_registry.register(resource)
+        for capability in local_capabilities():
+            self.capability_registry.register(capability)
+        return resources
+
+    def register_capability(self, capability: CapabilityDescriptor) -> None:
+        self.capability_registry.register(capability)
+
+    def register_resource(self, resource: ResourceDescriptor) -> None:
+        self.resource_registry.register(resource)
+
+    def create_capability_gap(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> CapabilityGap:
+        return self.capability_discovery.discover(requirement, gap_id=gap_id).gap
+
+    def resolve_capability_gap(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult:
+        return self.capability_discovery.discover(requirement, gap_id=gap_id)
+
+    def discover_capabilities(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult:
+        return self.resolve_capability_gap(requirement, gap_id=gap_id)
+
+    def capability_observations(self, scope_id: str) -> tuple[Observation, ...]:
+        """Expose registry state to autonomy as data only; no authority is implied."""
+        if not isinstance(scope_id, str) or not scope_id.strip():
+            raise ValueError("scope_id is required")
+        resources = self.resource_registry.all()
+        capabilities = tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())
+        return (
+            Observation(scope_id, "capability_inventory", tuple(item for item in capabilities if item is not None)),
+            Observation(scope_id, "resource_inventory", resources),
+            Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())),
+        )
 
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
@@ -89,6 +137,9 @@ class DORMAMMURuntime:
 
     def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine:
         return AutonomousEngine(self.orchestrator, self.education_feedback_observer, planner, verifier, recorder)
+
+    def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine:
+        return AutonomousEngine(self.orchestrator, self.capability_observations, planner, verifier, recorder)
 
     def education_integration(self, **adapters: object) -> EducationSubsystemIntegration:
         return EducationSubsystemIntegration(**adapters)
