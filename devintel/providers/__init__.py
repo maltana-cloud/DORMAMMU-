@@ -9,6 +9,7 @@ from .live import (
     ResearchRequest,
     ResearchResult,
 )
+from .live_adapters import GeminiGenerationProvider, WikipediaResearchProvider, configured_live_providers
 from .registry import ProviderRegistry
 
 __all__ = [
@@ -23,4 +24,7 @@ __all__ = [
     "ResearchRequest",
     "ResearchResult",
     "ProviderRouter",
+    "GeminiGenerationProvider",
+    "WikipediaResearchProvider",
+    "configured_live_providers",
 ]
