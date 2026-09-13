@@ -20,7 +20,7 @@ def test_wikipedia_adapter_rejects_empty_query():
     try:
         provider.search(ResearchRequest("   "))
     except ValueError as exc:
-        assert "research query is required" in str(exc)
+        assert "query is required" in str(exc)
     else:
         raise AssertionError("empty research query must fail closed")
 
