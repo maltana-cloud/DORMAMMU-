@@ -1,4 +1,4 @@
-"""Composition root connecting DEVINTEL's bounded subsystems."""
+"""Composition root connecting DORMAMMU's bounded subsystems."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -33,7 +33,11 @@ class RuntimeSnapshot:
     audit_events: int
 
 class DEVINTELRuntime:
-    """Single composition root for DEVINTEL bounded subsystems."""
+    """Single composition root for DORMAMMU bounded subsystems.
+
+    ``DEVINTELRuntime`` remains the public Python class name for backward
+    compatibility. DORMAMMU is the canonical product identity.
+    """
     def __init__(self) -> None:
         self.context = RuntimeContext()
         self.audit = AuditLog()
@@ -53,11 +57,11 @@ class DEVINTELRuntime:
         self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
     def _configure_live_providers(self) -> None:
-        """Register only explicitly available external providers; never invent credentials."""
+        """Register defaults at low precedence; explicit host registrations win."""
         gemini, wikipedia = configured_live_providers()
-        self.register_research_provider(wikipedia.provider_id, wikipedia, priority=50)
+        self.register_research_provider(wikipedia.provider_id, wikipedia, priority=1000)
         if gemini is not None:
-            self.register_generation_provider(gemini.provider_id, gemini, priority=50)
+            self.register_generation_provider(gemini.provider_id, gemini, priority=1000)
 
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
