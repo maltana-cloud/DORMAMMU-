@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from .contracts import CapabilityDescriptor, CapabilityStatus, Evaluation
 from .registry import CapabilityRegistry
 
-
 _ALLOWED: dict[CapabilityStatus, frozenset[CapabilityStatus]] = {
     CapabilityStatus.DISCOVERED: frozenset({CapabilityStatus.EVALUATED, CapabilityStatus.RETIRED}),
     CapabilityStatus.EVALUATED: frozenset({CapabilityStatus.APPROVED, CapabilityStatus.RETIRED}),
@@ -19,7 +18,6 @@ _ALLOWED: dict[CapabilityStatus, frozenset[CapabilityStatus]] = {
     CapabilityStatus.RETIRED: frozenset(),
 }
 
-
 @dataclass(frozen=True)
 class LifecycleEvent:
     capability_id: str
@@ -28,7 +26,6 @@ class LifecycleEvent:
     timestamp: str
     reason: str
 
-
 class CapabilityLifecycle:
     """State machine only. It never installs, executes, or grants permissions."""
     def __init__(self, registry: CapabilityRegistry, recorder=None) -> None:
@@ -36,7 +33,7 @@ class CapabilityLifecycle:
         self.recorder = recorder
 
     def transition(self, capability_id: str, target: CapabilityStatus, reason: str) -> CapabilityDescriptor:
-        if not reason.strip():
+        if not isinstance(reason, str) or not reason.strip():
             raise ValueError("reason is required")
         current = self.registry.get(capability_id)
         if current is None:
@@ -47,10 +44,7 @@ class CapabilityLifecycle:
         updated = replace(current, status=target)
         self.registry.register(updated)
         if self.recorder:
-            try:
-                self.recorder(LifecycleEvent(capability_id, current.status, target, datetime.now(timezone.utc).isoformat(), reason))
-            except Exception:
-                pass
+            self.recorder(LifecycleEvent(capability_id, current.status, target, datetime.now(timezone.utc).isoformat(), reason))
         return updated
 
     def approve(self, evaluation: Evaluation, permission_granted: bool = False) -> CapabilityDescriptor:
@@ -66,6 +60,9 @@ class CapabilityLifecycle:
         if current.status is CapabilityStatus.DISCOVERED:
             current = self.transition(current.capability_id, CapabilityStatus.EVALUATED, "evaluation passed")
         return self.transition(current.capability_id, CapabilityStatus.APPROVED, "owner permission granted")
+
+    def register(self, capability_id: str) -> CapabilityDescriptor:
+        return self.transition(capability_id, CapabilityStatus.REGISTERED, "approved capability registered")
 
     def canary(self, capability_id: str) -> CapabilityDescriptor:
         return self.transition(capability_id, CapabilityStatus.CANARY, "entered controlled canary")
