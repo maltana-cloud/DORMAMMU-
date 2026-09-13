@@ -1,19 +1,20 @@
 {
-  "schema_version": "1.3",
+  "schema_version": "1.4",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "last_code_commit": "c02c54e6dcd7131a88aae72052f8e2cfc8bf5a1b",
+  "last_code_commit": "a3c7308256eeec36c31d7840e899a6aea199fc47",
   "verification": {
-    "latest_ci_run": 504,
+    "latest_ci_run": 507,
     "latest_ci_status": "success",
     "truth_rule": "Implementation claims require code, tests, and successful CI evidence.",
     "repository_state_checked": true,
     "open_pull_requests": 0,
-    "open_issues": 0
+    "open_issues": 0,
+    "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md"
   },
   "capabilities": [
-    {"capability":"core foundations","status":"TESTED","implementation_path":"core/","next_action":"integrate higher-level operating path"},
+    {"capability":"core foundations","status":"VERIFIED","implementation_path":"core/","next_action":"protect regression boundaries while integrating the operating path"},
     {"capability":"specialists and domain services","status":"TESTED","implementation_path":"devintel/modules/","next_action":"connect real operating path"},
     {"capability":"bounded autonomy","status":"TESTED","implementation_path":"devintel/autonomy/","next_action":"consume bounded capability decisions"},
     {"capability":"education lifecycle","status":"TESTED","implementation_path":"devintel/modules/education/","next_action":"connect provider-backed teaching decisions"},
@@ -27,12 +28,14 @@
     {"capability":"cryptographic recovery authorization","status":"TESTED","implementation_path":"devintel/modules/security/recovery.py; devintel/modules/security/orchestrator.py","next_action":"operational secret provisioning and optional asymmetric provider"},
     {"capability":"canary health monitoring and rollback","status":"TESTED","implementation_path":"devintel/capabilities/canary.py","next_action":"feed real operational health metrics"},
     {"capability":"bounded capability decision path","status":"TESTED","implementation_path":"devintel/capabilities/decision.py; devintel/runtime/app.py","next_action":"connect to approved acquisition/integration adapters"},
+    {"capability":"canonical builder engineering control plane","status":"IMPLEMENTED","implementation_path":"DORMAMMU_ENGINEERING_MAP.md","next_action":"keep synchronized with verified repository state"},
     {"capability":"production autonomous ecosystem","status":"PLANNED","implementation_path":"cross-subsystem integration","next_action":"build and verify the first end-to-end bounded operating path"}
   ],
   "verification_notes": [
-    "GitHub Actions test run 504 completed successfully at commit c02c54e6dcd7131a88aae72052f8e2cfc8bf5a1b.",
+    "GitHub Actions test run 507 completed successfully for commit a3c7308256eeec36c31d7840e899a6aea199fc47.",
+    "The lifecycle persistence integration test now records transitions, closes the runtime, reopens the same SQLite store, and verifies the events remain present.",
     "Repository currently has no open pull requests and no open issues.",
-    "The previous project-state record was stale; this file is now synchronized with the verified checkpoint.",
+    "DORMAMMU_ENGINEERING_MAP.md is the canonical builder entry point for reconstructing project purpose, architecture, current state, build order, dependencies, safety boundaries, and definition of done.",
     "External capability acquisition remains deliberately disabled until trusted scouts, integration adapters, security checks, permission handling, and rollback are verified together.",
     "Production readiness is not claimed from unit tests alone."
   ],
@@ -46,5 +49,10 @@
     "Cryptographic recovery is independently authorized and replay/tamper/expiry protected.",
     "Canary failure can trigger bounded degradation/rollback, not silent activation.",
     "No unrestricted self-modification or automatic paid acquisition."
-  ]
+  ],
+  "next_execution_target": {
+    "name": "first end-to-end bounded operating path",
+    "flow": "GOAL → REQUIREMENTS → CAPABILITY DECISION → PERMISSION CHECK → APPROVAL WHEN REQUIRED → LIFECYCLE → CANARY → ACT → VERIFY → RECORD",
+    "status": "PLANNED"
+  }
 }
