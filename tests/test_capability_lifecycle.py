@@ -1,12 +1,13 @@
 import pytest
+from dataclasses import replace
 from devintel.capabilities import (
     CapabilityDescriptor, CapabilityLifecycle, CapabilityRegistry, CapabilityStatus,
-    DefaultEvaluator, DiscoveryPolicy, CapabilityRequirement, CapabilityDiscovery,
+    DefaultEvaluator, DiscoveryPolicy, CapabilityRequirement,
 )
 
 
-def descriptor():
-    return CapabilityDescriptor("research", "Research", "1.0", ("research",), "trusted", "MIT", permissions=("approved",))
+def descriptor(status=CapabilityStatus.DISCOVERED):
+    return CapabilityDescriptor("research", "Research", "1.0", ("research",), "trusted", "MIT", status=status, permissions=("approved",))
 
 
 def test_lifecycle_requires_valid_order_and_reason():
@@ -21,7 +22,6 @@ def test_lifecycle_requires_valid_order_and_reason():
 
 def test_lifecycle_approval_requires_explicit_permission():
     registry = CapabilityRegistry()
-    engine = CapabilityDiscovery(registry=registry)
     candidate = descriptor()
     req = CapabilityRequirement("research", "research", ("research",))
     evaluation = DefaultEvaluator(DiscoveryPolicy()).evaluate(req, candidate)
@@ -34,11 +34,16 @@ def test_lifecycle_approval_requires_explicit_permission():
 
 def test_lifecycle_canary_activate_and_rollback():
     registry = CapabilityRegistry()
-    registry.register(descriptor().replace(status=CapabilityStatus.REGISTERED) if hasattr(descriptor(), "replace") else descriptor())
-    from dataclasses import replace
-    registry.register(replace(descriptor(), status=CapabilityStatus.REGISTERED))
+    registry.register(descriptor(CapabilityStatus.REGISTERED))
     lifecycle = CapabilityLifecycle(registry)
     assert lifecycle.canary("research").status is CapabilityStatus.CANARY
     assert lifecycle.activate("research").status is CapabilityStatus.ACTIVE
     assert lifecycle.degrade("research", "health check failed").status is CapabilityStatus.DEGRADED
     assert lifecycle.rollback("research", "canary failure").status is CapabilityStatus.ROLLED_BACK
+
+
+def test_rollback_can_return_to_canary_only_explicitly():
+    registry = CapabilityRegistry()
+    registry.register(descriptor(CapabilityStatus.ROLLED_BACK))
+    lifecycle = CapabilityLifecycle(registry)
+    assert lifecycle.canary("research").status is CapabilityStatus.CANARY
