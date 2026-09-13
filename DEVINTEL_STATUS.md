@@ -28,13 +28,13 @@
 - [x] Adapter parsing and fail-closed configuration tests added
 
 ## Audit Note
-The repository's canonical product name is **DORMAMMU**. The existing `devintel/` Python package namespace and legacy status filename are retained for backward compatibility and are not alternative product names. The earlier continuation incorrectly declared DEVINTEL canonical; that documentation error has been corrected.
+The repository's canonical product name is **DORMAMMU**. The existing `devintel/` Python package namespace and this legacy status filename are retained for backward compatibility and are not alternative product names. The earlier continuation incorrectly declared DEVINTEL canonical; that documentation error has been corrected.
 
 ## Live Provider Boundary
 DORMAMMU has a provider-neutral live routing boundary:
 **REQUEST → HEALTH CHECK → PRIORITY ROUTE → FALLBACK → RESULT**.
 
-The runtime registers a free-first Wikipedia research provider automatically. A Gemini generation provider is registered only when `GEMINI_API_KEY` is explicitly configured. Both are replaceable adapters behind the same provider contracts. Provider failures and malformed output remain isolated, and the router fails closed when no usable provider exists.
+The runtime registers a free-first Wikipedia research provider automatically. A Gemini generation provider is registered only when a Gemini API key is explicitly configured. Both are replaceable adapters behind the same provider contracts. Provider failures and malformed output remain isolated, and the router fails closed when no usable provider exists.
 
 Provider output is explicitly not treated as verified truth. Research/Truth remains a separate authority boundary.
 
