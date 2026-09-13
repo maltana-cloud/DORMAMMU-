@@ -28,7 +28,7 @@ DORMAMMU has a provider-neutral live boundary:
 
 `REQUEST → HEALTH CHECK → PRIORITY ROUTE → FALLBACK → RESULT`
 
-The runtime can register real external adapters without coupling the core to a vendor. The current free-first research adapter uses Wikipedia's public REST API. Optional Gemini generation is enabled only when `GEMINI_API_KEY` is explicitly supplied; no credentials are stored in the repository. Provider output remains unverified until it passes the separate Truth/verification boundary.
+The runtime can register real external adapters without coupling the core to a vendor. The current free-first research adapter uses Wikipedia's public REST API. Optional Gemini generation is enabled only when `DORMAMMU_GEMINI_API_KEY` is explicitly supplied; `GEMINI_API_KEY` remains accepted as a legacy compatibility alias. No credentials are stored in the repository. Provider output remains unverified until it passes the separate Truth/verification boundary.
 
 ## Architecture
 
