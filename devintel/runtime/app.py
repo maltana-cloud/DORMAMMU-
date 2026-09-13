@@ -76,6 +76,11 @@ class DORMAMMURuntime:
     def education_feedback_observer(self, scope_id: str): return self.education_feedback.observe(scope_id)
     def register_action(self, action: str, handler: Any) -> None: self.orchestrator.register(action, handler)
     def execute(self, request: Any, *, owner_approved: bool = False, value: float = 0.0): return self.orchestrator.execute(request, owner_approved=owner_approved, value=value)
+    def bounded_operation_engine(self):
+        from ..operations.bounded import BoundedOperationEngine
+        return BoundedOperationEngine(self)
+    def run_bounded_operation(self, operation: Any, **kwargs: Any):
+        return self.bounded_operation_engine().run(operation, **kwargs)
     def autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, observer, planner, verifier, recorder)
     def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, self.education_feedback_observer, planner, verifier, recorder)
     def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, self.capability_observations, planner, verifier, recorder)
