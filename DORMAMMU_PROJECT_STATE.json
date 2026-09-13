@@ -4,10 +4,7 @@
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
   "last_code_commit": "eb6d892e7b05f6301da850008405a239fdbd2c6b",
-  "verification": {
-    "latest_ci_status": "pending",
-    "truth_rule": "Do not mark the newest code VERIFIED until its CI run completes successfully."
-  },
+  "verification": {"latest_ci_run": 486, "latest_ci_status": "success", "truth_rule": "Implementation claims require code, tests, and successful CI evidence."},
   "capabilities": [
     {"capability":"core foundations","status":"TESTED","implementation_path":"core/","next_action":"integrate higher-level operating path"},
     {"capability":"specialists and domain services","status":"TESTED","implementation_path":"devintel/modules/","next_action":"connect real operating path"},
@@ -18,18 +15,11 @@
     {"capability":"canonical DORMAMMU identity","status":"PARTIAL","implementation_path":"README.md; DORMAMMU_* docs; devintel/runtime/","next_action":"deliberate cleanup of remaining legacy strings"},
     {"capability":"capability and resource discovery","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/","next_action":"bounded external scouts after security verification"},
     {"capability":"controlled capability lifecycle","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/lifecycle.py","next_action":"health-driven canary decisions"},
-    {"capability":"durable lifecycle records","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/store.py","next_action":"integrate durable operational event retention"},
+    {"capability":"durable lifecycle records","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/store.py","next_action":"integrate operational event retention"},
     {"capability":"safe local inventory","status":"IMPLEMENTED","implementation_path":"devintel/capabilities/inventory.py","next_action":"platform-specific read-only telemetry"},
     {"capability":"autonomy capability/resource observation bridge","status":"IMPLEMENTED","implementation_path":"devintel/runtime/app.py","next_action":"bounded observation-driven planning"},
     {"capability":"production autonomous ecosystem","status":"PLANNED","implementation_path":"cross-subsystem integration","next_action":"build first end-to-end bounded operating path"}
   ],
-  "safety_boundaries": [
-    "Discovery never installs, executes, authenticates, or grants authority.",
-    "Lifecycle transitions are explicit and state-validated.",
-    "Owner permission is required for capability approval.",
-    "Lifecycle events can be persisted without granting authority.",
-    "Local inventory is read-only.",
-    "Autonomy observations carry data only and never grant authority.",
-    "No unrestricted self-modification or automatic paid acquisition."
-  ]
+  "verification_notes": ["CI run 486 completed successfully after lifecycle persistence/runtime changes.", "External capability acquisition remains deliberately disabled until stronger security/canary orchestration exists."],
+  "safety_boundaries": ["Discovery never installs, executes, authenticates, or grants authority.", "Lifecycle transitions are explicit and state-validated.", "Owner permission is required for capability approval.", "Lifecycle events can be persisted without granting authority.", "Local inventory is read-only.", "Autonomy observations carry data only and never grant authority.", "No unrestricted self-modification or automatic paid acquisition."]
 }
