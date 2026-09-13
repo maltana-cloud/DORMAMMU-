@@ -19,6 +19,7 @@ from ..modules.plugins.service import PluginService
 from ..modules.security.orchestrator import SecurityOrchestrator
 from ..modules.specialists.education import EducationSpecialist
 from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
+from ..providers.live_adapters import configured_live_providers
 from ..providers.registry import ProviderRegistry
 
 @dataclass(frozen=True)
@@ -42,6 +43,7 @@ class DEVINTELRuntime:
         self.plugins = PluginService()
         self.providers = ProviderRegistry()
         self.live_providers = ProviderRouter()
+        self._configure_live_providers()
         self.education = EducationEngine()
         self.education_specialist = EducationSpecialist(self.plugins, self.education)
         self.teaching = TeachingEngine()
@@ -49,6 +51,13 @@ class DEVINTELRuntime:
         self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self)
         self.orchestrator.register("education.record_assessment", self._record_assessment_action)
+
+    def _configure_live_providers(self) -> None:
+        """Register only explicitly available external providers; never invent credentials."""
+        gemini, wikipedia = configured_live_providers()
+        self.register_research_provider(wikipedia.provider_id, wikipedia, priority=50)
+        if gemini is not None:
+            self.register_generation_provider(gemini.provider_id, gemini, priority=50)
 
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
