@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from typing import Any
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.contracts import Observation
@@ -19,6 +20,7 @@ from ..modules.education.teaching import TeachingEngine, TeachingProfile, Teachi
 from ..modules.monitoring.engine import MonitoringEngine
 from ..modules.plugins.service import PluginService
 from ..modules.security.orchestrator import SecurityOrchestrator
+from ..modules.security.recovery import CryptographicRecovery, RecoveryRequest
 from ..modules.specialists.education import EducationSpecialist
 from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
 from ..providers.live_adapters import configured_live_providers
@@ -30,9 +32,15 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:") -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", recovery_secret: bytes | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
-        self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
+        secret = recovery_secret
+        if secret is None:
+            encoded = os.environ.get("DORMAMMU_RECOVERY_SECRET")
+            if encoded:
+                secret = bytes.fromhex(encoded)
+        self.recovery = CryptographicRecovery(secret) if secret is not None else None
+        self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state, recovery=self.recovery); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
         self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.refresh_local_inventory()
@@ -53,6 +61,8 @@ class DORMAMMURuntime:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         return (Observation(scope_id, "capability_inventory", tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())), Observation(scope_id, "resource_inventory", self.resource_registry.all()), Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())))
     def lifecycle_history(self, capability_id: str | None = None): return self.lifecycle_store.history(capability_id)
+    def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
+    def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def close(self) -> None: self.lifecycle_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
@@ -77,13 +87,5 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
-    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
-        from ..providers.contracts import ProviderCapability; self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
-    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
-        from ..providers.contracts import ProviderCapability; self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
-    def snapshot(self, scope_id: str) -> RuntimeSnapshot:
-        if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
-        plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
-        return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
-
-DEVINTELRuntime = DORMAMMURuntime
+    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_generation(provider_id, provider, priority=priority)
+    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_research(provider_id, provider, priority=priority)
