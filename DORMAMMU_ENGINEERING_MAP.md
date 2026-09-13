@@ -53,11 +53,11 @@ A document saying something exists is not proof that it exists. A unit test pass
 
 ## 4. Current Verified Foundation
 
-The current verified code checkpoint is commit `a3c7308256eeec36c31d7840e899a6aea199fc47`.
+The current verified code checkpoint is commit `58a3afe21a18c7a826da3f635c73da6ec244a625`.
 
-GitHub Actions test run **#507** completed successfully for that commit.
+GitHub Actions test run **#555** completed successfully for that commit.
 
-Verified foundation areas include:
+Verified/tested foundation areas include:
 
 - core engine, state, tasks, planning, events, and permission boundaries;
 - specialist/domain framework and bounded autonomy;
@@ -70,9 +70,13 @@ Verified foundation areas include:
 - lifecycle event persistence;
 - cryptographic recovery authorization;
 - canary health evaluation and bounded rollback;
-- bounded capability decision path.
+- bounded capability decision path;
+- bounded resource reservation and fail-closed capacity handling;
+- executive objective/goal understanding contracts;
+- dependency-checked, scope-checked task decomposition;
+- executive execution connected to the bounded operating path.
 
-Important limitations remain: external capability acquisition is intentionally not autonomous; canary health still needs real operational metrics; durable lifecycle storage must be explicitly configured for deployed runtimes; live provider coverage is limited; and the full autonomous ecosystem is not yet complete.
+Important limitations remain: external capability acquisition is intentionally not autonomous; canary health still needs real operational metrics; durable operational outcomes/resource leases are not complete; live provider coverage is limited; and the full autonomous ecosystem is not yet complete.
 
 ## 5. Repository Map
 
@@ -83,20 +87,26 @@ Important limitations remain: external capability acquisition is intentionally n
 - `devintel/control/` — owner-control policy and observation/control boundary.
 - `devintel/runtime/` — composition root and runtime integration.
 
-### Intelligence and execution
+### Executive and execution
 
-- `devintel/autonomy/` — bounded autonomous behavior.
+- `devintel/executive/` — objective understanding contracts, task decomposition, bounded executive execution.
+- `devintel/autonomy/` — finite bounded autonomous behavior.
+- `devintel/operations/` — bounded end-to-end operating path.
+
+### Intelligence
+
 - `devintel/modules/research/` — research pipeline, storage, provenance verification.
 - `devintel/modules/education/` — educational lifecycle and policy.
 - `devintel/providers/` — provider abstractions, routing, and live adapters.
 - `modules/` — higher-level product-facing modules such as publishing.
 
-### Capability management
+### Capability and resources
 
 - `devintel/capabilities/contracts.py` — stable capability/resource/evaluation contracts.
 - `devintel/capabilities/registry.py` — capability/resource registration.
 - `devintel/capabilities/discovery.py` — bounded discovery and evaluation.
 - `devintel/capabilities/inventory.py` — conservative local resource inventory.
+- `devintel/capabilities/resources.py` — bounded resource decisions and in-memory reservations.
 - `devintel/capabilities/lifecycle.py` — explicit lifecycle state machine.
 - `devintel/capabilities/store.py` — append-only SQLite lifecycle event store.
 - `devintel/capabilities/canary.py` — canary health and rollback boundary.
@@ -108,15 +118,20 @@ Important limitations remain: external capability acquisition is intentionally n
 - `DORMAMMU_ENGINEERING_MAP.md` — this builder control plane.
 - `DORMAMMU_PROJECT_STATE.json` — machine-readable state checkpoint.
 - `DORMAMMU_STATUS.md` — concise human-readable status.
+- `DORMAMMU_CAPABILITY_MATRIX.md` — detailed capability matrix.
 - `README.md` — public project orientation.
 - `AGENTS.md` — repository-level engineering/autonomy rules.
 - `AI_WORKING_RULES.md` — rules for AI builders working on the repository.
 
 Legacy `DEVINTEL_*` files/names may remain where needed for compatibility. Do not perform a blind rename.
 
-## 6. How the Pieces Are Supposed to Connect
+## 6. How the Pieces Connect Today
 
-The intended high-level operating mechanism is:
+The implemented bounded path is:
+
+`OBJECTIVE → GOAL UNDERSTANDING → TASK DECOMPOSITION → CAPABILITY DECISION → RESOURCE DECISION → PERMISSION → LIFECYCLE/CANARY WHEN NEEDED → ACT → VERIFY → RECORD`
+
+The intended broader mechanism remains:
 
 `OBJECTIVE → GOAL UNDERSTANDING → TASK DECOMPOSITION → CAPABILITY DISCOVERY → MODEL/AGENT SELECTION → SPECIALIST COLLABORATION → EXECUTION → VERIFICATION → REFLECTION → LEARNING → OUTCOME`
 
@@ -148,27 +163,45 @@ Protect and regression-test:
 8. Canary and rollback boundaries.
 9. Backward compatibility.
 
-### B. First real operating path — next engineering target
+### B. Bounded operating path — implemented/tested
 
-Connect the existing pieces into one bounded path:
+The first bounded path now exists and composes:
 
-`GOAL → REQUIREMENTS → CAPABILITY DECISION → PERMISSION CHECK → APPROVAL WHEN REQUIRED → LIFECYCLE → CANARY → ACT → VERIFY → RECORD`
+`GOAL → REQUIREMENTS → CAPABILITY DECISION → RESOURCE DECISION → PERMISSION CHECK → APPROVAL WHEN REQUIRED → LIFECYCLE → CANARY → ACT → VERIFY → RECORD`
 
-This path must use real repository contracts rather than mock architecture claims. It must fail safely when a capability, provider, permission, verification step, or resource is unavailable.
+It fails safely when capability/resource/permission/verification prerequisites are unavailable.
 
-### C. Executive cognition
+### C. Executive cognition foundation — implemented/tested
 
-Then connect goal understanding, task decomposition, planning, model/agent routing, specialist coordination, execution, verification, reflection, and outcome recording.
+The repository now has explicit `Objective`, `GoalUnderstanding`, `TaskSpec`, and `ExecutivePlan` contracts plus a bounded execution engine. The default interpreter intentionally performs only explicit-field normalization. Task decomposition is explicit and scope/dependency validated.
 
-### D. Trusted capability/resource expansion
+### D. Operational telemetry and durable outcomes — next engineering target
+
+Connect real execution observations to:
+
+- success/error rate;
+- latency;
+- verification outcome;
+- resource usage/reservation;
+- lifecycle state;
+- provider health;
+- operation outcome.
+
+Feed these measurements into canary evaluation and durable outcome records. Do not accept caller-supplied health as the sole source of truth for production decisions.
+
+### E. Evidence-backed executive intelligence
+
+Then add trustworthy goal understanding from structured/unstructured requests, requirements extraction, evidence-backed success criteria, model/agent routing, specialist collaboration, and reflection — all through bounded contracts.
+
+### F. Trusted capability/resource expansion
 
 Add external scouts and integration adapters only after provenance, source trust, license/terms, dependencies, compatibility, security, permissions, resource limits, cost, rollback, and observability are enforced end-to-end.
 
-### E. Ecosystem capabilities
+### G. Ecosystem capabilities
 
 Progressively integrate research, communication, education, creation, software/tool building, media, community participation, opportunity discovery, product/service discovery, analytics, distribution, and monetization — each behind the same contracts.
 
-### F. Advanced evolution
+### H. Advanced evolution
 
 Later integrate model training/evaluation, AI/ML research, controlled self-improvement, new-domain expansion, and resource optimization. Privileged/self-modifying infrastructure must remain explicitly bounded and reviewable.
 
@@ -236,10 +269,12 @@ Do not tell a builder that DORMAMMU is a finished autonomous ecosystem.
 
 Not yet complete:
 
-- full end-to-end objective execution;
-- broad trusted external capability scouting/acquisition;
+- arbitrary natural-language objective understanding and decomposition;
 - real operational canary telemetry;
+- durable operation outcome/resource lease storage;
+- broad trusted external capability scouting/acquisition;
 - complete model/agent selection and specialist collaboration loop;
+- evidence-backed cross-domain synthesis;
 - complete autonomous communication/community ecosystem;
 - full creation/distribution/awareness/monetization loop;
 - production-grade resource orchestration across diverse compute;
