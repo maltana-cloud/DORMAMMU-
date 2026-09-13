@@ -37,14 +37,14 @@ def test_cost_limit_and_permission_are_enforced():
     assert not resources.decide(ResourceRequest(ResourceKind.GPU, max_cost=1.0)).granted
 
 
-def test_unknown_capacity_is_not_treated_as_infinite():
+def test_unknown_capacity_fails_closed():
     registry = ResourceRegistry()
     registry.register(ResourceDescriptor("test:unknown", ResourceKind.GPU, "unknown gpu", availability="declared", permissions=("approved",)))
     resources = ResourceManager(registry)
     decision = resources.decide(ResourceRequest(ResourceKind.GPU, quantity=1))
-    assert decision.granted
+    assert not decision.granted
     reservation = resources.reserve(ResourceRequest(ResourceKind.GPU, quantity=1))
-    assert reservation.granted
+    assert not reservation.granted
 
 
 def test_invalid_request_is_rejected():
