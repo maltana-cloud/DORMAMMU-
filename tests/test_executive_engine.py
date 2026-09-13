@@ -72,7 +72,7 @@ def test_execute_stops_when_bounded_task_hits_permission_boundary():
             "protected",
             "protected work",
             CapabilityRequirement("runtime-local", "run locally", ("runtime",)),
-            ActionRequest("test.echo", ActionRisk.OWNER_APPROVAL, "protected", {"_scope_id": "scope"}),
+            ActionRequest("test.echo", ActionRisk.HIGH, "protected", {"_scope_id": "scope"}),
         )
         result = ExecutiveEngine(runtime).execute(Objective("protected", "done", "scope"), (protected,))
         assert not result.success
