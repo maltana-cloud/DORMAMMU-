@@ -60,6 +60,8 @@ class DORMAMMURuntime:
     def release_resource(self, reservation_id: str) -> None: self.resource_manager.release(reservation_id)
     def resource_reservations(self) -> tuple[tuple[str, str, float], ...]: return self.resource_manager.active_reservations()
     def record_operation_observation(self, observation: OperationObservation) -> None: self.operation_store.record(observation)
+    def record_operation_observation_from_result(self, operation_id: str, capability_id: str, stage: str, success: bool, verified: bool, duration_ms: float, message: str, resource_id: str | None = None, resource_quantity: float | None = None) -> None:
+        self.record_operation_observation(OperationObservation(operation_id, capability_id, stage, success, verified, duration_ms, message, resource_id, resource_quantity))
     def operation_history(self, capability_id: str | None = None, *, limit: int = 100) -> tuple[OperationObservation, ...]: return self.operation_store.history(capability_id, limit)
     def operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryHealth | None: return self.operation_store.health(capability_id, window=window, min_samples=min_samples)
     def evaluate_operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5):
