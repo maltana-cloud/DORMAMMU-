@@ -6,7 +6,7 @@ import os
 from typing import Any
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.contracts import Observation
-from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore)
+from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryHealth, CanaryMonitor, CanaryPolicy)
 from ..capabilities.inventory import local_capabilities, local_resources
 from ..control.service import OwnerControlCenter
 from ..core.audit import AuditLog
@@ -32,18 +32,16 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", recovery_secret: bytes | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
-        if secret is None:
-            encoded = os.environ.get("DORMAMMU_RECOVERY_SECRET")
-            if encoded:
-                secret = bytes.fromhex(encoded)
+        if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"):
+            secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
         self.recovery = CryptographicRecovery(secret) if secret is not None else None
         self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state, recovery=self.recovery); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
-        self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.refresh_local_inventory()
+        self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.refresh_local_inventory()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
@@ -57,6 +55,8 @@ class DORMAMMURuntime:
     def create_capability_gap(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> CapabilityGap: return self.capability_discovery.discover(requirement, gap_id=gap_id).gap
     def resolve_capability_gap(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult: return self.capability_discovery.discover(requirement, gap_id=gap_id)
     def discover_capabilities(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult: return self.resolve_capability_gap(requirement, gap_id=gap_id)
+    def decide_capability(self, requirement: CapabilityRequirement) -> CapabilityDecision: return self.capability_decisions.decide(requirement)
+    def evaluate_canary(self, capability_id: str, health: CanaryHealth): return self.canary_monitor.evaluate(capability_id, health)
     def capability_observations(self, scope_id: str) -> tuple[Observation, ...]:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         return (Observation(scope_id, "capability_inventory", tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())), Observation(scope_id, "resource_inventory", self.resource_registry.all()), Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())))
