@@ -1,7 +1,7 @@
 import pytest
 from devintel.capabilities import (
     CapabilityDescriptor, CapabilityDiscovery, CapabilityRequirement, CapabilityStatus,
-    DiscoveryPolicy, ResourceDescriptor, ResourceKind, ResourceRegistry,
+    DefaultEvaluator, DiscoveryPolicy, ResourceDescriptor, ResourceKind, ResourceRegistry,
 )
 
 
@@ -14,7 +14,7 @@ class Scout:
 
 
 def test_discovery_evaluates_free_and_paid_policy():
-    engine = CapabilityDiscovery(evaluator=None)
+    engine = CapabilityDiscovery()
     engine.add_scout(Scout())
     result = engine.discover(CapabilityRequirement("research.search", "find sources", ("research",)))
     assert len(result.candidates) == 2
@@ -33,7 +33,7 @@ def test_registration_requires_all_gates():
 
 
 def test_paid_policy_can_be_explicitly_enabled():
-    engine = CapabilityDiscovery(evaluator=__import__("devintel.capabilities", fromlist=["DefaultEvaluator"]).DefaultEvaluator(DiscoveryPolicy(allow_paid=True)))
+    engine = CapabilityDiscovery(evaluator=DefaultEvaluator(DiscoveryPolicy(allow_paid=True)))
     engine.add_scout(Scout())
     result = engine.discover(CapabilityRequirement("research.search", "find sources", ("research",)))
     assert result.evaluations[1].eligible
