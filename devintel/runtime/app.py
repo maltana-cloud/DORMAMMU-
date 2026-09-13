@@ -87,8 +87,16 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
-    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_generation(provider_id, provider, priority=priority)
-    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_research(provider_id, provider, priority=priority)
+    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
+        from ..providers.contracts import ProviderCapability
+        self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
+    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
+        from ..providers.contracts import ProviderCapability
+        self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
+    def snapshot(self, scope_id: str) -> RuntimeSnapshot:
+        if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
+        plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
+        return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
 
 # Backward compatibility: legacy internal imports remain valid while DORMAMMU
 # is the canonical public identity.
