@@ -1,43 +1,41 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Capability & Resource Discovery — controlled lifecycle + runtime integration**
+**Foundation hardening — verified capability discovery, lifecycle, recovery, canary monitoring, and bounded decision path**
 
 ## Truth Rule
-This file describes repository state; implementation claims are based on code/tests/CI evidence, not documentation alone. The latest checkpoint remains **verification pending** until CI run 477 completes.
+This file describes repository state; implementation claims require code, meaningful tests, and successful CI evidence. The latest verified checkpoint is commit `c02c54e6dcd7131a88aae72052f8e2cfc8bf5a1b`, validated by GitHub Actions run **504**.
 
 ## Verified Foundations
-- Core systems, plugin/specialist framework, orchestration, permissions, security/truth, autonomy, education, and provider routing remain in the repository.
+- Core systems, specialist/domain framework, orchestration, permissions, security/truth, autonomy, education, and provider routing remain in the repository.
 - Live provider adapters exist for keyless Wikipedia retrieval and optional Gemini generation.
 - Canonical `DORMAMMURuntime` exists; `DEVINTELRuntime` remains only as a compatibility alias.
-- Capability discovery contracts, registries, deterministic evaluation gates, and free-first policy are implemented.
+- Capability/resource discovery, deterministic evaluation gates, free-first policy, controlled lifecycle, lifecycle event storage, safe local inventory, cryptographic recovery authorization, canary health monitoring/rollback, and bounded capability decisions are implemented and covered by tests.
 
-## Newly Implemented
-- Controlled capability lifecycle state machine: `DISCOVERED → EVALUATED → APPROVED → REGISTERED → CANARY → ACTIVE`, with explicit degradation and rollback paths.
-- Owner permission is required before lifecycle approval.
-- Safe read-only local inventory for CPU, RAM, storage, and declared GPU resources.
-- Runtime composition now owns capability/resource registries and the capability discovery service.
-- Runtime exposes capability/resource observations to bounded autonomy as data-only observations.
-- Runtime exposes discovery and inventory APIs without automatically installing, executing, authenticating, or granting authority.
-- Regression tests cover lifecycle ordering, explicit approval, canary/activation/rollback, local inventory, and autonomy observation bridging.
+## Verified Safety Boundaries
+- Discovery does not install, execute, authenticate, or grant authority.
+- Lifecycle transitions are explicit and state-validated; approval requires permission.
+- Local resource inventory is read-only and conservative.
+- Autonomy capability observations are data-only and do not grant authority.
+- Recovery uses an externally supplied cryptographic secret, with tamper, expiry, and replay protection.
+- Canary failure can produce bounded degradation/rollback rather than silent activation.
+- No unrestricted self-modification or automatic paid acquisition.
 
-## Important Repository Correction
-A previous project-state record claimed runtime capability methods were present before they were actually in `devintel/runtime/app.py`. Repository inspection caught that inconsistency. The runtime integration is now implemented rather than merely documented.
+## Repository Correction Completed
+`DORMAMMU_PROJECT_STATE.json` had stale commit/CI information. It is now synchronized with the verified checkpoint and records the current capability statuses, verification facts, and known gaps.
 
-## Known Gaps
-- Latest CI for the newest checkpoint is still running; do not claim this checkpoint verified until it succeeds.
-- No external capability marketplace/scout is enabled.
-- Local inventory is intentionally conservative and does not invent GPU availability.
-- Lifecycle records are currently in-memory; durable persistence is pending.
-- Canary/rollback state transitions exist, but automated health-driven rollback orchestration is pending.
-- Discovery results are available to autonomy, but observation-driven capability acquisition/planning is not yet autonomous.
-- Wikipedia remains retrieval/snippet evidence, not a general web research engine.
-- Gemini remains optional and requires an owner-supplied credential.
+## Remaining Engineering Work
+- External capability scouts/marketplace discovery are intentionally disabled until trusted-source, licensing, dependency, security, compatibility, permission, and integration controls are wired end-to-end.
+- Lifecycle storage is reusable and durable when configured with a persistent SQLite path; the runtime default remains `:memory:` for isolation and tests. Production deployment must explicitly configure durable storage.
+- Canary monitoring currently evaluates supplied health observations; real operational metrics must be connected before claiming production autonomous rollout.
+- The bounded capability decision engine can recommend `use_existing`, `request_approval`, or `record_gap`, but it does not autonomously acquire arbitrary external capabilities.
+- Live external provider coverage remains intentionally limited; provider output is not itself truth.
+- Full production autonomous ecosystem integration remains incomplete and must be built incrementally behind the locked safety/authority boundaries.
+
+## Lock Criterion
+The **foundational architecture** may be declared locked only after a final repository audit confirms that the Charter's identity, authority, security, truth, owner-control, recovery, permission, auditability, modularity, and safe-evolution boundaries are implemented, tested, CI-verified, and protected from accidental weakening. Locking the foundation does not mean future capabilities are finished; future capabilities must plug into these boundaries without rewriting them.
 
 ## Next Engineering Target
-After CI verification: durable lifecycle/audit records, monitored canary health, and a bounded observation-driven capability decision path. External scouts remain disabled until those controls are verified.
-
-## Completion Standard
-Capability discovery is not complete until discovery, evaluation, permissions, security, compatibility, cost, resource requirements, lifecycle, observability, fallback, rollback, and integration are implemented and verified.
+Perform the final Charter-to-code audit, close any remaining foundational security/authority/persistence gaps, verify the integrated paths, run CI, and record the resulting verified lock checkpoint. After foundation lock, continue with the first end-to-end bounded operating path.
 
 **Every AI working on DORMAMMU must leave a truthful, test-backed checkpoint.**
