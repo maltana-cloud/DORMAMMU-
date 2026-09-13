@@ -11,7 +11,7 @@ __all__ = [
     "ClaimAssessment",
     "ContainmentManager",
     "CryptographicRecovery",
-    "RecoveryAction" if False else "RecoveryAuthorizationError",
+    "RecoveryAuthorizationError",
     "RecoveryRequest",
     "SecurityAction",
     "SecurityEvent",
