@@ -55,7 +55,7 @@ class CapabilityLifecycle:
         current = self.registry.get(evaluation.candidate.capability_id)
         if current is None:
             from dataclasses import replace
-            current = replace(evaluation.candidate, status=CapabilityStatus.EVALUATED)
+            current = replace(evaluation.candidate, status=CapabilityStatus.DISCOVERED)
             self.registry.register(current)
         if current.status is CapabilityStatus.DISCOVERED:
             current = self.transition(current.capability_id, CapabilityStatus.EVALUATED, "evaluation passed")
