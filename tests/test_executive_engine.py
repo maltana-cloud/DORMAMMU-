@@ -30,7 +30,7 @@ def test_plan_understands_objective_and_validates_dependencies():
         runtime.close()
 
 
-def test_plan_rejects_cycles_and_unknown_dependencies():
+def test_plan_rejects_cycles_unknown_dependencies_and_scope_crossing():
     runtime = DORMAMMURuntime()
     try:
         engine = ExecutiveEngine(runtime)
@@ -39,6 +39,12 @@ def test_plan_rejects_cycles_and_unknown_dependencies():
             engine.plan(objective, (task("a", "first", 1, ("missing",)),))
         with pytest.raises(ValueError, match="cycle"):
             engine.plan(objective, (task("a", "first", 1, ("b",)), task("b", "second", 2, ("a",))))
+        cross_scope = TaskSpec(
+            "cross", "cross scope", CapabilityRequirement("runtime-local", "run", ("runtime",)),
+            ActionRequest("test.echo", ActionRisk.LOW, "cross scope", {"_scope_id": "other"}),
+        )
+        with pytest.raises(ValueError, match="scope"):
+            engine.plan(objective, (cross_scope,))
     finally:
         runtime.close()
 
