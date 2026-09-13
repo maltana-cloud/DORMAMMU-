@@ -1,8 +1,11 @@
-"""Optional real external providers for DEVINTEL's bounded provider router.
+"""Optional real external providers for DORMAMMU's bounded provider router.
 
 The adapters use only Python's standard library so the core remains dependency-light.
 They are opt-in through environment variables/configuration and never grant side-effect
 authority. Research results are evidence candidates, not verified truth.
+
+The internal ``devintel`` namespace remains a compatibility boundary for existing
+imports; it does not change DORMAMMU's product identity.
 """
 from __future__ import annotations
 
@@ -19,14 +22,20 @@ from .live import GenerationRequest, GenerationResponse, ResearchRequest, Resear
 
 
 class _HttpJson:
-    def __init__(self, timeout: float = 15.0, user_agent: str = "DEVINTEL/1.0") -> None:
+    def __init__(self, timeout: float = 15.0, user_agent: str = "DORMAMMU/1.0") -> None:
         if timeout <= 0:
             raise ValueError("timeout must be positive")
         self.timeout = float(timeout)
         self.user_agent = user_agent
 
-    def request(self, url: str, *, method: str = "GET", payload: dict[str, Any] | None = None,
-                headers: dict[str, str] | None = None) -> dict[str, Any]:
+    def request(
+        self,
+        url: str,
+        *,
+        method: str = "GET",
+        payload: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
         body = None
         request_headers = {"User-Agent": self.user_agent, "Accept": "application/json"}
         if headers:
@@ -38,7 +47,7 @@ class _HttpJson:
         try:
             with urlopen(request, timeout=self.timeout) as response:
                 raw = response.read()
-        except (HTTPError, URLError, TimeoutError) as exc:
+        except (HTTPError, URLError, TimeoutError, OSError) as exc:
             raise RuntimeError(f"HTTP provider request failed: {exc}") from exc
         try:
             decoded = json.loads(raw.decode("utf-8"))
@@ -60,15 +69,18 @@ class WikipediaResearchProvider:
     def health(self) -> ProviderHealth:
         try:
             _HttpJson(self.timeout).request(
-                f"{self.base_url.rstrip('/')}/search/page?{urlencode({'q': 'DEVINTEL', 'limit': 1})}"
+                f"{self.base_url.rstrip('/')}/search/page?{urlencode({'q': 'DORMAMMU', 'limit': 1})}"
             )
             return ProviderHealth(self.provider_id, True, "Wikipedia REST API reachable")
         except Exception as exc:
             return ProviderHealth(self.provider_id, False, str(exc))
 
     def search(self, request: ResearchRequest) -> tuple[ResearchResult, ...]:
+        query = request.query.strip()
+        if not query:
+            raise ValueError("research query is required")
         limit = min(max(int(request.max_results), 1), 100)
-        url = f"{self.base_url.rstrip('/')}/search/page?{urlencode({'q': request.query.strip(), 'limit': limit})}"
+        url = f"{self.base_url.rstrip('/')}/search/page?{urlencode({'q': query, 'limit': limit})}"
         data = _HttpJson(self.timeout).request(url)
         pages = data.get("pages", [])
         if not isinstance(pages, list):
@@ -115,19 +127,18 @@ class GeminiGenerationProvider:
         model = request.model.strip() or self.default_model
         if model.startswith("models/"):
             model = model[7:]
-        url = f"{self.base_url.rstrip('/')}/models/{quote(model, safe='')}:generateContent?key={quote(self.api_key, safe='')}"
-        parts: list[dict[str, str]] = []
-        if request.system.strip():
-            parts.append({"text": f"System instruction:\n{request.system.strip()}"})
-        parts.append({"text": request.prompt})
-        payload = {
-            "contents": [{"role": "user", "parts": parts}],
+        url = f"{self.base_url.rstrip('/')}/models/{quote(model, safe='')}:generateContent"
+        headers = {"x-goog-api-key": self.api_key}
+        payload: dict[str, Any] = {
+            "contents": [{"role": "user", "parts": [{"text": request.prompt}]}],
             "generationConfig": {
                 "temperature": float(request.temperature),
                 "maxOutputTokens": int(request.max_tokens),
             },
         }
-        data = _HttpJson(self.timeout).request(url, method="POST", payload=payload)
+        if request.system.strip():
+            payload["systemInstruction"] = {"parts": [{"text": request.system.strip()}]}
+        data = _HttpJson(self.timeout).request(url, method="POST", payload=payload, headers=headers)
         candidates = data.get("candidates")
         if not isinstance(candidates, list) or not candidates:
             raise RuntimeError("Gemini returned no candidates")
@@ -141,16 +152,22 @@ class GeminiGenerationProvider:
             raise RuntimeError("Gemini returned empty text")
         usage = data.get("usageMetadata", {})
         usage_map = {
-            str(k): int(v) for k, v in usage.items()
+            str(k): int(v)
+            for k, v in usage.items()
             if k in {"promptTokenCount", "candidatesTokenCount", "totalTokenCount"} and isinstance(v, int)
         } if isinstance(usage, dict) else {}
         return GenerationResponse(text=text, provider_id=self.provider_id, model=model, usage=usage_map)
 
 
+def _env(name: str, legacy_name: str, default: str = "") -> str:
+    """Read the canonical DORMAMMU setting, with a backward-compatible legacy alias."""
+    return os.getenv(name, os.getenv(legacy_name, default))
+
+
 def configured_live_providers() -> tuple[GeminiGenerationProvider | None, WikipediaResearchProvider]:
     """Build the free-first default provider set from environment configuration."""
-    timeout = float(os.getenv("DEVINTEL_PROVIDER_TIMEOUT", "15"))
+    timeout = float(_env("DORMAMMU_PROVIDER_TIMEOUT", "DEVINTEL_PROVIDER_TIMEOUT", "15"))
     wikipedia = WikipediaResearchProvider(timeout=timeout)
-    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    api_key = _env("DORMAMMU_GEMINI_API_KEY", "GEMINI_API_KEY").strip()
     gemini = GeminiGenerationProvider(api_key=api_key, timeout=max(timeout, 30.0)) if api_key else None
     return gemini, wikipedia
