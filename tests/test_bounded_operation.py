@@ -1,4 +1,4 @@
-from devintel.capabilities import CapabilityDescriptor, CapabilityRequirement, CapabilityStatus, CanaryHealth
+from devintel.capabilities import CapabilityDescriptor, CapabilityRequirement, CapabilityStatus, CanaryHealth, ResourceKind, ResourceRequest
 from devintel.core.contracts import ActionRequest, ActionRisk
 from devintel.operations import BoundedOperation, BoundedOperationEngine
 from devintel.runtime.app import DORMAMMURuntime
@@ -28,14 +28,18 @@ def test_existing_capability_runs_through_action_and_verification():
             "echo a value",
             CapabilityRequirement("runtime-local", "run locally", ("runtime",)),
             ActionRequest("test.echo", ActionRisk.LOW, "bounded test action", {"value": "ok"}),
+            resource_request=ResourceRequest(ResourceKind.CPU, quantity=1),
         )
         result = BoundedOperationEngine(runtime).run(operation, verifier=lambda output: output == {"echo": "ok"})
         assert result.success
         assert result.verified
         assert result.stage == "record"
         assert result.action_result is not None and result.action_result.success
+        assert runtime.resource_reservations() == ()
         names = [event.name for event in runtime.context.events.history()]
         assert names[0] == "operation.requested"
+        assert "operation.resource_reserved" in names
+        assert "operation.resource_released" in names
         assert "operation.completed" in names
         assert names[-1] == "operation.recorded"
     finally:
