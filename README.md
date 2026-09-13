@@ -18,7 +18,15 @@ DEVINTEL is a modular, verification-first developer intelligence system designed
 
 `OBSERVE → UNDERSTAND → PLAN → PERMISSION CHECK → ACT → VERIFY → RECORD → IMPROVE`
 
-## Initial Architecture
+## Current Runtime
+
+DEVINTEL now has a provider-neutral live boundary:
+
+`REQUEST → HEALTH CHECK → PRIORITY ROUTE → FALLBACK → RESULT`
+
+The runtime can register real external adapters without coupling the core to a vendor. The current free-first research adapter uses Wikipedia's public REST API. Optional Gemini generation is enabled only when `GEMINI_API_KEY` is explicitly supplied; no credentials are stored in the repository. Provider output remains unverified until it passes the separate Truth/verification boundary.
+
+## Architecture
 
 ```text
 DEVINTEL/
@@ -36,6 +44,11 @@ DEVINTEL/
 │   ├── growth/
 │   ├── monetization/
 │   └── tool_builder/
+├── providers/
+│   ├── contracts.py
+│   ├── live.py
+│   ├── live_adapters.py
+│   └── registry.py
 ├── tools/
 │   ├── telegram/
 │   ├── github/
@@ -80,25 +93,8 @@ Every important intelligence item should carry provenance and confidence informa
 
 DEVINTEL must never claim to have personally tested, deployed, contacted, or observed something unless the system actually performed that action and has evidence for it.
 
-## Roadmap
-
-1. Foundation and configuration
-2. Persistent storage and migrations
-3. Core orchestration and permission model
-4. Research and source ingestion
-5. Verification / Truth Engine
-6. Conversation and memory
-7. Telegram interface and publishing
-8. Tool registry and tool builder
-9. Community engine
-10. Growth intelligence
-11. Monetization and sponsor safety
-12. Owner control center
-13. Self-monitoring and controlled improvement
-14. Additional platform integrations
-
 ## Status
 
-**Foundation build starting.**
+The repository's canonical product name is **DEVINTEL**. The remaining GitHub repository slug is `DORMAMMU-` because the connected GitHub integration available to this session does not expose a repository-rename operation. No code or documentation should treat DORMAMMU as the product name.
 
-The architecture is intentionally designed to support future expansion without breaking existing modules.
+The current milestone is the live provider layer and the next engineering target is the real autonomous operating path across Education, Conversation, Research, Truth, and Distribution.
