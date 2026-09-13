@@ -21,11 +21,12 @@ from ..modules.education.outcomes import EducationFeedbackBridge, OutcomeEngine,
 from ..modules.education.teaching import TeachingEngine, TeachingProfile, TeachingResponse
 from ..modules.monitoring.engine import MonitoringEngine
 from ..modules.plugins.service import PluginService
-from ..modules.research import Claim, KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim
+from ..modules.research import KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim
 from ..modules.security.orchestrator import SecurityOrchestrator
 from ..modules.security.recovery import CryptographicRecovery, RecoveryRequest
 from ..modules.specialists.education import EducationSpecialist
 from ..operations.telemetry import OperationObservation, OperationalTelemetryStore
+from ..providers.contracts import ProviderCapability
 from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
 from ..providers.live_adapters import configured_live_providers
 from ..providers.registry import ProviderRegistry
@@ -44,8 +45,7 @@ class DORMAMMURuntime:
     def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
-        if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"):
-            secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
+        if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
         self.recovery = CryptographicRecovery(secret) if secret is not None else None
         self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state, recovery=self.recovery); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
@@ -62,20 +62,18 @@ class DORMAMMURuntime:
         resources = local_resources(); [self.resource_registry.register(r) for r in resources]; [self.capability_registry.register(c) for c in local_capabilities()]; return resources
     def register_capability(self, capability: CapabilityDescriptor) -> None: self.capability_registry.register(capability)
     def register_resource(self, resource: ResourceDescriptor) -> None: self.resource_registry.register(resource)
-    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_research_provider(provider_id, provider, priority=priority)
-    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register_generation_provider(provider_id, provider, priority=priority)
+    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
+    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
     def snapshot(self, scope_id: str) -> RuntimeSnapshot:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
-        monitoring = self.monitoring.overall_state(scope_id).value
-        return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, monitoring, len(self.audit.history()))
+        return RuntimeSnapshot(scope_id, self.context.state.state.value, self.context.snapshot_metrics(), plugins, self.monitoring.overall_state(scope_id).value, len(self.audit.history()))
     def decide_resource(self, request: ResourceRequest) -> ResourceDecision: return self.resource_manager.decide(request)
     def reserve_resource(self, request: ResourceRequest) -> ResourceDecision: return self.resource_manager.reserve(request)
     def release_resource(self, reservation_id: str) -> None: self.resource_manager.release(reservation_id)
     def resource_reservations(self) -> tuple[tuple[str, str, float], ...]: return self.resource_manager.active_reservations()
     def record_operation_observation(self, observation: OperationObservation) -> None: self.operation_store.record(observation)
-    def record_operation_observation_from_result(self, operation_id: str, capability_id: str, stage: str, success: bool, verified: bool, duration_ms: float, message: str, resource_id: str | None = None, resource_quantity: float | None = None) -> None:
-        self.record_operation_observation(OperationObservation(operation_id, capability_id, stage, success, verified, duration_ms, message, resource_id, resource_quantity))
+    def record_operation_observation_from_result(self, operation_id: str, capability_id: str, stage: str, success: bool, verified: bool, duration_ms: float, message: str, resource_id: str | None = None, resource_quantity: float | None = None) -> None: self.record_operation_observation(OperationObservation(operation_id, capability_id, stage, success, verified, duration_ms, message, resource_id, resource_quantity))
     def operation_history(self, capability_id: str | None = None, *, limit: int = 100) -> tuple[OperationObservation, ...]: return self.operation_store.history(capability_id, limit)
     def operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryHealth | None: return self.operation_store.health(capability_id, window=window, min_samples=min_samples)
     def evaluate_operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryDecision:
@@ -94,9 +92,7 @@ class DORMAMMURuntime:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         return (Observation(scope_id, "capability_inventory", tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())), Observation(scope_id, "resource_inventory", self.resource_registry.all()), Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())), Observation(scope_id, "resource_reservations", self.resource_manager.active_reservations()))
     def lifecycle_history(self, capability_id: str | None = None): return self.lifecycle_store.history(capability_id)
-    def synthesize_knowledge(self, topic: str, claims: Sequence[VerifiedClaim], *, excluded_claims: int = 0) -> SynthesisResult:
-        """Expose conservative evidence synthesis without granting execution authority."""
-        return self.knowledge_synthesis.synthesize(topic, claims, excluded_claims=excluded_claims)
+    def synthesize_knowledge(self, topic: str, claims: Sequence[VerifiedClaim], *, excluded_claims: int = 0) -> SynthesisResult: return self.knowledge_synthesis.synthesize(topic, claims, excluded_claims=excluded_claims)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close()
