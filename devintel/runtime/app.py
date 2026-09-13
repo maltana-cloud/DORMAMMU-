@@ -118,6 +118,12 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
+    def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
+        from ..providers.contracts import ProviderCapability
+        self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
+    def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None:
+        from ..providers.contracts import ProviderCapability
+        self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
 
 # Backward-compatible legacy import; DORMAMMU remains the canonical runtime identity.
 DEVINTELRuntime = DORMAMMURuntime
