@@ -8,19 +8,14 @@ the core permission path, verifies the result, and records the outcome.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 from uuid import uuid4
 
-from ..capabilities import (
-    CapabilityDecision,
-    CapabilityRequirement,
-    CapabilityStatus,
-    CanaryHealth,
-)
-from ..core.contracts import ActionRequest, ActionResult, ActionRisk, Event
-from ..core.planner.engine import PlanStep
-from ..runtime.app import DORMAMMURuntime
+from ..capabilities import CapabilityDecision, CapabilityRequirement, CapabilityStatus, CanaryHealth
+from ..core.contracts import ActionRequest, ActionResult, Event
 
+if TYPE_CHECKING:
+    from ..runtime.app import DORMAMMURuntime
 
 Verifier = Callable[[Any], bool]
 
@@ -55,7 +50,7 @@ class OperationResult:
 class BoundedOperationEngine:
     """Compose the first complete bounded operating path without bypassing authority."""
 
-    def __init__(self, runtime: DORMAMMURuntime) -> None:
+    def __init__(self, runtime: "DORMAMMURuntime") -> None:
         self.runtime = runtime
 
     def run(
@@ -68,18 +63,14 @@ class BoundedOperationEngine:
         verifier: Verifier | None = None,
     ) -> OperationResult:
         operation_id = str(uuid4())
-        self.runtime.context.events.publish(
-            Event("operation.requested", {"operation_id": operation_id, "goal": operation.goal})
-        )
+        self.runtime.context.events.publish(Event("operation.requested", {"operation_id": operation_id, "goal": operation.goal}))
         decision = self.runtime.decide_capability(operation.requirement)
 
         if decision.action == "record_gap":
             return self._finish(operation_id, "capability", False, "no eligible capability is available", decision)
-
         capability_id = decision.capability_id
         if not capability_id:
             return self._finish(operation_id, "capability", False, "capability decision did not identify a capability", decision)
-
         capability = self.runtime.capability_registry.get(capability_id)
         if capability is None:
             return self._finish(operation_id, "capability", False, "selected capability is not registered", decision)
@@ -106,50 +97,19 @@ class BoundedOperationEngine:
             canary = self.runtime.evaluate_canary(capability_id, canary_health)
             if not canary.activated:
                 return self._finish(operation_id, "canary", False, canary.reason, decision)
-
         elif capability.status is not CapabilityStatus.ACTIVE:
             return self._finish(operation_id, "capability", False, "selected existing capability is not active", decision)
 
-        action_result = self.runtime.execute(
-            operation.action,
-            owner_approved=owner_approved,
-            value=operation.value,
-        )
+        action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
         if not action_result.success:
             return self._finish(operation_id, "act", False, action_result.message, decision, action_result)
-
         verified = True if verifier is None else bool(verifier(action_result.data.get("output")))
         if not verified:
-            self.runtime.context.events.publish(
-                Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id})
-            )
+            self.runtime.context.events.publish(Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id}))
             return self._finish(operation_id, "verify", False, "operation result failed verification", decision, action_result, False)
-
-        self.runtime.context.events.publish(
-            Event("operation.completed", {"operation_id": operation_id, "capability_id": capability_id})
-        )
+        self.runtime.context.events.publish(Event("operation.completed", {"operation_id": operation_id, "capability_id": capability_id}))
         return self._finish(operation_id, "record", True, "bounded operation completed and verified", decision, action_result, True)
 
-    def _finish(
-        self,
-        operation_id: str,
-        stage: str,
-        success: bool,
-        message: str,
-        decision: CapabilityDecision,
-        action_result: ActionResult | None = None,
-        verified: bool = False,
-    ) -> OperationResult:
-        self.runtime.context.events.publish(
-            Event(
-                "operation.recorded",
-                {
-                    "operation_id": operation_id,
-                    "stage": stage,
-                    "success": success,
-                    "message": message,
-                    "capability_id": decision.capability_id or "",
-                },
-            )
-        )
+    def _finish(self, operation_id: str, stage: str, success: bool, message: str, decision: CapabilityDecision, action_result: ActionResult | None = None, verified: bool = False) -> OperationResult:
+        self.runtime.context.events.publish(Event("operation.recorded", {"operation_id": operation_id, "stage": stage, "success": success, "message": message, "capability_id": decision.capability_id or ""}))
         return OperationResult(success, operation_id, stage, message, decision, action_result, verified)
