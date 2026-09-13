@@ -6,7 +6,8 @@ import os
 from typing import Any
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.contracts import Observation
-from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest)
+from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest)
+from ..capabilities.contracts import CapabilityStatus
 from ..capabilities.inventory import local_capabilities, local_resources
 from ..control.service import OwnerControlCenter
 from ..core.audit import AuditLog
@@ -64,10 +65,15 @@ class DORMAMMURuntime:
         self.record_operation_observation(OperationObservation(operation_id, capability_id, stage, success, verified, duration_ms, message, resource_id, resource_quantity))
     def operation_history(self, capability_id: str | None = None, *, limit: int = 100) -> tuple[OperationObservation, ...]: return self.operation_store.history(capability_id, limit)
     def operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryHealth | None: return self.operation_store.health(capability_id, window=window, min_samples=min_samples)
-    def evaluate_operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5):
+    def evaluate_operational_health(self, capability_id: str, *, window: int = 20, min_samples: int = 5) -> CanaryDecision:
         health = self.operational_health(capability_id, window=window, min_samples=min_samples)
         if health is None:
             raise RuntimeError("insufficient operational observations for health evaluation")
+        capability = self.capability_registry.get(capability_id)
+        if capability is None:
+            raise KeyError(capability_id)
+        if capability.status is CapabilityStatus.ACTIVE and health.healthy:
+            return CanaryDecision(capability_id, CapabilityStatus.ACTIVE, False, False, "operational health verified from recorded observations")
         return self.evaluate_canary(capability_id, health)
     def create_capability_gap(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> CapabilityGap: return self.capability_discovery.discover(requirement, gap_id=gap_id).gap
     def resolve_capability_gap(self, requirement: CapabilityRequirement, *, gap_id: str | None = None) -> DiscoveryResult: return self.capability_discovery.discover(requirement, gap_id=gap_id)
