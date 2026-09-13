@@ -58,35 +58,22 @@ class BoundedOperationEngine:
     def __init__(self, runtime: "DORMAMMURuntime") -> None:
         self.runtime = runtime
 
-    def run(
-        self,
-        operation: BoundedOperation,
-        *,
-        owner_approved: bool = False,
-        capability_approved: bool = False,
-        canary_health: CanaryHealth | None = None,
-        verifier: Verifier | None = None,
-    ) -> OperationResult:
+    def run(self, operation: BoundedOperation, *, owner_approved: bool = False, capability_approved: bool = False, canary_health: CanaryHealth | None = None, verifier: Verifier | None = None) -> OperationResult:
         operation_id = str(uuid4())
         started = perf_counter()
         self.runtime.context.events.publish(Event("operation.requested", {"operation_id": operation_id, "goal": operation.goal}))
         decision = self.runtime.decide_capability(operation.requirement)
-
         if decision.action == "record_gap":
             return self._finish(operation_id, "capability", False, "no eligible capability is available", decision)
         capability_id = decision.capability_id
         if not capability_id:
             return self._finish(operation_id, "capability", False, "capability decision did not identify a capability", decision)
-
         if decision.action == "request_approval":
             if not capability_approved:
                 return self._finish(operation_id, "approval", False, "explicit capability approval is required", decision)
             if decision.discovery is None:
                 return self._finish(operation_id, "approval", False, "approval requires discovery evidence", decision)
-            evaluation = next(
-                (item for item in decision.discovery.evaluations if item.candidate.capability_id == capability_id and item.eligible),
-                None,
-            )
+            evaluation = next((item for item in decision.discovery.evaluations if item.candidate.capability_id == capability_id and item.eligible), None)
             if evaluation is None:
                 return self._finish(operation_id, "approval", False, "selected capability no longer has an eligible evaluation", decision)
             try:
@@ -121,7 +108,7 @@ class BoundedOperationEngine:
         try:
             action_result = self.runtime.execute(operation.action, owner_approved=owner_approved, value=operation.value)
             if not action_result.success:
-                return self._finish_with_release(operation_id, reservation_id, "act", False, action_result.message, decision, action_result, started, resource_id, resource_quantity)
+                return self._finish_with_release(operation_id, reservation_id, "act", False, action_result.message, decision, action_result, False, started, resource_id, resource_quantity)
             verified = True if verifier is None else bool(verifier(action_result.data.get("output")))
             if not verified:
                 self.runtime.context.events.publish(Event("operation.verification_failed", {"operation_id": operation_id, "capability_id": capability_id}))
