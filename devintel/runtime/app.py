@@ -12,6 +12,7 @@ from ..control.service import OwnerControlCenter
 from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
+from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
 from ..modules.education.integrations import EducationIntegrationResult, EducationSubsystemIntegration
@@ -42,6 +43,7 @@ class DORMAMMURuntime:
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_manager = ResourceManager(self.resource_registry); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
         self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.refresh_local_inventory()
+        self.executive = ExecutiveEngine(self)
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
@@ -85,6 +87,8 @@ class DORMAMMURuntime:
         return BoundedOperationEngine(self)
     def run_bounded_operation(self, operation: Any, **kwargs: Any):
         return self.bounded_operation_engine().run(operation, **kwargs)
+    def plan_objective(self, objective: Objective, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan: return self.executive.plan(objective, tasks)
+    def run_objective(self, objective: Objective, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute(objective, tasks, **kwargs)
     def autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, observer, planner, verifier, recorder)
     def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, self.education_feedback_observer, planner, verifier, recorder)
     def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, self.capability_observations, planner, verifier, recorder)
