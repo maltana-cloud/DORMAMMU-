@@ -3,11 +3,11 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "1335a6b38393c33c21200bf61ceda629b4b03dac",
+  "checkpoint_commit": "c400b54c58ff7b09c10cfdd92b082f90a539a1fb",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "Category 5 Engineering Intelligence complete; Category 6 Language & Communication is next",
-    "ci_status": "Category 5 post-merge main tests workflow #832 passed all test steps.",
+    "active_work": "Category 6 Language & Communication complete and locked; Category 7 Research & Domain Expansion is next",
+    "ci_status": "Category 6 branch workflow #839 passed all test steps; post-merge main CI checkpoint remains pending",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -18,8 +18,8 @@
     "3_capability_resource_intelligence": "COMPLETE_LOCKED",
     "4_ecosystem_awareness": "COMPLETE_LOCKED",
     "5_engineering_intelligence": "COMPLETE_LOCKED",
-    "6_language_communication": "NEXT",
-    "7_research_domain_expansion": "MAJOR_WORK_REMAINS",
+    "6_language_communication": "COMPLETE_LOCKED",
+    "7_research_domain_expansion": "NEXT",
     "8_creative_intelligence": "MAJOR_WORK_REMAINS",
     "9_simulation_interactive_worlds": "MAJOR_WORK_REMAINS",
     "10_social_community_intelligence": "MAJOR_WORK_REMAINS",
@@ -50,6 +50,7 @@
     "ecosystem_awareness_aggregation": "VERIFIED",
     "live_approved_awareness_source_adapter": "VERIFIED",
     "engineering_static_intelligence": "VERIFIED",
+    "bounded_language_intelligence": "IMPLEMENTED",
     "full_autonomous_ecosystem": "PARTIAL"
   },
   "known_high_priority_gaps": [
@@ -64,16 +65,17 @@
     "real Domain Intelligence / Add Domain lifecycle",
     "live multi-source ecosystem awareness and distribution loop",
     "Model Training & Evolution / Model Factory",
-    "Language/Speech, Opinion, Crypto/Blockchain, Creative/Video/Film, Music/Audio, Gaming, Platform Identity, Community, Business/Reinvestment ecosystems",
+    "production speech/audio I/O and communication-channel adapters",
+    "provider-backed language generation and real-provider/model-specific operational evidence",
     "real-provider/model-specific operational evidence for semantic interpretation",
     "broader historical CI evidence for earlier merged cognition and direct-commit checkpoints"
   ],
   "production_readiness": "NOT_CLAIMED",
   "next_execution_target": {
-    "name": "Category 6 — Language & Communication",
+    "name": "Category 7 — Research & Domain Expansion",
     "status": "NEXT",
-    "selection_rule": "Build bounded language understanding/communication capabilities on the existing semantic-goal, routing, cognition, provenance, permission, security, execution, verification, telemetry, and recovery control plane. Language output must not silently grant authority.",
-    "category_5_completion": "Bounded static Python engineering intelligence is implemented, tested, integrated, and CI-verified. It produces advisory findings and deterministic source/import evidence without importing or executing inspected source."
+    "selection_rule": "Build bounded research and domain-expansion capabilities on the existing cognition, provenance, capability, resource, language, permission, security, execution, verification, telemetry, and recovery control plane.",
+    "category_6_completion": "Bounded deterministic language understanding and response constraints are implemented, tested, merged, and documented without granting communication or execution authority."
   },
-  "resume_instruction": "Continue from actual main repository state. Categories 1–5 are complete and locked; do not restart them. Category 6 is next. Preserve all safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
+  "resume_instruction": "Continue from actual main repository state. Categories 1–6 are complete and locked; do not restart them. Category 7 is next. Preserve all safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
 }
