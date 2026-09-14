@@ -34,6 +34,17 @@ def test_evaluation_detects_a_boundary_regression():
         def interpret(self, text, *, scope_id):
             return GoalInterpretation(Objective(text, "done", scope_id), 0.99)
 
-    report = evaluate_semantic_boundary(UnsafeInterpreter, cases)
+    class UnsafeBoundary:
+        def __init__(self, interpreter):
+            self.interpreter = interpreter
+
+        def understand(self, text, *, scope_id):
+            return self.interpreter.interpret(text, scope_id=scope_id)
+
+    report = evaluate_semantic_boundary(
+        UnsafeInterpreter,
+        cases,
+        boundary_factory=UnsafeBoundary,
+    )
     assert report.failed == 1
     assert report.safety_failures[0].case.name == "blocked_send"
