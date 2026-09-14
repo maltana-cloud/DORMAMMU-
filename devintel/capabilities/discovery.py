@@ -23,7 +23,7 @@ class DefaultEvaluator:
         evidence_sources = {item.source for item in candidate.evidence}
         provenance_ok = bool(candidate.evidence) and all(item.trustworthy for item in candidate.evidence)
         source_ok = bool(evidence_sources & set(self.policy.trusted_evidence_sources)) if self.policy.trusted_evidence_sources else False
-        trust = candidate.provider.strip().lower() != "unknown" and (not self.policy.require_provenance or (provenance_ok and source_ok))
+        trust = candidate.provider.strip().lower() not in {"", "unknown"} and candidate.capability_id.strip().lower() not in {"", "unknown"} and (not self.policy.require_provenance or (provenance_ok and source_ok))
         security = candidate.metadata.get("security_status", "").lower() in {"safe", "verified", "approved"} if self.policy.require_provenance else "unsafe" not in {x.lower() for x in candidate.metadata.values()}
         compatibility = set(requirement.required_interfaces).issubset(candidate.interfaces)
         performance = candidate.metadata.get("performance", "").lower() in {"excellent", "good", "verified", "tested"} if self.policy.require_provenance else candidate.metadata.get("performance", "unknown").lower() not in {"poor", "failed"}
