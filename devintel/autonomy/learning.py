@@ -46,7 +46,9 @@ class OutcomeLearner:
         if any(item.scope_id != scope or not item.verified for item in items): raise ValueError("learning evidence must be verified and same-scope")
         if len(items) < self.min_samples: return ()
         mean = sum(item.metric for item in items) / len(items)
-        confidence = min(1.0, len(items) / (self.min_samples * 2))
+        # Confidence starts above the default threshold once the minimum
+        # evidence window is satisfied, then increases monotonically to 1.
+        confidence = min(1.0, 0.5 + len(items) / (self.min_samples * 2))
         if confidence < self.min_confidence: return ()
         direction = "increase" if mean > 0 else "decrease" if mean < 0 else "retain"
         proposal = LearningProposal(scope, tuple(item.cycle_id for item in items), f"{direction} bounded strategy weight", mean, confidence)
