@@ -1,10 +1,10 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 8 — Creative Intelligence is IN PROGRESS.** The current branch implements a bounded creative reasoning foundation and runtime path: ideation, variations, structured planning, critique, bounded repair, media-consistency constraints, provider/resource compatibility awareness, and immutable in-process lineage. It remains advisory and does not grant execution, publishing, spending, authentication, or owner authority.
+**Category 8 — Creative Intelligence is COMPLETE / LOCKED at the repository architecture level.** The category now provides bounded creative understanding, ideation, planning, creation handoff, critique, repair, verification, consistency preservation, provider/resource awareness, provenance/lineage, cross-intelligence context, telemetry, and durable lineage persistence on the existing DORMAMMU control plane.
 
 ## Truth Rule
-Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence. Category 7 remains COMPLETE / LOCKED on `main`. Category 8 is not yet complete and must not be represented as locked until its remaining integration, security, observability, documentation, and verification work is finished.
+Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence. Category 8 is locked only at the repository architecture level; this does not claim production deployment or unrestricted external provider availability.
 
 ## Category Status
 1. Foundation & Governance — COMPLETE / LOCKED
@@ -14,7 +14,7 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 5. Engineering Intelligence — COMPLETE / LOCKED
 6. Language & Communication — COMPLETE / LOCKED
 7. Research & Domain Expansion — COMPLETE / LOCKED
-8. Creative Intelligence — IN PROGRESS
+8. Creative Intelligence — COMPLETE / LOCKED
 9. Simulation & Interactive Worlds — MAJOR WORK REMAINS
 10. Social & Community Intelligence — MAJOR WORK REMAINS
 11. Economic & Business Intelligence — MAJOR WORK REMAINS
@@ -22,36 +22,34 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 13. Autonomous Operations — PARTIAL
 14. Evolution & Self-Improvement — EARLY
 
-## Category 8 Implemented So Far
-- deterministic creative brief digestion and concept ideation;
-- bounded concept variations;
-- structured creation planning and explicit acceptance criteria;
-- critique with bounded scoring and defect reporting;
-- digest-bound revision to prevent applying an evaluation to a different plan;
-- media consistency requirements for style, character/environment identity, resolution, FPS, aspect ratio, seed strategy, and post-processing;
-- approved-provider/resource compatibility selection with deterministic fallback candidates;
-- immutable artifact/plan/brief lineage records preserving evidence references;
-- runtime composition-root integration;
-- regression, bounds, failure-path, authority-surface, provider-compatibility, and runtime integration tests.
-
-## Remaining Category 8 Work
-- deeper integration with cognition/research/language/capability decisions and existing permission/security boundaries;
-- richer verification and quality measurement beyond deterministic structural checks;
-- appropriate operational telemetry/observability integration;
-- durable persistence where creative artifacts need to survive process recovery;
-- broader authorized creation-provider adapter integration without bypassing provider controls;
-- end-to-end integration/regression/security verification;
-- capability matrix/project-state updates only after the complete category is actually verified.
+## Category 8 Completion Evidence
+- deterministic creative brief digestion, ideation, variations, planning, critique, bounded repair, and acceptance evaluation;
+- consistency contracts for style, character/environment identity, resolution, FPS, aspect ratio, seed strategy, and post-processing;
+- fail-closed approved-provider compatibility with deterministic fallback candidates;
+- quality verification and explicit safety/review gating;
+- immutable artifact/plan/brief/evidence lineage with bounded SQLite persistence and runtime reopen support;
+- standardized creation-request handoff into the existing host-controlled generation router; the adapter constructs requests but does not execute providers;
+- context adapter using existing language intelligence and, when supplied, research synthesis/core cognition, while preserving capability/resource limits;
+- runtime integration with capability/resource inventory, operational telemetry, security/permission boundaries, and recovery lifecycle;
+- regression, integration, persistence, safety, bounds, fallback, creation-handoff, and authority-surface tests;
+- feature-head CI workflow #946 passed with the full repository suite: **320 passed**.
 
 ## Safety Boundaries
 - Creative output is not treated as truth merely because it was generated.
 - Evidence references are preserved but are not silently promoted to verified claims.
-- Provider selection is advisory and fail-closed; no provider is contacted by the creative provider catalogue.
+- Provider selection is advisory and fail-closed; the creative provider catalogue never contacts or authenticates providers.
+- Creation handoff builds a host-routed request only; execution remains outside creative intelligence and subject to existing permission/security/execution controls.
 - No automatic installation, credential handling, payment, publishing, deployment, or platform-control bypass.
-- External creation remains subject to the existing capability, permission, security, resource, execution, verification, telemetry, and recovery control plane.
+- Durable lineage stores only bounded provenance metadata and cannot grant authority.
 
-## Verification Note
-Category 8 branch tests have passed through the repository test workflow during the current implementation. The latest commit's workflow is still being observed before this checkpoint can be treated as verified. This branch is intentionally not a completion checkpoint yet.
+## Known Category 8 Limitations
+- Real external provider/model availability, credentials, quotas, and production operational evidence remain environment-dependent.
+- Structural quality verification cannot prove subjective artistic quality or factual truth of generated media.
+- Live provider execution remains governed by the existing provider router and host permission boundaries rather than by the creative module itself.
+- Production readiness is not claimed.
+
+## Next Execution Target
+Proceed to **Category 9 — Simulation & Interactive Worlds**. Do not restart Categories 1–8. Build on the existing cognition, research/provenance, capability/resource, language, permission, security, execution, verification, telemetry, persistence, and recovery control plane.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, leave a truthful test-backed checkpoint, finish the active category before moving to the next category, and continue from the repository rather than treating prior chat history as authoritative.
