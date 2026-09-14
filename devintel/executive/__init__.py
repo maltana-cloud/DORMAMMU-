@@ -2,6 +2,7 @@
 from .contracts import ExecutivePlan, GoalUnderstanding, Objective, TaskSpec
 from .engine import DefaultGoalInterpreter, ExecutiveEngine, ExecutiveResult, ExplicitTaskDecomposer
 from .evidence import EvidenceBackedExecutiveAdapter, EvidenceBackedUnderstanding, EvidenceRequirementError
+from .routing import CollaborationPlan, CollaborationStep, RouteCandidate, RoutingRequirement, SpecialistDescriptor, SpecialistKind, SpecialistRouter
 
 __all__ = [
     "DefaultGoalInterpreter",
@@ -15,4 +16,11 @@ __all__ = [
     "GoalUnderstanding",
     "Objective",
     "TaskSpec",
+    "CollaborationPlan",
+    "CollaborationStep",
+    "RouteCandidate",
+    "RoutingRequirement",
+    "SpecialistDescriptor",
+    "SpecialistKind",
+    "SpecialistRouter",
 ]
