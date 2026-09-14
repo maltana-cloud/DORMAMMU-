@@ -53,7 +53,15 @@ class ResourceLeaseStore:
             self._conn.commit()
             return float(row[0])
 
-    def acquire(self, resource_id: str, quantity: float, capacity: float, *, ttl_seconds: float = 300.0, now: float | None = None) -> ResourceLease | None:
+    def acquire(
+        self,
+        resource_id: str,
+        quantity: float,
+        capacity: float,
+        *,
+        ttl_seconds: float = 300.0,
+        now: float | None = None,
+    ) -> ResourceLease | None:
         if not resource_id or quantity <= 0 or capacity < 0 or ttl_seconds <= 0:
             raise ValueError("resource_id, quantity, capacity, and ttl_seconds must be valid")
         now = time.time() if now is None else now
