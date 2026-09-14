@@ -3,11 +3,11 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "a190e11a40843dc375777d381042825eee2eaafa",
+  "checkpoint_commit": "57dfb2ded53d671a586ee4ea240713845c9b052e",
   "verification": {
     "repository_state_checked": true,
     "active_work": "broad ecosystem capabilities",
-    "ci_status": "semantic evaluation head CI passed before PR #62 merge; no post-merge workflow was exposed for squash commit a190e11a40843dc375777d381042825eee2eaafa; earlier runtime cognition merge still lacks exposed workflow/status evidence",
+    "ci_status": "Semantic evaluation head CI passed before PR #62 merge; no post-merge workflow was exposed for squash commit a190e11a40843dc375777d381042825eee2eaafa; earlier runtime cognition merge still lacks exposed workflow/status evidence; documentation/governance cleanup has not been represented as CI evidence.",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -53,7 +53,10 @@
     "runtime-owned durable learning store, outcome-aware routing service, and semantic goal understanding entry point",
     "deterministic semantic safety evaluation with representative, ambiguous, and high-impact cases",
     "unsafe-boundary regression coverage via injectable evaluation boundary",
-    "DORMAMMU-named AGENTS.md constitution on main"
+    "DORMAMMU-named AGENTS.md constitution on main",
+    "canonical DORMAMMU_PROJECT_CHARTER.md on main",
+    "legacy DEVINTEL_STATUS.md reduced to a compatibility-only alias",
+    "duplicate DEVINTEL_PROJECT_CHARTER.md removed"
   ],
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
