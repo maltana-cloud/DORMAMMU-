@@ -3,11 +3,11 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "ec62eaef6d544a192e99666deb5d9e6639b2aefb",
+  "checkpoint_commit": "aefede207f3965577bdbdcb6bc5b305c300413fb",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "general semantic natural-language goal understanding",
-    "ci_status": "latest merged outcome-aware routing commit has no workflow/status evidence exposed by available integration",
+    "active_work": "semantic-goal production evaluation and hardening",
+    "ci_status": "runtime cognition integration merged at d8691b813efdc71d79cc1e4e3c666cec00e8ba58; available integration exposes no workflow/status evidence for that commit",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -25,6 +25,8 @@
     "controlled_reflection_learning": "IMPLEMENTED",
     "outcome_aware_routing_integration": "IMPLEMENTED",
     "bounded_natural_language_goal_boundary": "IMPLEMENTED",
+    "provider_semantic_goal_interpreter": "IMPLEMENTED",
+    "runtime_cognition_integration": "IMPLEMENTED",
     "full_autonomous_ecosystem": "PARTIAL"
   },
   "current_verified_components": [
@@ -45,7 +47,9 @@
     "ordered specialist collaboration plans with deterministic ranked fallbacks",
     "verified same-scope outcome evidence with optional specialist attribution and reversible learning proposals",
     "durable outcome-aware routing preferences bounded by hard eligibility gates",
-    "bounded natural-language intake with scope, confidence, ambiguity, and high-impact gates"
+    "bounded natural-language intake with scope, confidence, ambiguity, and high-impact gates",
+    "provider-backed semantic goal interpretation through the existing bounded untrusted-input boundary",
+    "runtime-owned durable learning store, outcome-aware routing service, and semantic goal understanding entry point"
   ],
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
@@ -66,20 +70,21 @@
     "Learning accepts only verified same-scope evidence and emits reversible proposals.",
     "Learned routing preference is bounded advisory scoring only and cannot override hard eligibility gates.",
     "Natural-language input never grants authority or directly creates executable actions.",
+    "Provider semantic output is untrusted data and cannot bypass scope, confidence, ambiguity, or high-impact gates.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
-    "general semantic natural-language goal understanding",
+    "semantic-goal production evaluation and provider/model-specific hardening",
     "broad ecosystem capabilities",
     "distributed resource/provider scheduling",
-    "repository-wide CI evidence for the latest merged outcome-aware routing integration"
+    "repository-wide CI evidence for the latest merged cognition integration"
   ],
   "next_execution_target": {
-    "name": "general semantic goal understanding",
+    "name": "semantic-goal production evaluation and hardening",
     "status": "PARTIAL",
     "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE"
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Inspect the merged outcome-aware routing integration and latest CI evidence, then implement a production-grade semantic goal interpreter behind the existing bounded NL boundary. Keep high-impact ambiguity fail-closed, preserve scope and authority boundaries, and continue with ecosystem and distributed scheduling gaps only after the semantic-goal milestone is genuinely verified."
+  "resume_instruction": "Evaluate the provider-backed semantic goal interpreter with representative and adversarial cases, verify structured-output handling and real provider behavior, obtain repository-wide CI evidence, and only then advance to broad ecosystem capabilities and distributed scheduling. Preserve the existing fail-closed scope, authority, permission, security, lifecycle, resource, execution, and verification boundaries."
 }
