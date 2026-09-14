@@ -45,12 +45,18 @@ class SimulationRuntimeAdapter:
         if resource_id is not None:
             if resource_quantity is None or resource_quantity <= 0:
                 raise ValueError("resource_quantity is required for resource-backed simulation")
-            # Reuse the existing resource decision path; simulation never provisions resources.
-            from ...capabilities import ResourceRequest
-            decision = self.runtime.decide_resource(ResourceRequest(resource_id, resource_quantity, "simulation", world_id))
-            if not decision.allowed:
+            from ...capabilities import ResourceKind, ResourceRequest
+            request = ResourceRequest(ResourceKind.CPU, resource_quantity)
+            decision = self.runtime.decide_resource(request)
+            if not decision.granted:
                 raise RuntimeError("simulation resource request denied")
-            reservation_id = self.runtime.reserve_resource(ResourceRequest(resource_id, resource_quantity, "simulation", world_id)).reservation_id
+            reservation = self.runtime.reserve_resource(request)
+            if not reservation.granted:
+                raise RuntimeError("simulation resource reservation denied")
+            reservation_id = reservation.reservation_id
+            if reservation.resource_id != resource_id:
+                self.runtime.release_resource(reservation_id)
+                raise RuntimeError("requested simulation resource was not selected")
         result = world.step(actions, ticks=ticks)
         self.store.save(result.snapshot)
         self.runtime.record_operation_observation_from_result(
@@ -58,7 +64,7 @@ class SimulationRuntimeAdapter:
             "simulation.world",
             "simulate",
             True,
-            all(e.accepted or e.reason for e in result.events),
+            all(e.accepted for e in result.events) if result.events else True,
             (monotonic() - start) * 1000,
             "bounded deterministic simulation step",
             resource_id,
