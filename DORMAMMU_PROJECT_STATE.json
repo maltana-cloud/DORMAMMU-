@@ -3,11 +3,11 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "5a1dde0182417342af3b0f972d075eddc8eb64d9",
+  "checkpoint_commit": "ec62eaef6d544a192e99666deb5d9e6639b2aefb",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "production capability source configuration",
-    "ci_status": "post_fix_run_not_exposed_by_available_integration",
+    "active_work": "general semantic natural-language goal understanding",
+    "ci_status": "latest merged outcome-aware routing commit has no workflow/status evidence exposed by available integration",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -22,7 +22,8 @@
     "operational_telemetry": "TESTED",
     "knowledge_synthesis": "TESTED",
     "model_agent_specialist_routing": "VERIFIED",
-    "controlled_reflection_learning": "PARTIAL",
+    "controlled_reflection_learning": "IMPLEMENTED",
+    "outcome_aware_routing_integration": "IMPLEMENTED",
     "bounded_natural_language_goal_boundary": "IMPLEMENTED",
     "full_autonomous_ecosystem": "PARTIAL"
   },
@@ -42,7 +43,8 @@
     "finite autonomous OBSERVE/UNDERSTAND/PLAN/PERMISSION/SECURITY/ACT/VERIFY/RECORD/IMPROVE loop",
     "deterministic model/agent/specialist selection with health, approval, cost, metadata, provider, and version gates",
     "ordered specialist collaboration plans with deterministic ranked fallbacks",
-    "verified same-scope outcome evidence and reversible learning proposals",
+    "verified same-scope outcome evidence with optional specialist attribution and reversible learning proposals",
+    "durable outcome-aware routing preferences bounded by hard eligibility gates",
     "bounded natural-language intake with scope, confidence, ambiguity, and high-impact gates"
   ],
   "safety_boundaries": [
@@ -62,21 +64,22 @@
     "Routing fallbacks remain subject to the same eligibility requirements.",
     "Autonomous improvement can propose changes but cannot mutate code, handlers, permissions, credentials, or authority.",
     "Learning accepts only verified same-scope evidence and emits reversible proposals.",
+    "Learned routing preference is bounded advisory scoring only and cannot override hard eligibility gates.",
     "Natural-language input never grants authority or directly creates executable actions.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
     "general semantic natural-language goal understanding",
-    "outcome-aware routing/policy integration",
     "broad ecosystem capabilities",
-    "distributed resource/provider scheduling"
+    "distributed resource/provider scheduling",
+    "repository-wide CI evidence for the latest merged outcome-aware routing integration"
   ],
   "next_execution_target": {
-    "name": "general semantic goal understanding and outcome-aware routing integration",
+    "name": "general semantic goal understanding",
     "status": "PARTIAL",
-    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY UPDATE"
+    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE"
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Inspect the production capability-source configuration and current learning/NL boundaries on main, verify CI truth before upgrading statuses, then implement general semantic goal understanding and bounded outcome-aware routing integration without weakening authority, security, provenance, or rollback controls."
+  "resume_instruction": "Inspect the merged outcome-aware routing integration and latest CI evidence, then implement a production-grade semantic goal interpreter behind the existing bounded NL boundary. Keep high-impact ambiguity fail-closed, preserve scope and authority boundaries, and continue with ecosystem and distributed scheduling gaps only after the semantic-goal milestone is genuinely verified."
 }
