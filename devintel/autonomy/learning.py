@@ -14,11 +14,13 @@ class OutcomeEvidence:
     metric: float
     observation: str = ""
     recorded_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    subject_id: str = ""
     def __post_init__(self) -> None:
         if not self.scope_id.strip() or not self.cycle_id.strip(): raise ValueError("scope_id and cycle_id are required")
         if not self.verified: raise ValueError("only verified outcomes can enter learning")
         if not math.isfinite(float(self.metric)) or not -1.0 <= float(self.metric) <= 1.0: raise ValueError("metric must be finite and between -1 and 1")
         if self.recorded_at.tzinfo is None: raise ValueError("recorded_at must be timezone-aware")
+        if not isinstance(self.subject_id, str): raise TypeError("subject_id must be a string")
 
 @dataclass(frozen=True)
 class LearningProposal:
@@ -28,11 +30,13 @@ class LearningProposal:
     expected_delta: float
     confidence: float
     reversible: bool = True
+    subject_id: str = ""
     def __post_init__(self) -> None:
         if not self.scope_id.strip() or not self.basis_cycle_ids: raise ValueError("scope and evidence cycles are required")
         if not self.adjustment.strip(): raise ValueError("adjustment is required")
         if not 0.0 <= float(self.confidence) <= 1.0: raise ValueError("confidence must be between 0 and 1")
         if not self.reversible: raise ValueError("learning proposals must be reversible")
+        if not isinstance(self.subject_id, str): raise TypeError("subject_id must be a string")
 
 class OutcomeLearner:
     """Learns only from verified, same-scope outcomes and emits proposals."""
@@ -42,14 +46,17 @@ class OutcomeLearner:
     def reflect(self, evidence: Sequence[OutcomeEvidence]) -> tuple[LearningProposal, ...]:
         items = tuple(evidence)
         if not items: return ()
-        scope = items[0].scope_id
-        if any(item.scope_id != scope or not item.verified for item in items): raise ValueError("learning evidence must be verified and same-scope")
-        if len(items) < self.min_samples: return ()
-        mean = sum(item.metric for item in items) / len(items)
-        # Confidence starts above the default threshold once the minimum
-        # evidence window is satisfied, then increases monotonically to 1.
-        confidence = min(1.0, 0.5 + len(items) / (self.min_samples * 2))
-        if confidence < self.min_confidence: return ()
-        direction = "increase" if mean > 0 else "decrease" if mean < 0 else "retain"
-        proposal = LearningProposal(scope, tuple(item.cycle_id for item in items), f"{direction} bounded strategy weight", mean, confidence)
-        return (proposal,)[:self.max_proposals]
+        scopes = {item.scope_id for item in items}
+        if len(scopes) != 1 or any(not item.verified for item in items): raise ValueError("learning evidence must be verified and same-scope")
+        grouped: dict[str, list[OutcomeEvidence]] = {}
+        for item in items: grouped.setdefault(item.subject_id, []).append(item)
+        proposals: list[LearningProposal] = []
+        for subject_id, group in sorted(grouped.items()):
+            if not subject_id or len(group) < self.min_samples: continue
+            mean = sum(item.metric for item in group) / len(group)
+            confidence = min(1.0, 0.5 + len(group) / (self.min_samples * 2))
+            if confidence < self.min_confidence: continue
+            direction = "increase" if mean > 0 else "decrease" if mean < 0 else "retain"
+            proposals.append(LearningProposal(group[0].scope_id, tuple(item.cycle_id for item in group), f"{direction} bounded routing preference", mean, confidence, True, subject_id))
+            if len(proposals) >= self.max_proposals: break
+        return tuple(proposals)
