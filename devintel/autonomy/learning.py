@@ -52,11 +52,13 @@ class OutcomeLearner:
         for item in items: grouped.setdefault(item.subject_id, []).append(item)
         proposals: list[LearningProposal] = []
         for subject_id, group in sorted(grouped.items()):
-            if not subject_id or len(group) < self.min_samples: continue
+            if subject_id and len(group) < self.min_samples: continue
+            if not subject_id and len(group) < self.min_samples: continue
             mean = sum(item.metric for item in group) / len(group)
             confidence = min(1.0, 0.5 + len(group) / (self.min_samples * 2))
             if confidence < self.min_confidence: continue
             direction = "increase" if mean > 0 else "decrease" if mean < 0 else "retain"
-            proposals.append(LearningProposal(group[0].scope_id, tuple(item.cycle_id for item in group), f"{direction} bounded routing preference", mean, confidence, True, subject_id))
+            adjustment = f"{direction} bounded routing preference" if subject_id else f"{direction} bounded strategy weight"
+            proposals.append(LearningProposal(group[0].scope_id, tuple(item.cycle_id for item in group), adjustment, mean, confidence, True, subject_id))
             if len(proposals) >= self.max_proposals: break
         return tuple(proposals)
