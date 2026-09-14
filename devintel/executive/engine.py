@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from uuid import uuid4
 
 from .contracts import ExecutivePlan, GoalInterpreter, GoalUnderstanding, Objective, TaskSpec
+from .evidence import EvidenceBackedExecutiveAdapter
 from ..core.contracts import ActionRequest
+from ..modules.research import SynthesisResult
 from ..operations import BoundedOperation, OperationResult
 
 
@@ -71,9 +73,21 @@ class ExecutiveEngine:
     def __init__(self, runtime, interpreter: GoalInterpreter | None = None) -> None:
         self.runtime = runtime
         self.interpreter = interpreter or DefaultGoalInterpreter()
+        self.evidence_adapter = EvidenceBackedExecutiveAdapter()
 
     def plan(self, objective: Objective, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan:
         understanding = self.interpreter.understand(objective)
+        return ExecutivePlan(understanding, ExplicitTaskDecomposer().decompose(understanding, tasks))
+
+    def plan_from_synthesis(
+        self,
+        objective: Objective,
+        synthesis: SynthesisResult,
+        tasks: tuple[TaskSpec, ...],
+    ) -> ExecutivePlan:
+        """Build a plan whose success criteria come only from eligible synthesis signals."""
+        backed = self.evidence_adapter.understand(objective, synthesis)
+        understanding = backed.understanding
         return ExecutivePlan(understanding, ExplicitTaskDecomposer().decompose(understanding, tasks))
 
     def execute(
@@ -86,6 +100,31 @@ class ExecutiveEngine:
         canary_health_by_capability: dict[str, object] | None = None,
     ) -> ExecutiveResult:
         plan = self.plan(objective, tasks)
+        return self._execute_plan(objective, plan, owner_approved=owner_approved, capability_approved=capability_approved, canary_health_by_capability=canary_health_by_capability)
+
+    def execute_from_synthesis(
+        self,
+        objective: Objective,
+        synthesis: SynthesisResult,
+        tasks: tuple[TaskSpec, ...],
+        *,
+        owner_approved: bool = False,
+        capability_approved: bool | set[str] = False,
+        canary_health_by_capability: dict[str, object] | None = None,
+    ) -> ExecutiveResult:
+        """Execute an evidence-backed plan without weakening bounded execution controls."""
+        plan = self.plan_from_synthesis(objective, synthesis, tasks)
+        return self._execute_plan(objective, plan, owner_approved=owner_approved, capability_approved=capability_approved, canary_health_by_capability=canary_health_by_capability)
+
+    def _execute_plan(
+        self,
+        objective: Objective,
+        plan: ExecutivePlan,
+        *,
+        owner_approved: bool,
+        capability_approved: bool | set[str],
+        canary_health_by_capability: dict[str, object] | None,
+    ) -> ExecutiveResult:
         task_results: list[tuple[str, OperationResult]] = []
         completed: set[str] = set()
         health = canary_health_by_capability or {}

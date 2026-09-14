@@ -35,6 +35,9 @@ class GoalUnderstanding:
     normalized_goal: str
     success_criteria: tuple[str, ...]
     constraints: Mapping[str, str] = field(default_factory=dict)
+    evidence_urls: tuple[str, ...] = ()
+    evidence_topic: str = ""
+    evidence_uncertainty: str = ""
 
 
 @dataclass(frozen=True)
