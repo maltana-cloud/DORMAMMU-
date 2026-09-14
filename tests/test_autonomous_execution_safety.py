@@ -50,4 +50,5 @@ def test_improvement_produces_proposals_without_mutating_authority():
     )
     cycle = engine.run_once("scope")
     assert cycle.improvement_actions_proposed == 1
-    assert runtime.handler("ping") is not None
+    result = runtime.execute(ActionRequest("ping", payload={"scope_id": "scope"}))
+    assert result.success is True
