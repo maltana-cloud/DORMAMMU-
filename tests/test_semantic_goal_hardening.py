@@ -5,11 +5,13 @@ from devintel.executive.nl_goal import (
     GoalInterpretation,
     ProviderSemanticNaturalLanguageInterpreter,
 )
-from devintel.providers.contracts import ProviderCapability
+from devintel.providers.contracts import ProviderCapability, ProviderHealth
 from devintel.providers.live import GenerationResponse, ProviderRouter
 
 
 class FakeProvider:
+    provider_id = "fake"
+
     def __init__(self, payload=None, *, error=False):
         self.payload = payload
         self.error = error
@@ -17,10 +19,10 @@ class FakeProvider:
     def generate(self, request):
         if self.error:
             raise RuntimeError("offline")
-        return GenerationResponse(json.dumps(self.payload), "fake")
+        return GenerationResponse(json.dumps(self.payload), self.provider_id)
 
     def health(self):
-        return type("Health", (), {"healthy": True})()
+        return ProviderHealth(self.provider_id, True)
 
 
 def interpreter(payload, *, error=False):
