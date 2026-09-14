@@ -3,7 +3,7 @@ from .contracts import ExecutivePlan, GoalUnderstanding, Objective, TaskSpec
 from .engine import DefaultGoalInterpreter, ExecutiveEngine, ExecutiveResult, ExplicitTaskDecomposer
 from .evidence import EvidenceBackedExecutiveAdapter, EvidenceBackedUnderstanding, EvidenceRequirementError
 from .routing import CollaborationPlan, CollaborationStep, RouteCandidate, RoutingRequirement, SpecialistDescriptor, SpecialistKind, SpecialistRouter
-from .nl_goal import BoundedNaturalLanguageGoalBoundary, DeterministicNaturalLanguageInterpreter, GoalInterpretation, NaturalLanguageGoalInterpreter
+from .nl_goal import BoundedNaturalLanguageGoalBoundary, DeterministicNaturalLanguageInterpreter, GoalInterpretation, NaturalLanguageGoalInterpreter, ProviderSemanticNaturalLanguageInterpreter
 from .outcome_routing import OutcomeAwareRoutingService
 
 __all__ = [
@@ -12,6 +12,6 @@ __all__ = [
     "ExplicitTaskDecomposer", "GoalUnderstanding", "Objective", "TaskSpec",
     "CollaborationPlan", "CollaborationStep", "RouteCandidate", "RoutingRequirement",
     "SpecialistDescriptor", "SpecialistKind", "SpecialistRouter",
-    "BoundedNaturalLanguageGoalBoundary", "DeterministicNaturalLanguageInterpreter", "GoalInterpretation", "NaturalLanguageGoalInterpreter",
+    "BoundedNaturalLanguageGoalBoundary", "DeterministicNaturalLanguageInterpreter", "GoalInterpretation", "NaturalLanguageGoalInterpreter", "ProviderSemanticNaturalLanguageInterpreter",
     "OutcomeAwareRoutingService",
 ]
