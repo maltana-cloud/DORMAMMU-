@@ -1,13 +1,13 @@
 {
-  "schema_version": "2.1",
+  "schema_version": "2.2",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "41fe594f5adc571bb80cdcedb43e365d02532f2e",
+  "checkpoint_commit": "b6d99e130dcaf970a20723c483fb0925d12a6fac",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "broad ecosystem capabilities",
-    "ci_status": "Semantic evaluation head CI passed before PR #62 merge; no post-merge workflow was exposed for squash commit a190e11a40843dc375777d381042825eee2eaafa; earlier runtime cognition merge still lacks exposed workflow/status evidence; awareness aggregation and governance/documentation cleanup have no exposed latest CI evidence.",
+    "active_work": "capability and resource discovery engine",
+    "ci_status": "The unified discovery engine and tests were added on main, but no latest workflow result is exposed through the available integration; do not claim CI verification for these latest commits.",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -15,6 +15,7 @@
   "milestones": {
     "identity_migration": "IMPLEMENTED",
     "capability_resource_discovery": "IMPLEMENTED",
+    "capability_resource_discovery_engine": "IMPLEMENTED",
     "production_capability_source_configuration": "IMPLEMENTED",
     "resource_compute_management": "VERIFIED",
     "bounded_operating_path": "VERIFIED",
@@ -55,6 +56,7 @@
     "deterministic semantic safety evaluation with representative, ambiguous, and high-impact cases",
     "unsafe-boundary regression coverage via injectable evaluation boundary",
     "bounded ecosystem-awareness aggregation with scope filtering, deduplication, deterministic ranking, and bounded evidence URLs",
+    "unified discovery engine connecting local inventory, trusted external sources, capability evaluation, and resource decisions",
     "DORMAMMU-named AGENTS.md constitution on main",
     "canonical DORMAMMU_PROJECT_CHARTER.md on main",
     "legacy DEVINTEL_STATUS.md reduced to a compatibility-only alias",
@@ -82,22 +84,27 @@
     "Provider semantic output is untrusted data and cannot bypass scope, confidence, ambiguity, or high-impact gates.",
     "Semantic evaluation records structured outcomes only and never executes actions or grants authority.",
     "Awareness aggregation only produces bounded observations; it does not publish, authenticate, contact, or grant distribution authority.",
+    "Unified discovery only observes local resources and trusted catalogs; resource reservation remains separate from capability authority.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
-    "broad ecosystem capabilities",
+    "real model/tool/API/dataset/provider adapters beyond the bounded catalog boundary",
     "distributed resource/provider scheduling",
+    "real Domain Intelligence / Add Domain lifecycle",
+    "live multi-source ecosystem awareness and distribution loop",
+    "Model Training & Evolution / Model Factory",
+    "Engineering, Language/Speech, Opinion, Crypto/Blockchain, Creative/Video/Film, Music/Audio, Gaming, Platform Identity, Community, Business/Reinvestment ecosystems",
     "real-provider/model-specific operational evidence for semantic interpretation",
-    "repository-wide CI evidence for the earlier merged cognition integration",
-    "latest CI evidence for direct awareness/governance commits"
+    "repository-wide CI evidence for earlier merged cognition integration",
+    "latest CI evidence for direct awareness/governance/discovery commits"
   ],
   "next_execution_target": {
-    "name": "broad ecosystem capabilities",
+    "name": "real capability/provider/resource adapters and end-to-end autonomous capability use",
     "status": "IN_PROGRESS",
-    "selection_rule": "Choose the highest-value capability that can be implemented end-to-end from the existing control plane, with explicit permissions, security checks, verification, telemetry, and tests.",
-    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE"
+    "selection_rule": "Choose the highest-value capability that can be implemented end-to-end from the existing control plane, with explicit permissions, security checks, verification, telemetry, tests, and legitimate provider/resource fallback.",
+    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → CAPABILITY DISCOVERY → EVALUATE → SELECT → PERMISSION → SECURITY CHECK → RESOURCE RESERVATION → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE"
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Continue broad ecosystem capabilities from the actual repository state. Select one end-to-end capability rather than creating disconnected stubs. Preserve existing safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Do not claim production readiness without capability-appropriate operational evidence."
+  "resume_instruction": "Continue from the actual main repository state. Do not restart the foundation. Connect the discovery engine to legitimate real providers/resources incrementally, then implement the highest-value domain/ecosystem capability end-to-end. Preserve safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
 }
