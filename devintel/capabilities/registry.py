@@ -2,7 +2,11 @@
 from __future__ import annotations
 
 from threading import RLock
+from typing import TYPE_CHECKING
 from .contracts import CapabilityDescriptor, CapabilityGap, ResourceDescriptor
+
+if TYPE_CHECKING:
+    from .store import CapabilityRegistryStore
 
 
 class CapabilityRegistry:
