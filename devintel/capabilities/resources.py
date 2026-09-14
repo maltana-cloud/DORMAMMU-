@@ -2,16 +2,15 @@
 
 Resource management is deliberately separate from capability authority. It observes
 registered resources, checks declared capacity/cost/permission, and creates scoped
-in-memory reservations. It never provisions machines, acquires credentials, spends
-money, or bypasses platform controls.
+SQLite-backed reservations. It never provisions machines, acquires credentials,
+spends money, or bypasses platform controls.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
-from threading import RLock
-from uuid import uuid4
 
 from .contracts import ResourceDescriptor, ResourceKind
+from .leases import ResourceLeaseStore
 from .registry import ResourceRegistry
 
 
@@ -22,12 +21,15 @@ class ResourceRequest:
     max_cost: float | None = None
     currency: str = "USD"
     required_permission: str = "approved"
+    ttl_seconds: float = 300.0
 
     def __post_init__(self) -> None:
         if self.quantity <= 0:
             raise ValueError("quantity must be positive")
         if self.max_cost is not None and self.max_cost < 0:
             raise ValueError("max_cost must be non-negative")
+        if self.ttl_seconds <= 0:
+            raise ValueError("ttl_seconds must be positive")
 
 
 @dataclass(frozen=True)
@@ -39,12 +41,11 @@ class ResourceDecision:
 
 
 class ResourceManager:
-    """Reserve registered resources without provisioning or authority escalation."""
+    """Reserve registered resources through durable, expiring leases."""
 
-    def __init__(self, registry: ResourceRegistry) -> None:
+    def __init__(self, registry: ResourceRegistry, lease_store: ResourceLeaseStore | None = None) -> None:
         self.registry = registry
-        self._reservations: dict[str, tuple[str, float]] = {}
-        self._lock = RLock()
+        self.lease_store = lease_store or ResourceLeaseStore()
 
     @staticmethod
     def _capacity(resource: ResourceDescriptor) -> float | None:
@@ -63,7 +64,7 @@ class ResourceManager:
         capacity = self._capacity(resource)
         if capacity is None:
             return None
-        used = sum(quantity for rid, quantity in self._reservations.values() if rid == resource.resource_id)
+        used = self.lease_store.active_quantity(resource.resource_id)
         return max(0.0, capacity - used)
 
     def decide(self, request: ResourceRequest) -> ResourceDecision:
@@ -89,24 +90,25 @@ class ResourceManager:
         return ResourceDecision(True, chosen.resource_id, "registered resource satisfies the request")
 
     def reserve(self, request: ResourceRequest) -> ResourceDecision:
-        with self._lock:
-            decision = self.decide(request)
-            if not decision.granted or decision.resource_id is None:
-                return decision
-            reservation_id = uuid4().hex
-            self._reservations[reservation_id] = (decision.resource_id, request.quantity)
-            return ResourceDecision(True, decision.resource_id, "resource reserved", reservation_id)
+        candidates = [resource for resource in self.registry.all() if resource.kind is request.kind and resource.availability in {"ready", "declared"} and (request.max_cost is None or (resource.currency == request.currency and resource.cost <= request.max_cost)) and (not request.required_permission or request.required_permission in resource.permissions)]
+        for resource in sorted(candidates, key=lambda item: (item.cost, item.resource_id)):
+            capacity = self._capacity(resource)
+            if capacity is None:
+                continue
+            lease = self.lease_store.acquire(resource.resource_id, request.quantity, capacity, ttl_seconds=request.ttl_seconds)
+            if lease is not None:
+                return ResourceDecision(True, resource.resource_id, "resource reserved with durable lease", lease.lease_id)
+        return ResourceDecision(False, None, "no registered resource with known sufficient capacity satisfies the request")
 
     def release(self, reservation_id: str) -> None:
-        with self._lock:
-            if reservation_id not in self._reservations:
-                raise KeyError(reservation_id)
-            del self._reservations[reservation_id]
+        self.lease_store.release(reservation_id)
 
-    def reservation(self, reservation_id: str) -> tuple[str, float] | None:
-        with self._lock:
-            return self._reservations.get(reservation_id)
+    def reservation(self, reservation_id: str):
+        lease = self.lease_store.get(reservation_id)
+        return None if lease is None else (lease.resource_id, lease.quantity)
 
     def active_reservations(self) -> tuple[tuple[str, str, float], ...]:
-        with self._lock:
-            return tuple((rid, resource_id, quantity) for rid, (resource_id, quantity) in sorted(self._reservations.items()))
+        return tuple((lease.lease_id, lease.resource_id, lease.quantity) for lease in self.lease_store.active())
+
+    def close(self) -> None:
+        self.lease_store.close()
