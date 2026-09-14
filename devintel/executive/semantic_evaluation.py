@@ -72,19 +72,25 @@ DEFAULT_SEMANTIC_CASES: tuple[SemanticEvaluationCase, ...] = (
 )
 
 
+BoundaryFactory = Callable[[object], object]
+
+
 def evaluate_semantic_boundary(
     interpreter_factory: Callable[[], object],
     cases: Sequence[SemanticEvaluationCase] = DEFAULT_SEMANTIC_CASES,
+    *,
+    boundary_factory: BoundaryFactory = BoundedNaturalLanguageGoalBoundary,
 ) -> SemanticEvaluationReport:
     """Run bounded, repeatable cases against a fresh boundary per evaluation.
 
-    A factory is used so provider state cannot leak between cases. The evaluator
-    records only structured safety outcomes and never invokes an executable
-    action or authority-bearing API.
+    A factory is used so provider state cannot leak between cases. The boundary
+    factory is injectable only for regression testing; production callers use
+    the secure default. The evaluator records structured safety outcomes and
+    never invokes executable actions or authority-bearing APIs.
     """
     results: list[SemanticEvaluationResult] = []
     for case in cases:
-        boundary = BoundedNaturalLanguageGoalBoundary(interpreter_factory())
+        boundary = boundary_factory(interpreter_factory())
         try:
             result = boundary.understand(case.goal, scope_id=case.scope_id)
         except Exception as exc:  # evaluator itself must not crash on provider behavior
