@@ -3,18 +3,19 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "d91d89b7f5bf4c9de6f6e37c85416f77e4003334",
+  "checkpoint_commit": "5a1dde0182417342af3b0f972d075eddc8eb64d9",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "model/agent/specialist routing and collaboration",
-    "ci_status": "passed",
+    "active_work": "production capability source configuration",
+    "ci_status": "post_fix_run_not_exposed_by_available_integration",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
   },
   "milestones": {
     "identity_migration": "IMPLEMENTED",
-    "capability_resource_discovery": "VERIFIED",
+    "capability_resource_discovery": "IMPLEMENTED",
+    "production_capability_source_configuration": "IMPLEMENTED",
     "resource_compute_management": "VERIFIED",
     "bounded_operating_path": "VERIFIED",
     "executive_cognition_foundation": "TESTED",
@@ -22,6 +23,7 @@
     "knowledge_synthesis": "TESTED",
     "model_agent_specialist_routing": "VERIFIED",
     "controlled_reflection_learning": "PARTIAL",
+    "bounded_natural_language_goal_boundary": "IMPLEMENTED",
     "full_autonomous_ecosystem": "PARTIAL"
   },
   "current_verified_components": [
@@ -36,12 +38,17 @@
     "SQLite-backed operational telemetry and evidence-derived health",
     "conservative evidence-backed knowledge synthesis with contradiction and uncertainty controls",
     "provenance-backed JSON and bounded HTTPS capability catalog scouting",
+    "durable capability-source configuration with explicit enablement, HTTPS, host, timeout, size, and trusted-source gates",
     "finite autonomous OBSERVE/UNDERSTAND/PLAN/PERMISSION/SECURITY/ACT/VERIFY/RECORD/IMPROVE loop",
     "deterministic model/agent/specialist selection with health, approval, cost, metadata, provider, and version gates",
-    "ordered specialist collaboration plans with deterministic ranked fallbacks"
+    "ordered specialist collaboration plans with deterministic ranked fallbacks",
+    "verified same-scope outcome evidence and reversible learning proposals",
+    "bounded natural-language intake with scope, confidence, ambiguity, and high-impact gates"
   ],
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
+    "Capability sources are disabled unless explicitly enabled and trusted by the active discovery policy.",
+    "External source retrieval is HTTPS-only and bounded by explicit host, timeout, and response-size controls.",
     "Lifecycle transitions are explicit and state-validated; capability approval requires permission.",
     "Executive tasks must explicitly declare objective scope and capability approval is explicit.",
     "Resource management reserves only registered resources and fails closed on unknown quantitative capacity.",
@@ -54,23 +61,22 @@
     "Routing selects only registered, approved, healthy, requirement-compatible specialists and never grants authority.",
     "Routing fallbacks remain subject to the same eligibility requirements.",
     "Autonomous improvement can propose changes but cannot mutate code, handlers, permissions, credentials, or authority.",
-    "Autonomous cycle history is durable audit evidence, not an authority source.",
-    "Core action execution remains behind the permission boundary.",
+    "Learning accepts only verified same-scope evidence and emits reversible proposals.",
+    "Natural-language input never grants authority or directly creates executable actions.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
-    "controlled reflection/outcome learning",
-    "evidence-backed arbitrary natural-language goal understanding",
-    "production source-specific capability discovery configuration",
+    "general semantic natural-language goal understanding",
+    "outcome-aware routing/policy integration",
     "broad ecosystem capabilities",
     "distributed resource/provider scheduling"
   ],
   "next_execution_target": {
-    "name": "controlled reflection and outcome learning",
+    "name": "general semantic goal understanding and outcome-aware routing integration",
     "status": "PARTIAL",
-    "flow": "OBSERVE → EXECUTE → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY UPDATE"
+    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY UPDATE"
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Inspect verified routing and autonomous execution on main, then implement controlled reflection/outcome learning. Learning must be evidence-backed, bounded, auditable, reversible, and must not grant authority or mutate privileged code/security controls."
+  "resume_instruction": "Inspect the production capability-source configuration and current learning/NL boundaries on main, verify CI truth before upgrading statuses, then implement general semantic goal understanding and bounded outcome-aware routing integration without weakening authority, security, provenance, or rollback controls."
 }
