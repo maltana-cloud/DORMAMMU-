@@ -1,10 +1,10 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Bounded autonomous execution and deterministic model/agent/specialist routing are implemented and verified on `main`.** DORMAMMU now has an explicit permission-gated operating loop plus deterministic selection of already-registered intelligence capabilities and ordered collaboration plans with ranked fallbacks.
+**Bounded autonomous execution, deterministic specialist routing, controlled outcome learning, and a bounded natural-language goal intake boundary are implemented on `main`.**
 
 ## Truth Rule
-Implementation claims require code, meaningful tests, integration evidence, and successful CI. The autonomous operating-path milestone was merged at `d73d6b609e31c3a5963b977c566fee5f4d66ca78`. The routing milestone was merged at `d91d89b7f5bf4c9de6f6e37c85416f77e4003334` after PR #54 CI passed.
+Implementation claims require code, meaningful tests, integration evidence, and successful CI. The routing milestone was merged at `d91d89b7f5bf4c9de6f6e37c85416f77e4003334`; controlled outcome learning was merged at `49289b1bc72de6d97035073ca7901bd7c04cb312`; bounded natural-language goal understanding was merged at `7adad2d2f2259afc40a8bc46070c15c199dfb888`.
 
 ## Repository Checkpoint
 - Canonical runtime: `DORMAMMURuntime`; `DEVINTELRuntime` remains a compatibility alias.
@@ -13,28 +13,29 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 - Capability discovery/admission has provenance-aware evidence, strict trust-source gates, deterministic acquisition ranking/fallback, explicit approval, lifecycle/canary controls, and bounded JSON/HTTPS catalog scouts.
 - Autonomous execution is finite and fail-closed; every planned action is scope-bound and permission-preflighted before acting.
 - Model/agent/specialist routing selects only healthy, approved, requirement-compatible registered specialists and supplies deterministic collaboration fallbacks.
+- Reflection/learning accepts only verified same-scope outcomes, requires sufficient evidence, persists evidence/proposals, and emits reversible bounded proposals.
+- Natural-language intake now has an explicit untrusted-input boundary: scope matching, confidence/ambiguity gates, and fail-closed handling for high-impact language.
 
 ## Current Engineering Gaps
-1. **Controlled reflection/learning:** verified outcomes are recorded, but no durable policy yet turns them into bounded, auditable routing/planning improvements.
-2. **Evidence-backed arbitrary natural-language goal understanding:** structured goals remain the safe boundary; arbitrary high-impact intent inference is not yet trusted.
-3. **Production capability source configuration:** generic read-only scouts exist; each real external source still needs explicit trusted provenance configuration and validation.
-4. **Broad ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
-5. **Distributed resource/provider scheduling:** current routing is deterministic/local rather than a distributed scheduler.
+1. **General semantic goal understanding:** the NL boundary is implemented, but a production semantic interpreter still requires explicit provider/model integration and evaluation; the deterministic parser intentionally handles only simple bounded normalization.
+2. **Production capability source configuration:** generic read-only scouts exist; each real external source still needs explicit trusted provenance configuration and validation.
+3. **Broad ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
+4. **Distributed resource/provider scheduling:** current routing is deterministic/local rather than a distributed scheduler.
 
 ## Safety Boundaries
 - Routing is selection, not authority.
-- Only registered, approved, healthy specialists satisfying explicit requirements can be selected.
-- Cost limits and required metadata are enforced before selection.
-- Routing fallbacks are evaluated by the same eligibility gates.
+- Only registered, approved, healthy, requirement-compatible specialists can be selected.
+- Learning cannot override hard routing gates or mutate authority, permissions, credentials, security controls, privileged code, or handlers.
+- Natural-language input never grants authority or directly creates executable actions.
+- Ambiguous, low-confidence, scope-mismatched, or high-impact natural-language intent fails closed or requires explicit confirmation.
 - Selected capabilities still pass through existing permission, security, lifecycle, canary, resource, execution, and verification boundaries.
-- Improvement remains proposal-only and cannot mutate privileged code, permissions, credentials, or authority.
 - No automatic credentials, spending, irreversible actions, authority escalation, CAPTCHA bypass, or platform-control bypass.
 
 ## Capability Matrix
 `DORMAMMU_CAPABILITY_MATRIX.md` is the engineering checkpoint for implementation status and evidence.
 
 ## Next Execution Target
-Proceed to the next highest-value unfinished dependency: **controlled reflection and outcome learning**, turning verified execution outcomes into bounded, auditable improvement signals without granting self-modification or new authority.
+Proceed to the next highest-value unfinished dependency: **production capability source configuration**, turning the generic provenance-aware JSON/HTTPS scout into explicitly configured, source-specific trusted discovery without automatic trust or installation.
 
 Preferred operating path:
 `OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → CAPABILITY SELECTION → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN`
