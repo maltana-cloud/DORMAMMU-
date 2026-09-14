@@ -1,42 +1,42 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Trusted capability discovery and admission is implemented and verified on `main`.** DORMAMMU now has explicit provenance evidence, strict trust-source gating, security/compatibility/performance/license/cost/permission evaluation, deterministic acquisition ranking and fallback planning, explicit owner approval, lifecycle/canary controls, and durable SQLite-backed admitted-capability state.
+**Bounded autonomous execution and deterministic model/agent/specialist routing are implemented and verified on `main` through the current checkpoint.** DORMAMMU now has a permission-gated operating loop plus deterministic selection of already-admitted intelligence capabilities and ordered collaboration plans with ranked fallbacks.
 
 ## Truth Rule
-Implementation claims require code, meaningful tests, integration evidence, and successful CI. The trusted capability admission milestone was merged to `main` at `d6b8431f98a13a825875a9a6e8aaaffa773a39ec` after the final branch CI passed.
+Implementation claims require code, meaningful tests, integration evidence, and successful CI. The autonomous operating-path milestone was merged at `d73d6b609e31c3a5963b977c566fee5f4d66ca78`. The routing milestone is verified only after its branch CI passes and its PR is merged.
 
 ## Repository Checkpoint
 - Canonical runtime: `DORMAMMURuntime`; `DEVINTELRuntime` remains a compatibility alias.
 - Evidence-backed knowledge synthesis and executive integration exist on `main`.
 - Durable resource leases are implemented with expiry, atomic capacity acquisition, persistence, and runtime integration.
-- Capability discovery now has provenance-aware evidence and strict admission gates; newly discovered external candidates are not trusted automatically.
-- Capability acquisition coordinates discovery → evaluation → explicit approval → lifecycle registration → canary → fallback without installing software, acquiring credentials, spending money, executing external candidates, or bypassing owner/platform controls.
+- Capability discovery has provenance-aware evidence, strict admission gates, durable admitted-capability state, and bounded JSON catalog scouting.
+- Autonomous execution has explicit OBSERVE → UNDERSTAND → PLAN → PERMISSION → SECURITY_CHECK → ACT → VERIFY → RECORD → IMPROVE phases, bounded action counts, durable cycle history, and proposal-only improvement.
+- Model/agent/specialist routing now selects only healthy, approved, cost-eligible registered specialists, ranks them deterministically, and can produce ordered collaboration steps with ranked per-step fallbacks.
 
 ## Current Engineering Gaps
-1. **Production capability discovery adapters:** legitimate source adapters still need to be built and explicitly trusted per source; external candidates remain untrusted until provenance and all gates pass.
-2. **Evidence-backed arbitrary natural-language goal understanding:** current interpreter normalizes explicit fields rather than safely inferring arbitrary goals.
-3. **Model/agent/specialist routing and collaboration:** automated selection and coordination remain incomplete.
-4. **Reflection/learning:** telemetry exists, but no controlled outcome-learning loop yet turns evidence into bounded improvement.
-5. **Broad ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
+1. **Evidence-backed arbitrary natural-language goal understanding:** current interpreter normalizes explicit fields rather than safely inferring arbitrary goals.
+2. **Controlled reflection/learning:** telemetry and proposal-only improvement exist, but no durable outcome-learning policy yet turns verified outcomes into bounded routing or planning improvements.
+3. **Broader ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
+4. **Production source-specific discovery configuration:** generic read-only catalog adapters exist; each external source still requires explicit provenance/trust configuration before admission.
+5. **Richer distributed resource/provider scheduling:** routing is deterministic and local; distributed scheduling and broader resource orchestration remain incomplete.
 
 ## Safety Boundaries
-- Capability provenance is evidence, not authority.
-- External candidates fail closed when provenance/trusted-source evidence is absent in strict mode.
-- Capability admission still requires explicit owner approval and the existing lifecycle/canary gates.
-- Resource leases only reserve already-registered resources; they never provision machines, acquire credentials, spend money, or grant authority.
-- Core action execution remains behind the permission boundary.
-- Recovery uses externally supplied cryptographic authorization with tamper, expiry, and replay protection.
-- No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass.
+- Routing is selection, not authority.
+- Only registered/approved/healthy specialists satisfying explicit requirements can be selected.
+- Cost limits and required metadata are enforced before selection.
+- Provider/capability output remains untrusted until downstream verification and truth/provenance controls pass.
+- Selected capabilities still pass through existing permission, security, lifecycle, canary, resource, execution, and verification boundaries.
+- No automatic credentials, spending, irreversible actions, authority escalation, or unrestricted self-modification.
 
 ## Capability Matrix
-`DORMAMMU_CAPABILITY_MATRIX.md` is reconciled to the verified capability-admission and durable-resource milestones.
+`DORMAMMU_CAPABILITY_MATRIX.md` is the engineering checkpoint for implementation status and evidence.
 
 ## Next Execution Target
-Proceed to the next highest-value dependency: **production capability discovery adapters and source-specific trust configuration**, then verify and move to the next category.
+Proceed to the next dependency: **controlled reflection and outcome learning**, turning verified execution outcomes into bounded, auditable improvement signals without granting self-modification or new authority.
 
-Preferred capability path:
-`REQUIREMENT → CAPABILITY REGISTRY → GAP → SCOUT → PROVENANCE → TRUST → SECURITY → COMPATIBILITY → PERFORMANCE → COST → LICENSE → PERMISSION → COMPARE → SELECT → EXPLICIT APPROVAL → REGISTER → CANARY → ACTIVATE → MONITOR → FALLBACK`
+Preferred operating path:
+`OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → CAPABILITY SELECTION → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN`
 
 ## Verification Note
 Repository branch-protection/ruleset enforcement has not been independently verified through the available integration, so repository-level protection is not claimed. Architectural safety boundaries remain code-enforced.
