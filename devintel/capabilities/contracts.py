@@ -7,6 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Mapping, Protocol, Sequence
+from .evidence import CapabilityEvidence
 
 
 class CapabilityStatus(str, Enum):
@@ -75,6 +76,7 @@ class CapabilityDescriptor:
     permissions: tuple[str, ...] = ()
     dependencies: tuple[str, ...] = ()
     metadata: Mapping[str, str] = field(default_factory=dict)
+    evidence: tuple[CapabilityEvidence, ...] = ()
     def __post_init__(self) -> None:
         for value, field_name in ((self.capability_id, "capability_id"), (self.name, "name"), (self.version, "version"), (self.provider, "provider"), (self.license, "license")):
             if not isinstance(value, str) or not value.strip(): raise ValueError(f"{field_name} is required")
