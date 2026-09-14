@@ -5,7 +5,7 @@ import os
 from typing import Any, Sequence
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.contracts import Observation
-from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest)
+from ..capabilities import (CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest, ResourceLeaseStore)
 from ..capabilities.contracts import CapabilityStatus
 from ..capabilities.inventory import local_capabilities, local_resources
 from ..control.service import OwnerControlCenter
@@ -41,14 +41,14 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
         if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
         self.recovery = CryptographicRecovery(secret) if secret is not None else None
         self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state, recovery=self.recovery); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
-        self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_manager = ResourceManager(self.resource_registry); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
+        self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_lease_store = ResourceLeaseStore(resource_lease_store_path); self.resource_manager = ResourceManager(self.resource_registry, self.resource_lease_store); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
         self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.refresh_local_inventory()
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
@@ -97,7 +97,7 @@ class DORMAMMURuntime:
     def run_objective_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute_from_synthesis(objective, synthesis, tasks, **kwargs)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
-    def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close()
+    def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")

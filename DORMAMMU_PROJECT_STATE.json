@@ -1,24 +1,22 @@
 {
-  "schema_version": "1.8",
+  "schema_version": "1.9",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
-  "branch": "main",
-  "latest_repository_commit": "19d4d3ae0682cf4a34f80db0a0da7d6fd6379aae",
-  "latest_verified_code_commit": "19d4d3ae0682cf4a34f80db0a0da7d6fd6379aae",
+  "branch": "codex/durable-resource-leases",
+  "base_main_commit": "8ee3881a2a4c269f9ebeb0cd32b9f0ebf75f1219",
+  "checkpoint_commit": "c28251f3f8f95dd77135a7f562a52feae9cdac37",
   "verification": {
-    "latest_feature_ci_run": 603,
-    "latest_feature_ci_status": "success",
-    "latest_feature_commit": "c78dfeae0f5de5f027d8fd1f44333d902948e694",
-    "post_merge_main_ci": "not_yet_observed",
-    "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "repository_state_checked": true,
+    "active_work": "durable resource leases",
+    "ci_status": "pending",
+    "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
   },
   "milestones": {
     "identity_migration": "IMPLEMENTED",
     "capability_resource_discovery": "TESTED",
-    "resource_compute_management": "TESTED",
+    "resource_compute_management": "IMPLEMENTED",
     "bounded_operating_path": "TESTED",
     "executive_cognition_foundation": "TESTED",
     "operational_telemetry": "TESTED",
@@ -30,7 +28,8 @@
     "security/containment/recovery/owner control",
     "research/truth/provenance and provider routing",
     "capability/resource registry, discovery, evaluation, lifecycle and canary",
-    "safe local resource inventory and bounded resource reservations",
+    "safe local resource inventory",
+    "durable SQLite resource leases with expiry and transaction-protected acquisition",
     "bounded operation execution with verification and recording",
     "objective/goal/task executive contracts and bounded execution",
     "SQLite-backed operational telemetry and evidence-derived health",
@@ -40,14 +39,14 @@
     "path": "DORMAMMU_CAPABILITY_MATRIX.md",
     "required_fields": ["status","implementation_path","tests","ci_evidence","dependencies","security_status","known_limitations","next_action","version","last_verified_commit"],
     "status_vocabulary": ["PLANNED","DESIGNED","PARTIAL","IMPLEMENTED","TESTED","VERIFIED","DEPLOYED","BLOCKED"],
-    "blocked_major_capabilities": [],
-    "note": "The matrix is the detailed record for every major capability; this file is the machine-readable project checkpoint."
+    "blocked_major_capabilities": []
   },
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
     "Lifecycle transitions are explicit and state-validated; capability approval requires permission.",
     "Executive tasks must explicitly declare objective scope and capability approval is explicit.",
     "Resource management reserves only registered resources and fails closed on unknown quantitative capacity.",
+    "Resource leases expire and release capacity; lease persistence does not grant authority.",
     "Telemetry is evidence, not authority, and health requires sufficient observations.",
     "Only verified research claims enter the verified synthesis contract.",
     "Contradictory or low-confidence synthesis signals cannot become executive requirements.",
@@ -58,18 +57,17 @@
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
-    "post-merge CI verification for the knowledge synthesis merge commit",
-    "evidence-backed executive intelligence integration",
-    "durable resource leases",
+    "durable resource lease CI/integration verification",
     "trusted external capability acquisition",
     "evidence-backed arbitrary natural-language goal understanding",
     "model/agent/specialist routing and collaboration",
     "cross-domain reasoning and ecosystem-scale learning"
   ],
   "next_execution_target": {
-    "name": "evidence-backed executive intelligence",
-    "status": "PLANNED",
-    "flow": "SYNTHESIZE → PRESERVE PROVENANCE/UNCERTAINTY → EXTRACT REQUIREMENTS/SUCCESS CRITERIA → PLAN → BOUNDED EXECUTION → VERIFY → RECORD"
+    "name": "durable resource lease verification",
+    "status": "IMPLEMENTED_PENDING_VERIFICATION",
+    "flow": "REGISTERED RESOURCE → ELIGIBILITY → DURABLE LEASE → EXPIRY/RELEASE → BOUNDED OPERATION → TELEMETRY → HEALTH/CANARY"
   },
-  "production_readiness": "NOT_CLAIMED"
+  "production_readiness": "NOT_CLAIMED",
+  "resume_instruction": "Verify the active durable-lease branch with full CI and integration/security checks. If verified, merge it, refresh main state, then inspect and implement the highest-priority remaining dependency rather than stopping."
 }
