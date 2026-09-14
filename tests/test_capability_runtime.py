@@ -30,6 +30,24 @@ def test_runtime_can_reserve_and_release_local_cpu():
         runtime.close()
 
 
+def test_runtime_lease_store_can_survive_runtime_reopen(tmp_path):
+    path = str(tmp_path / "resource-leases.sqlite3")
+    first = DORMAMMURuntime(resource_lease_store_path=path)
+    try:
+        result = first.reserve_resource(ResourceRequest(ResourceKind.CPU, quantity=1, ttl_seconds=60))
+        assert result.granted and result.reservation_id
+        reservation_id = result.reservation_id
+    finally:
+        first.close()
+
+    second = DORMAMMURuntime(resource_lease_store_path=path)
+    try:
+        assert second.resource_manager.reservation(reservation_id) is not None
+        assert any(item[0] == reservation_id for item in second.resource_reservations())
+    finally:
+        second.close()
+
+
 def test_runtime_discovery_records_a_gap():
     runtime = DORMAMMURuntime()
     try:
