@@ -6,7 +6,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Current checkpoint:** Categories 1–7 are complete and locked at the repository architecture level. Category 7 was implemented in PR #68, merged as `be49628ed4ac7039f20823731b71e9f59bf7cb1a`, tested by feature-head CI #848, and followed by successful main-branch documentation checkpoint runs #850 and #851. Production readiness remains unclaimed.
+**Current checkpoint:** Categories 1–8 are complete and locked at the repository architecture level. Production readiness remains unclaimed.
 
 | Capability | Status | Implementation / evidence | Security boundary | Known limitation |
 |---|---|---|---|---|
@@ -16,8 +16,8 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | Ecosystem Awareness | VERIFIED | bounded aggregation plus approved HTTPS awareness adapter | trusted-source/host/size/time/content gates; observations are untrusted | live multi-source polling/distribution loop remains future work |
 | Engineering Intelligence | VERIFIED | bounded static repository/code intelligence and safety tests | static analysis; no implicit import/execute | broader repository graph, dependency vulnerability intelligence, repair loop remain future work |
 | Language & Communication | VERIFIED | bounded language intelligence, normalization, tokenization, intent/risk hints, response constraints | advisory only; high-impact intents require confirmation | heuristic language detection and production speech/provider adapters remain future work |
-| Research & Domain Expansion | COMPLETE / LOCKED | `devintel/modules/research/` bounded domain evidence/proposal/assessment/expansion/registry contracts; PR #68; CI #848; main docs CI #850/#851 | verified evidence required; confidence/risk/capability coverage are fail-closed; registry admission grants no execution authority | no unrestricted crawler, installation, authentication, spending, publishing, or domain execution |
-| Creative Intelligence | NEXT | architecture target | must reuse existing permission, resource, verification and recovery boundaries | major implementation work remains |
+| Research & Domain Expansion | COMPLETE / LOCKED | bounded domain evidence/proposal/assessment/expansion/registry contracts; PR #68; CI #848; main docs CI #850/#851 | verified evidence required; confidence/risk/capability coverage are fail-closed; registry admission grants no execution authority | no unrestricted crawler, installation, authentication, spending, publishing, or domain execution |
+| Creative Intelligence | COMPLETE / LOCKED | deterministic ideation/variation/planning/critique/repair; consistency; provider compatibility/fallback; verification/safety; lineage persistence; creation-request handoff; language/research/cognition context; runtime telemetry integration; PR #69; CI #946 (320 passed) | advisory creative layer; no publish/spend/auth/authority; creation adapter only constructs a host-routed request and does not execute providers | subjective artistic quality and factual truth require downstream verification; real provider credentials/quotas remain environment-dependent |
 | Simulation & Interactive Worlds | PLANNED | architecture direction | scoped actions only | no subsystem yet |
 | Social & Community Intelligence | PARTIAL | community/publishing-facing modules and policy foundations | no fake engagement; identity and authority separated | no complete autonomous community loop |
 | Economic & Business Intelligence | PARTIAL | opportunity/business foundations | spending and financial authority protected | no autonomous commercial execution |
@@ -25,23 +25,22 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | Autonomous Operations | PARTIAL | bounded autonomy cycle, telemetry, recovery, learning | finite, permission-preflighted, proposal-oriented | continuous distributed operations not built |
 | Evolution & Self-Improvement | EARLY | controlled reflection/learning foundations | no unrestricted self-modification | training/evaluation/model factory not built |
 
-## Category 7 completion boundary
+## Category 8 completion boundary
 
-Category 7 is complete when DORMAMMU can represent a proposed new domain using explicit evidence and boundaries, assess that proposal against verification state, evidence confidence, declared risk, and required capability coverage, and admit only eligible proposals into a deterministic versioned registry. Registration is separate from execution authority.
+Category 8 is complete at the repository architecture level: creative understanding, ideation, planning, creation handoff, critique, repair, verification, consistency, provenance/lineage, resource/provider awareness, cognition/research/language integration, permission/security boundaries, observability, persistence, tests, CI, and truthful project-state documentation are implemented and verified. External creation/publishing remains authorized and bounded; intelligence itself never grants authority.
 
-The implemented boundary deliberately does **not** make domain expansion equivalent to unrestricted autonomous acquisition. It does not install code, execute providers, authenticate accounts, spend money, publish externally, bypass platform controls, or grant permissions.
+## Category 8 verification evidence
 
-## Category 7 verification evidence
+- Feature branch: `codex/category-8-creative-intelligence`
+- Pull request: #69
+- Feature-head CI: workflow #946 — **success; 320 tests passed**.
+- Runtime integration: `DORMAMMURuntime.creative`, `creative_plan(...)`, `creative_context_for(...)`, and `creative_creation_request(...)`.
+- Durable lineage is opt-in through `creative_lineage_store_path`; default runtime storage remains in-memory.
+- Creation handoff uses the existing host-controlled generation request contract; the creative layer does not contact providers or grant execution authority.
 
-- PR #68: `feat: complete category 7 research and domain expansion`
-- Merge commit: `be49628ed4ac7039f20823731b71e9f59bf7cb1a`
-- Feature-head CI: workflow #848 — successful, including tests
-- Main checkpoint CI: workflow #850 — successful
-- Subsequent main documentation CI: workflow #851 — successful
+## Highest-priority gaps after Category 8
 
-## Highest-priority gaps after Category 7
-
-1. Category 8 — Creative Intelligence.
+1. Category 9 — Simulation & Interactive Worlds.
 2. Real external research providers and live multi-source research adapters.
 3. Full repository graph/dependency intelligence and broader coding-agent orchestration.
 4. Distributed resource/provider scheduling and broader operational telemetry.
