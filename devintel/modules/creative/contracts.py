@@ -36,15 +36,17 @@ class CreativeBrief:
     asset_kind: AssetKind
     constraints: Tuple[str, ...] = field(default_factory=tuple)
     success_criteria: Tuple[str, ...] = field(default_factory=tuple)
+    evidence_refs: Tuple[str, ...] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
         for value in (self.purpose, self.audience):
             if not value or len(value.strip()) > MAX_TEXT:
                 raise ValueError("brief fields must be non-empty and bounded")
-        if len(self.constraints) > MAX_ITEMS or len(self.success_criteria) > MAX_ITEMS:
-            raise ValueError("brief item collections are bounded")
-        if any(not isinstance(v, str) or not v.strip() or len(v) > MAX_TEXT for v in (*self.constraints, *self.success_criteria)):
+        collections = (*self.constraints, *self.success_criteria, *self.evidence_refs)
+        if any(not isinstance(v, str) or not v.strip() or len(v) > MAX_TEXT for v in collections):
             raise ValueError("brief items must be non-empty and bounded")
+        if any(len(items) > MAX_ITEMS for items in (self.constraints, self.success_criteria, self.evidence_refs)):
+            raise ValueError("brief item collections are bounded")
 
 
 @dataclass(frozen=True)
@@ -99,7 +101,7 @@ class CreativeEvaluation:
 
 
 def brief_digest(brief: CreativeBrief) -> str:
-    payload = "\n".join((brief.purpose.strip(), brief.audience.strip(), brief.asset_kind.value, *brief.constraints, *brief.success_criteria))
+    payload = "\n".join((brief.purpose.strip(), brief.audience.strip(), brief.asset_kind.value, *brief.constraints, *brief.success_criteria, *brief.evidence_refs))
     return sha256(payload.encode("utf-8")).hexdigest()
 
 
