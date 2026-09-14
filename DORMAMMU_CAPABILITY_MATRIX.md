@@ -6,7 +6,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Current checkpoint:** Categories 1–7 are complete and locked at the repository architecture level. Category 8 is actively being completed on its feature branch and is intentionally not marked complete. Production readiness remains unclaimed.
+**Current checkpoint:** Categories 1–8 are complete and locked at the repository architecture level. Production readiness remains unclaimed.
 
 | Capability | Status | Implementation / evidence | Security boundary | Known limitation |
 |---|---|---|---|---|
@@ -17,7 +17,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | Engineering Intelligence | VERIFIED | bounded static repository/code intelligence and safety tests | static analysis; no implicit import/execute | broader repository graph, dependency vulnerability intelligence, repair loop remain future work |
 | Language & Communication | VERIFIED | bounded language intelligence, normalization, tokenization, intent/risk hints, response constraints | advisory only; high-impact intents require confirmation | heuristic language detection and production speech/provider adapters remain future work |
 | Research & Domain Expansion | COMPLETE / LOCKED | bounded domain evidence/proposal/assessment/expansion/registry contracts; PR #68; CI #848; main docs CI #850/#851 | verified evidence required; confidence/risk/capability coverage are fail-closed; registry admission grants no execution authority | no unrestricted crawler, installation, authentication, spending, publishing, or domain execution |
-| Creative Intelligence | PARTIAL | `devintel/modules/creative/`: ideation, variations, planning, critique/repair, consistency contracts, provider/resource compatibility, lineage, runtime integration and tests | advisory-only creative layer; no publish/spend/auth/authority; provider catalogue does not contact providers | deeper cognition/research/language/security/telemetry integration, durable persistence, richer quality verification, and authorized creation adapters remain |
+| Creative Intelligence | COMPLETE / LOCKED | deterministic ideation/variation/planning/critique/repair; consistency; provider compatibility/fallback; verification/safety; lineage persistence; creation-request handoff; language/research/cognition context; runtime telemetry integration; PR #69; CI #946 (320 passed) | advisory creative layer; no publish/spend/auth/authority; creation adapter only constructs a host-routed request and does not execute providers | subjective artistic quality and factual truth require downstream verification; real provider credentials/quotas remain environment-dependent |
 | Simulation & Interactive Worlds | PLANNED | architecture direction | scoped actions only | no subsystem yet |
 | Social & Community Intelligence | PARTIAL | community/publishing-facing modules and policy foundations | no fake engagement; identity and authority separated | no complete autonomous community loop |
 | Economic & Business Intelligence | PARTIAL | opportunity/business foundations | spending and financial authority protected | no autonomous commercial execution |
@@ -27,18 +27,20 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 ## Category 8 completion boundary
 
-Category 8 is complete only when creative understanding, ideation, planning, creation integration, critique, repair, verification, consistency, provenance/lineage, resource/provider awareness, cognition/research/language integration, permission/security boundaries, observability, persistence requirements, tests, CI, and truthful project-state documentation are all implemented and verified. External creation/publishing remains authorized and bounded; intelligence itself never grants authority.
+Category 8 is complete at the repository architecture level: creative understanding, ideation, planning, creation handoff, critique, repair, verification, consistency, provenance/lineage, resource/provider awareness, cognition/research/language integration, permission/security boundaries, observability, persistence, tests, CI, and truthful project-state documentation are implemented and verified. External creation/publishing remains authorized and bounded; intelligence itself never grants authority.
 
-## Current Category 8 evidence
+## Category 8 verification evidence
 
 - Feature branch: `codex/category-8-creative-intelligence`
-- Runtime integration: `DORMAMMURuntime.creative` and `creative_plan(...)`
-- Current test coverage includes deterministic planning, ideation/variation bounds, critique/revision, consistency, provider fallback/compatibility, lineage, runtime integration, and authority-surface checks.
-- Latest observed repository test workflow before the most recent documentation commit passed; the latest documentation commit's workflow must still be observed.
+- Pull request: #69
+- Feature-head CI: workflow #946 — **success; 320 tests passed**.
+- Runtime integration: `DORMAMMURuntime.creative`, `creative_plan(...)`, `creative_context_for(...)`, and `creative_creation_request(...)`.
+- Durable lineage is opt-in through `creative_lineage_store_path`; default runtime storage remains in-memory.
+- Creation handoff uses the existing host-controlled generation request contract; the creative layer does not contact providers or grant execution authority.
 
-## Highest-priority gaps after Category 7
+## Highest-priority gaps after Category 8
 
-1. Finish Category 8 — Creative Intelligence before moving to Category 9.
+1. Category 9 — Simulation & Interactive Worlds.
 2. Real external research providers and live multi-source research adapters.
 3. Full repository graph/dependency intelligence and broader coding-agent orchestration.
 4. Distributed resource/provider scheduling and broader operational telemetry.
