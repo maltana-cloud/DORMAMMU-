@@ -6,51 +6,48 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Matrix checkpoint:** Category 2 Core Intelligence is complete and locked at the repository architecture level. The verified checkpoint includes bounded objective understanding, evidence-backed synthesis, executive cognition/task boundaries, specialist and outcome-aware routing, controlled learning, semantic safety evaluation, and an explicit bounded cognitive state/self-model. Post-merge main CI passed for merge commit `04084c7780ea1bf615e35fcd5e0873b58ec6d5a3` in workflow run #806.
+**Current checkpoint:** Categories 1–7 are complete and locked at the repository architecture level. Category 7 was implemented in PR #68, merged as `be49628ed4ac7039f20823731b71e9f59bf7cb1a`, tested by feature-head CI #848, and followed by successful main-branch documentation checkpoint runs #850 and #851. Production readiness remains unclaimed.
 
-| Capability | Status | Implementation path | Tests | CI evidence | Dependencies | Security status | Known limitations | Next action | Version | Last verified commit |
-|---|---|---|---|---|---|---|---|---|---|---|
-| DORMAMMU identity migration | IMPLEMENTED | `DORMAMMU_CHARTER.md`; `DORMAMMU_*`; `devintel/runtime/` | compatibility coverage | successful CI | legacy namespace compatibility | Protected; no blind rename | legacy names remain intentionally | Remove legacy naming where compatibility permits | 1.0 | `a3c730...` |
-| Capability & Resource Discovery | IMPLEMENTED | `devintel/capabilities/` discovery, evidence, acquisition, catalog, sources | discovery/acquisition/provenance/catalog/source/lifecycle/runtime tests | PR #51 CI passed | registries, provenance, evaluator, lifecycle, canary | Fail-closed strict provenance; no automatic trust/install | real sources still require legitimate explicit configuration | Complete Category 3 operational layer | 1.3 | `5a1dde...` |
-| Resource / Compute Management | VERIFIED | `devintel/capabilities/resources.py`, `leases.py`, `inventory.py` | resource/lease/runtime tests | successful CI | resource registry, durable lease store, local inventory | fail-closed capacity; no provisioning/spending | no distributed scheduler | Add richer metrics/scheduling in Category 3 | 1.1 | `11d3eb5...` |
-| Domain Intelligence | TESTED | `devintel/modules/` research, education, specialists | domain/module suite | successful CI | core runtime, providers | bounded modules | coverage uneven | Expand later through domain categories | 1.0 | `d73d6b6...` |
-| Ecosystem Awareness | PARTIAL | `devintel/modules/growth/awareness.py` + growth contracts/engine | `tests/test_awareness_aggregation.py` + growth tests | post-merge evidence not yet separately established | awareness observations, provenance, growth policy | HTTPS evidence only; scoped/bounded; no distribution authority | no live multi-source adapter or publishing loop yet | Connect approved source adapters and freshness/importance feeds | 0.2 | `1809416...` |
-| Knowledge synthesis / evidence reasoning | VERIFIED | `devintel/modules/research/synthesis.py`; `devintel/executive/evidence.py`; `devintel/executive/cognition.py` | synthesis/executive/cognition tests | Category 2 main CI passed | verified claims, provenance | contradictions/uncertainty preserved | semantic interpretation still depends on admitted providers when used | Reuse in later categories | 0.3 | `04084c7...` |
-| Executive cognition foundation | VERIFIED | `devintel/executive/` contracts/engine/evidence/cognition | executive/cognition/NL tests | Category 2 main CI passed | bounded operations, capability/resource decisions | explicit scope/approval; no authority from cognition | no unrestricted high-impact inference | Reuse as input to later capability/resource work | 0.2 | `04084c7...` |
-| Model / Agent / Specialist Routing | VERIFIED | `devintel/executive/routing.py` + outcome-aware routing | routing/outcome-aware tests | earlier milestone CI + Category 2 main CI | registered specialists, health, approval, explicit requirements, verified outcomes | selection is not authority; learned preference cannot override hard gates | deterministic/local; no autonomous enrollment | Add distributed scheduling in Category 3 | 1.1 | `04084c7...` |
-| Controlled reflection / outcome learning | VERIFIED | `devintel/autonomy/learning.py`, `learning_store.py` | outcome learning/routing tests | Category 2 main CI passed | verified same-scope outcomes, durable store | reversible proposals only | no unrestricted policy mutation | Feed verified outcomes into later scheduling | 1.1 | `04084c7...` |
-| Outcome-aware routing integration | VERIFIED | `devintel/executive/outcome_routing.py` | `tests/test_outcome_aware_routing.py` | Category 2 main CI passed | durable proposals, registered specialists | advisory bounded scoring; hard gates dominate | local service, not distributed scheduling | Connect with Category 3 resources | 0.1 | `04084c7...` |
-| Bounded natural-language goal intake | VERIFIED | `devintel/executive/nl_goal.py` | natural-language goal/adversarial tests | PR #61 CI + Category 2 main CI | explicit scope, interpreter contract | untrusted input; high-impact/ambiguity gates | provider behavior still needs operational evidence | Preserve regression suite | 0.1 | `04084c7...` |
-| Semantic goal safety evaluation | VERIFIED | `devintel/executive/semantic_evaluation.py` | `tests/test_semantic_evaluation.py` | PR #62 head CI + Category 2 main CI | bounded goal boundary | structured outcomes only; no authority/actions | real-provider operational evaluation remains follow-up | Gather legitimate provider/model evidence when available | 0.1 | `04084c7...` |
-| Cognitive state / bounded self-model | VERIFIED | `devintel/executive/cognition.py` | `tests/test_core_cognition.py` + Category 2 regression coverage | Category 2 main CI passed | synthesis, capability/resource inventory | descriptive only; never grants authority | bounded descriptive self-model; not unrestricted self-modification | Reuse as input to Category 3/4 | 0.1 | `04084c7...` |
-| Operational telemetry | TESTED | `devintel/operations/telemetry.py`; bounded/autonomy stores | telemetry/bounded/runtime/autonomy tests | successful CI | bounded execution, SQLite | evidence only | richer provider/resource metrics pending | Feed verified outcomes into later categories | 0.2 | `d73d6b6...` |
-| Full autonomous operating path | VERIFIED | `devintel/autonomy/`, executive, operations, capabilities, routing, learning | autonomy/safety/cycle/runtime/routing/learning tests | Category 2 main CI passed | cognition, routing, resource/capability, permission, verification | bounded, permission-preflighted, finite, proposal-only improvement | distributed scheduling not built | Complete Category 3 scheduling/resource layers | 0.7 | `04084c7...` |
-| Production capability source configuration | IMPLEMENTED | `devintel/capabilities/sources.py` | `tests/test_capability_sources.py` | source PR CI passed | explicit source config, trusted evidence policy, HTTPS scout | disabled by default; host/timeout/size/trust gates | no source is silently trusted or installed | Operationally validate legitimate configured sources | 1.0 | `5a1dde...` |
-| Model Training & Evolution | PLANNED | architecture direction | none | baseline | datasets, compute, evaluation, governance | no unrestricted self-modification | loop not built | Define isolated training/evaluation contracts | 0.1 | `d73d6b6...` |
-| Engineering / Coding Intelligence | PARTIAL | developer/domain modules + bounded execution | existing tests | successful CI | core, tools, sandbox | generated code controlled | no complete coding-agent loop | Connect coding specialist to bounded execution | 0.1 | `d73d6b6...` |
-| Language & Speech Intelligence | PLANNED | architecture intent | none | baseline | routing, providers, platform I/O | credentials isolated | no production speech subsystem | Define contracts | 0.1 | `d73d6b6...` |
-| Opinion Intelligence | PLANNED | charter intent | none | baseline | truth/provenance, discourse | fact/opinion/speculation separated | no engine | Define contract | 0.1 | `d73d6b6...` |
-| Platform Identity & Account Management | PARTIAL | control/security + adapters | security/control/provider tests | successful CI | auth/session/capability boundaries | identity separated from authority | no complete identity plane | Implement scoped account/session contracts | 0.1 | `d73d6b6...` |
-| Community Intelligence | PARTIAL | community/publishing-facing modules | existing tests | successful CI | platform adapters, identity, memory, policy | no fake engagement | no autonomous community loop | Build isolated community state/policy | 0.1 | `d73d6b6...` |
-| Crypto / Blockchain Ecosystem | PLANNED | domain scope | none | baseline | market data, security, account controls | no unrestricted trading/withdrawal | no subsystem | Define read-only intelligence contracts | 0.1 | `d73d6b6...` |
-| Creative / Media Systems | PARTIAL | creative/media architecture/modules | applicable tests | successful CI | routing, resources, verification | generation not quality proof | no complete pipeline | Define asset/project/quality contracts | 0.1 | `d73d6b6...` |
-| Music / Audio | PLANNED | architecture intent | none | baseline | media/audio providers, resources | providers untrusted | no system | Define contracts | 0.1 | `d73d6b6...` |
-| Gaming | PLANNED | architecture intent | none | baseline | creative/media, runtime, resources | actions scoped | no subsystem | Define boundary | 0.1 | `d73d6b6...` |
-| Business / Revenue / Reinvestment | PARTIAL | opportunity/business modules + owner control | existing tests | successful CI | analytics, owner control, financial boundaries | spending protected | no autonomous commercial execution | Implement outcome contracts | 0.1 | `d73d6b6...` |
-| Owner Identity / Zero-Trust Recovery | TESTED | security recovery/orchestrator/owner control | recovery tests | successful CI | external secret provisioning | HMAC tamper/expiry/replay protection | provisioning external | Harden provisioning | 1.0 | `d73d6b6...` |
-| Self-Model / Resilience / Continuous Evolution | PARTIAL | autonomy, monitoring, security, recovery, capability lifecycle | autonomy/security/monitoring tests | successful CI | observations, metrics, recovery, controlled improvement | proposal-only improvement | general semantic autonomy remains bounded | Continue in later categories | 0.3 | `ec62eae...` |
+| Capability | Status | Implementation / evidence | Security boundary | Known limitation |
+|---|---|---|---|---|
+| Foundation & Governance | VERIFIED | charter, working rules, project state, engineering map, governance controls | explicit authority and fail-closed governance | operational governance still needs real deployment evidence |
+| Core Intelligence | VERIFIED | cognition, evidence synthesis, routing, learning, semantic safety evaluation, bounded self-model | cognition never grants authority | provider-specific operational evidence remains future work |
+| Capability & Resource Intelligence | VERIFIED | discovery, provenance, capability/resource lifecycle, inventory, leases, scheduling | explicit permissions; no silent installation/provisioning/spending | distributed/provider-backed scheduling remains future work |
+| Ecosystem Awareness | VERIFIED | bounded aggregation plus approved HTTPS awareness adapter | trusted-source/host/size/time/content gates; observations are untrusted | live multi-source polling/distribution loop remains future work |
+| Engineering Intelligence | VERIFIED | bounded static repository/code intelligence and safety tests | static analysis; no implicit import/execute | broader repository graph, dependency vulnerability intelligence, repair loop remain future work |
+| Language & Communication | VERIFIED | bounded language intelligence, normalization, tokenization, intent/risk hints, response constraints | advisory only; high-impact intents require confirmation | heuristic language detection and production speech/provider adapters remain future work |
+| Research & Domain Expansion | COMPLETE / LOCKED | `devintel/modules/research/` bounded domain evidence/proposal/assessment/expansion/registry contracts; PR #68; CI #848; main docs CI #850/#851 | verified evidence required; confidence/risk/capability coverage are fail-closed; registry admission grants no execution authority | no unrestricted crawler, installation, authentication, spending, publishing, or domain execution |
+| Creative Intelligence | NEXT | architecture target | must reuse existing permission, resource, verification and recovery boundaries | major implementation work remains |
+| Simulation & Interactive Worlds | PLANNED | architecture direction | scoped actions only | no subsystem yet |
+| Social & Community Intelligence | PARTIAL | community/publishing-facing modules and policy foundations | no fake engagement; identity and authority separated | no complete autonomous community loop |
+| Economic & Business Intelligence | PARTIAL | opportunity/business foundations | spending and financial authority protected | no autonomous commercial execution |
+| Owner & Platform Security | PARTIAL | owner-control, recovery, security foundations | zero-trust boundaries, recovery protections | deeper platform security work remains |
+| Autonomous Operations | PARTIAL | bounded autonomy cycle, telemetry, recovery, learning | finite, permission-preflighted, proposal-oriented | continuous distributed operations not built |
+| Evolution & Self-Improvement | EARLY | controlled reflection/learning foundations | no unrestricted self-modification | training/evaluation/model factory not built |
 
-## Category 2 completion boundary
+## Category 7 completion boundary
 
-Category 2 is complete when DORMAMMU can: (1) represent an objective safely, (2) understand/normalize it, (3) synthesize verified evidence while preserving uncertainty and contradiction, (4) produce bounded executive understanding and explicit task plans, (5) route work to appropriate specialists using hard safety gates plus bounded outcome learning, and (6) maintain an explicit bounded cognitive state/self-model without granting itself authority. These capabilities are implemented, tested, integrated with the existing control plane, and covered by the successful post-merge main CI checkpoint for `04084c7780ea1bf615e35fcd5e0873b58ec6d5a3`.
+Category 7 is complete when DORMAMMU can represent a proposed new domain using explicit evidence and boundaries, assess that proposal against verification state, evidence confidence, declared risk, and required capability coverage, and admit only eligible proposals into a deterministic versioned registry. Registration is separate from execution authority.
 
-This does **not** claim that every domain is intelligent, that providers are always available, or that production deployment has been proven. Those belong to later capability categories and operational verification.
+The implemented boundary deliberately does **not** make domain expansion equivalent to unrestricted autonomous acquisition. It does not install code, execute providers, authenticate accounts, spend money, publish externally, bypass platform controls, or grant permissions.
 
-## Highest-priority gaps after Category 2
+## Category 7 verification evidence
 
-1. **Category 3 — Capability & Resource Intelligence completion** — connect discovery/resource infrastructure into a coherent operational capability/resource layer, including legitimate adapters and scheduling/fallback boundaries.
-2. **Category 4 — Ecosystem Awareness** — live approved source adapters and continuous observation.
-3. **Production operational evidence** — real-provider/model-specific semantic evaluation and broader historical repository evidence remain verification follow-ups.
+- PR #68: `feat: complete category 7 research and domain expansion`
+- Merge commit: `be49628ed4ac7039f20823731b71e9f59bf7cb1a`
+- Feature-head CI: workflow #848 — successful, including tests
+- Main checkpoint CI: workflow #850 — successful
+- Subsequent main documentation CI: workflow #851 — successful
+
+## Highest-priority gaps after Category 7
+
+1. Category 8 — Creative Intelligence.
+2. Real external research providers and live multi-source research adapters.
+3. Full repository graph/dependency intelligence and broader coding-agent orchestration.
+4. Distributed resource/provider scheduling and broader operational telemetry.
+5. Production speech/audio and communication-channel adapters.
+6. Model Training & Evolution / Model Factory.
+7. Production operational evidence for real providers and models.
 
 ## Verification rule
 
