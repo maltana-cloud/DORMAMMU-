@@ -3,7 +3,7 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "4a440e2137e2328eef3e5a9a5c7788524ccd8948",
+  "checkpoint_commit": "a190e11a40843dc375777d381042825eee2eaafa",
   "verification": {
     "repository_state_checked": true,
     "active_work": "broad ecosystem capabilities",
@@ -52,7 +52,8 @@
     "provider-backed semantic goal interpretation through the existing bounded untrusted-input boundary",
     "runtime-owned durable learning store, outcome-aware routing service, and semantic goal understanding entry point",
     "deterministic semantic safety evaluation with representative, ambiguous, and high-impact cases",
-    "unsafe-boundary regression coverage via injectable evaluation boundary"
+    "unsafe-boundary regression coverage via injectable evaluation boundary",
+    "DORMAMMU-named AGENTS.md constitution on main"
   ],
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
@@ -86,10 +87,10 @@
   ],
   "next_execution_target": {
     "name": "broad ecosystem capabilities",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "selection_rule": "Choose the highest-value capability that can be implemented end-to-end from the existing control plane, with explicit permissions, security checks, verification, telemetry, and tests.",
     "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE"
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Start the broad ecosystem capability category from the actual repository state. Select one end-to-end capability rather than creating disconnected stubs. Preserve existing safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Do not claim production readiness without capability-appropriate operational evidence."
+  "resume_instruction": "Continue broad ecosystem capabilities from the actual repository state. Select one end-to-end capability rather than creating disconnected stubs. Preserve existing safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Do not claim production readiness without capability-appropriate operational evidence."
 }
