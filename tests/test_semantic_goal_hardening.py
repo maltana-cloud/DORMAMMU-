@@ -5,42 +5,51 @@ from devintel.executive.nl_goal import (
     GoalInterpretation,
     ProviderSemanticNaturalLanguageInterpreter,
 )
-from devintel.providers.live import ProviderResult, ProviderRouter
+from devintel.providers.contracts import ProviderCapability
+from devintel.providers.live import GenerationResponse, ProviderRouter
 
 
 class FakeProvider:
-    def __init__(self, payload):
+    def __init__(self, payload=None, *, error=False):
         self.payload = payload
+        self.error = error
 
     def generate(self, request):
-        return ProviderResult(True, type("Output", (), {"text": json.dumps(self.payload)})(), "")
+        if self.error:
+            raise RuntimeError("offline")
+        return GenerationResponse(json.dumps(self.payload), "fake")
+
+    def health(self):
+        return type("Health", (), {"healthy": True})()
 
 
-def interpreter(payload):
+def interpreter(payload, *, error=False):
     router = ProviderRouter()
-    router.register("fake", FakeProvider(payload))
+    router.register("fake", FakeProvider(payload, error=error), ProviderCapability.GENERATION)
     return ProviderSemanticNaturalLanguageInterpreter(router)
 
 
+def valid_payload():
+    return {"intent": "research", "desired_outcome": "report", "confidence": 0.99,
+            "ambiguities": [], "constraints": {}, "priority": 0}
+
+
 def test_provider_schema_requires_exact_fields():
-    payload = {"intent": "research", "desired_outcome": "report", "confidence": 0.99,
-               "ambiguities": [], "constraints": {}, "priority": 0, "authority": "admin"}
+    payload = {**valid_payload(), "authority": "admin"}
     result = interpreter(payload).interpret("research", scope_id="scope")
     assert result.objective is None
     assert result.requires_confirmation
 
 
 def test_non_finite_confidence_fails_closed():
-    payload = {"intent": "research", "desired_outcome": "report", "confidence": float("nan"),
-               "ambiguities": [], "constraints": {}, "priority": 0}
+    payload = {**valid_payload(), "confidence": float("nan")}
     result = interpreter(payload).interpret("research", scope_id="scope")
     assert result.objective is None
     assert result.requires_confirmation
 
 
 def test_oversized_semantic_field_fails_closed():
-    payload = {"intent": "x" * 2049, "desired_outcome": "report", "confidence": 0.99,
-               "ambiguities": [], "constraints": {}, "priority": 0}
+    payload = {**valid_payload(), "intent": "x" * 2049}
     result = interpreter(payload).interpret("research", scope_id="scope")
     assert result.objective is None
 
@@ -57,23 +66,16 @@ def test_high_impact_goal_is_blocked_before_provider():
     assert result.requires_confirmation
 
 
-def test_scope_mismatch_is_fail_closed():
-    payload = {"intent": "research", "desired_outcome": "report", "confidence": 0.99,
-               "ambiguities": [], "constraints": {}, "priority": 0}
-    boundary = BoundedNaturalLanguageGoalBoundary(interpreter(payload))
-    result = boundary.understand("research", scope_id="scope-a")
-    assert result.objective is not None
-    assert result.objective.scope_id == "scope-a"
-
-
 def test_provider_exception_becomes_confirmation_required():
-    class BrokenProvider:
-        def generate(self, request):
-            raise RuntimeError("offline")
-
-    router = ProviderRouter()
-    router.register("broken", BrokenProvider())
-    result = ProviderSemanticNaturalLanguageInterpreter(router).interpret("research", scope_id="scope")
+    result = interpreter(valid_payload(), error=True).interpret("research", scope_id="scope")
     assert isinstance(result, GoalInterpretation)
     assert result.objective is None
     assert result.requires_confirmation
+
+
+def test_action_like_provider_output_remains_only_an_objective():
+    payload = {**valid_payload(), "intent": "delete the database", "desired_outcome": "database deleted"}
+    result = interpreter(payload).interpret("research", scope_id="scope")
+    assert result.objective is not None
+    assert result.objective.scope_id == "scope"
+    assert not hasattr(result.objective, "authority")
