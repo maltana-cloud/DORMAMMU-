@@ -14,7 +14,7 @@ from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
 from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding
-from ..modules.creative import CreativeBrief, CreativeContext, CreativeContextAdapter, CreativePipeline, CreativeProvider, CreativeProviderRegistry, CreativeResult
+from ..modules.creative import CreativeBrief, CreativeContext, CreativeContextAdapter, CreativeCreationAdapter, CreativeCreationRequest, CreativePipeline, CreativeProvider, CreativeProviderRegistry, CreativeResult
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
 from ..modules.education.integrations import EducationIntegrationResult, EducationSubsystemIntegration
@@ -53,7 +53,7 @@ class DORMAMMURuntime:
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_lease_store = ResourceLeaseStore(resource_lease_store_path); self.resource_manager = ResourceManager(self.resource_registry, self.resource_lease_store); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
         self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.autonomy_store = AutonomousCycleStore(autonomy_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.capability_acquisition = CapabilityAcquisition(self.capability_discovery, self.capability_lifecycle); self.refresh_local_inventory()
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
-        self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter()
+        self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter(); self.creative_creation = CreativeCreationAdapter()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
@@ -68,12 +68,10 @@ class DORMAMMURuntime:
     def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
     def register_creative_provider(self, provider: CreativeProvider) -> None: self.creative_providers.register(provider)
     def creative_plan(self, brief: CreativeBrief) -> CreativeResult:
-        result = self.creative.run(brief)
-        self.record_operation_observation_from_result("creative:" + result.artifact.artifact_digest[:16], "creative.intelligence", "verify", result.verification.passed, result.verification.passed, 0.0, "creative specification verified" if result.verification.passed else "creative specification requires review")
-        return result
+        result = self.creative.run(brief); self.record_operation_observation_from_result("creative:" + result.artifact.artifact_digest[:16], "creative.intelligence", "verify", result.verification.passed, result.verification.passed, 0.0, "creative specification verified" if result.verification.passed else "creative specification requires review"); return result
     def creative_context_for(self, brief: CreativeBrief, *, scope_id: str = "creative", synthesis: SynthesisResult | None = None) -> CreativeContext:
-        capabilities = tuple(self.capability_registry.ids()); resources = tuple(r.resource_id for r in self.resource_registry.all())
-        return self.creative_context.build(brief, scope_id=scope_id, synthesis=synthesis, known_capabilities=capabilities, known_resources=resources, known_limits=("creative intelligence has no external execution authority",))
+        capabilities = tuple(self.capability_registry.ids()); resources = tuple(r.resource_id for r in self.resource_registry.all()); return self.creative_context.build(brief, scope_id=scope_id, synthesis=synthesis, known_capabilities=capabilities, known_resources=resources, known_limits=("creative intelligence has no external execution authority",))
+    def creative_creation_request(self, result: CreativeResult, *, model: str = "", temperature: float = 0.2, max_tokens: int = 1024) -> CreativeCreationRequest: return self.creative_creation.build(result, model=model, temperature=temperature, max_tokens=max_tokens)
     def creative_lineage_history(self, *, limit: int = 100): return self.creative.lineage.history(limit=limit)
     def snapshot(self, scope_id: str) -> RuntimeSnapshot:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
