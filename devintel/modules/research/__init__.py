@@ -11,6 +11,8 @@ from .providers import RSSProvider, StaticProvider
 from .store import InMemoryResearchStore, ResearchStore
 from .synthesis import Contradiction, KnowledgeSynthesisEngine, SynthesisResult, SynthesisSignal, VerifiedClaim
 from .verification import ProvenanceVerifier, ResearchVerifier, VerificationResult
+from .domain_expansion import DomainAssessment, DomainEvidence, DomainExpander, DomainProposal
+from .domain_registry import DomainRecord, DomainRegistry
 
 __all__ = [
     "ResearchCandidate", "ResearchDocument", "ResearchObservation", "canonicalize_url", "content_digest",
@@ -20,4 +22,5 @@ __all__ = [
     "ResearchStore", "InMemoryResearchStore", "SQLiteResearchStore",
     "ResearchVerifier", "ProvenanceVerifier", "VerificationResult",
     "VerifiedClaim", "Contradiction", "SynthesisSignal", "SynthesisResult", "KnowledgeSynthesisEngine",
+    "DomainAssessment", "DomainEvidence", "DomainExpander", "DomainProposal", "DomainRecord", "DomainRegistry",
 ]
