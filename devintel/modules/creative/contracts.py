@@ -1,15 +1,10 @@
-"""Contracts for bounded creative planning and quality evaluation.
-
-Creative intelligence produces plans and evaluation records. It does not grant
-publishing, spending, execution, or platform authority.
-"""
+"""Contracts for bounded creative planning, evaluation, and lineage."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
 from hashlib import sha256
 from typing import Tuple
-
 
 MAX_TEXT = 16_384
 MAX_ITEMS = 64
@@ -48,6 +43,22 @@ class CreativeBrief:
                 raise ValueError("brief fields must be non-empty and bounded")
         if len(self.constraints) > MAX_ITEMS or len(self.success_criteria) > MAX_ITEMS:
             raise ValueError("brief item collections are bounded")
+        if any(not isinstance(v, str) or not v.strip() or len(v) > MAX_TEXT for v in (*self.constraints, *self.success_criteria)):
+            raise ValueError("brief items must be non-empty and bounded")
+
+
+@dataclass(frozen=True)
+class CreativeConcept:
+    title: str
+    premise: str
+    differentiator: str
+    required_elements: Tuple[str, ...] = field(default_factory=tuple)
+
+    def __post_init__(self) -> None:
+        if any(not value.strip() or len(value) > MAX_TEXT for value in (self.title, self.premise, self.differentiator)):
+            raise ValueError("concept fields must be non-empty and bounded")
+        if len(self.required_elements) > MAX_ITEMS:
+            raise ValueError("required elements are bounded")
 
 
 @dataclass(frozen=True)
@@ -65,7 +76,7 @@ class CreativePlan:
             raise ValueError("plan must contain a bounded number of steps")
         if len(self.risks) > MAX_ITEMS:
             raise ValueError("risks are bounded")
-        if len(self.brief_digest) != 64:
+        if len(self.brief_digest) != 64 or any(c not in "0123456789abcdef" for c in self.brief_digest.lower()):
             raise ValueError("brief_digest must be a SHA-256 hex digest")
 
 
@@ -81,9 +92,8 @@ class CreativeEvaluation:
             raise ValueError("plan_digest must be a SHA-256 hex digest")
         if not self.criterion_scores or len(self.criterion_scores) > MAX_ITEMS:
             raise ValueError("criterion scores must be bounded and non-empty")
-        for name, score in self.criterion_scores:
-            if not name or not 0.0 <= score <= 1.0:
-                raise ValueError("criterion scores must be in [0, 1]")
+        if any(not name.strip() or not 0.0 <= score <= 1.0 for name, score in self.criterion_scores):
+            raise ValueError("criterion scores must have names and be in [0, 1]")
         if len(self.defects) > MAX_ITEMS:
             raise ValueError("defects are bounded")
 
