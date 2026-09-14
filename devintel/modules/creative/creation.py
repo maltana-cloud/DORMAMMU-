@@ -1,7 +1,7 @@
 """Translate verified creative specifications into host-routed generation requests."""
 from __future__ import annotations
 from dataclasses import dataclass
-from ..providers.live import GenerationRequest
+from ...providers.live import GenerationRequest
 from .pipeline import CreativeResult
 
 @dataclass(frozen=True)
