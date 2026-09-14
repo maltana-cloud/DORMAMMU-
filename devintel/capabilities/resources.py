@@ -60,25 +60,24 @@ class ResourceManager:
         except (TypeError, ValueError):
             return None
 
+    def _eligible(self, resource: ResourceDescriptor, request: ResourceRequest) -> bool:
+        return (
+            resource.kind is request.kind
+            and resource.availability in {"ready", "declared"}
+            and (request.max_cost is None or (resource.currency == request.currency and resource.cost <= request.max_cost))
+            and (not request.required_permission or request.required_permission in resource.permissions)
+        )
+
     def _available(self, resource: ResourceDescriptor) -> float | None:
         capacity = self._capacity(resource)
         if capacity is None:
             return None
-        used = self.lease_store.active_quantity(resource.resource_id)
-        return max(0.0, capacity - used)
+        return max(0.0, capacity - self.lease_store.active_quantity(resource.resource_id))
 
     def decide(self, request: ResourceRequest) -> ResourceDecision:
         candidates: list[ResourceDescriptor] = []
         for resource in self.registry.all():
-            if resource.kind is not request.kind:
-                continue
-            if resource.availability not in {"ready", "declared"}:
-                continue
-            if request.max_cost is not None and resource.currency != request.currency:
-                continue
-            if request.max_cost is not None and resource.cost > request.max_cost:
-                continue
-            if request.required_permission and request.required_permission not in resource.permissions:
+            if not self._eligible(resource, request):
                 continue
             available = self._available(resource)
             if available is None or available < request.quantity:
@@ -90,12 +89,17 @@ class ResourceManager:
         return ResourceDecision(True, chosen.resource_id, "registered resource satisfies the request")
 
     def reserve(self, request: ResourceRequest) -> ResourceDecision:
-        candidates = [resource for resource in self.registry.all() if resource.kind is request.kind and resource.availability in {"ready", "declared"} and (request.max_cost is None or (resource.currency == request.currency and resource.cost <= request.max_cost)) and (not request.required_permission or request.required_permission in resource.permissions)]
+        candidates = [resource for resource in self.registry.all() if self._eligible(resource, request)]
         for resource in sorted(candidates, key=lambda item: (item.cost, item.resource_id)):
             capacity = self._capacity(resource)
             if capacity is None:
                 continue
-            lease = self.lease_store.acquire(resource.resource_id, request.quantity, capacity, ttl_seconds=request.ttl_seconds)
+            lease = self.lease_store.acquire(
+                resource.resource_id,
+                request.quantity,
+                capacity,
+                ttl_seconds=request.ttl_seconds,
+            )
             if lease is not None:
                 return ResourceDecision(True, resource.resource_id, "resource reserved with durable lease", lease.lease_id)
         return ResourceDecision(False, None, "no registered resource with known sufficient capacity satisfies the request")
