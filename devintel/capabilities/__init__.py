@@ -16,6 +16,7 @@ from .registry import CapabilityRegistry, GapRegistry, ResourceRegistry
 from .resources import ResourceDecision, ResourceManager, ResourceRequest
 from .leases import ResourceLease, ResourceLeaseStore
 from .sources import CapabilitySourceConfig, CapabilitySourceStore, ConfiguredCapabilitySource
+from .scheduler import CapabilityResourceCandidate, CapabilityResourcePlan, CapabilityResourceScheduler
 from .store import CapabilityRegistryStore, LifecycleStore
 
 __all__ = [
@@ -27,6 +28,7 @@ __all__ = [
     "CapabilityDecision", "CapabilityDecisionEngine",
     "CapabilityDiscovery", "DefaultEvaluator", "DiscoveryPolicy",
     "CapabilityResourceDiscoveryEngine", "DiscoverySnapshot",
+    "CapabilityResourceCandidate", "CapabilityResourcePlan", "CapabilityResourceScheduler",
     "CapabilityLifecycle", "LifecycleEvent", "LifecycleStore", "CapabilityRegistryStore", "local_capabilities", "local_resources",
     "CapabilityRegistry", "GapRegistry", "ResourceRegistry",
     "ResourceDecision", "ResourceManager", "ResourceRequest",
