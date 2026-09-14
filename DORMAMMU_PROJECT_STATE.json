@@ -3,11 +3,11 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "5bfce40dc94ea60e63d71ea443ed3f9c802df74b",
+  "checkpoint_commit": "58b1a54ad9c225cf80565d4859291d6449383446",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "Category 2 Core Intelligence complete; Category 3 Capability & Resource Intelligence is next",
-    "ci_status": "Category 2 merge commit 04084c7780ea1bf615e35fcd5e0873b58ec6d5a3 passed main tests workflow run #806.",
+    "active_work": "Category 3 Capability & Resource Intelligence complete; Category 4 Ecosystem Awareness is next",
+    "ci_status": "Category 3 branch final workflow run #814 passed all test steps before merge; merged checkpoint is 58b1a54ad9c225cf80565d4859291d6449383446.",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -15,8 +15,8 @@
   "category_status": {
     "1_foundation_governance": "COMPLETE_LOCKED",
     "2_core_intelligence": "COMPLETE_LOCKED",
-    "3_capability_resource_intelligence": "NEXT",
-    "4_ecosystem_awareness": "PARTIAL_LATER",
+    "3_capability_resource_intelligence": "COMPLETE_LOCKED",
+    "4_ecosystem_awareness": "NEXT",
     "5_engineering_intelligence": "MAJOR_WORK_REMAINS",
     "6_language_communication": "PARTIAL_LATER",
     "7_research_domain_expansion": "MAJOR_WORK_REMAINS",
@@ -34,6 +34,7 @@
     "capability_resource_discovery_engine": "VERIFIED",
     "production_capability_source_configuration": "IMPLEMENTED",
     "resource_compute_management": "VERIFIED",
+    "capability_resource_scheduling": "VERIFIED",
     "bounded_operating_path": "VERIFIED",
     "executive_cognition_foundation": "VERIFIED",
     "operational_telemetry": "TESTED",
@@ -75,6 +76,7 @@
     "bounded cognitive state with facts, hypotheses, unresolved questions, deterministic identity, scope-safe comparison, and descriptive self-model",
     "bounded ecosystem-awareness aggregation with scope filtering, deduplication, deterministic ranking, and bounded evidence URLs",
     "unified discovery engine connecting local inventory, trusted external sources, capability evaluation, and resource decisions",
+    "deterministic capability/resource scheduler pairing hard-eligible capabilities with registered resource capacity and durable leases",
     "DORMAMMU-named AGENTS.md constitution on main",
     "canonical DORMAMMU_PROJECT_CHARTER.md on main",
     "legacy DEVINTEL_STATUS.md reduced to a compatibility-only alias",
@@ -88,6 +90,7 @@
     "Executive tasks must explicitly declare objective scope and capability approval is explicit.",
     "Resource management reserves only registered resources and fails closed on unknown quantitative capacity.",
     "Resource leases expire and release capacity; lease persistence does not grant authority.",
+    "Capability/resource scheduling uses only hard-eligible capabilities and registered resources; exhausted capacity fails closed.",
     "Telemetry is evidence, not authority, and health requires sufficient observations.",
     "Only verified research claims enter the verified synthesis contract.",
     "Contradictory or low-confidence synthesis signals cannot become executive requirements.",
@@ -108,8 +111,8 @@
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
-    "Category 3 coherent capability/resource operational layer with legitimate adapters, scheduling, reservation, and fallback",
     "real model/tool/API/dataset/provider adapters beyond the bounded catalog boundary",
+    "distributed resource/provider scheduling",
     "real Domain Intelligence / Add Domain lifecycle",
     "live multi-source ecosystem awareness and distribution loop",
     "Model Training & Evolution / Model Factory",
@@ -118,11 +121,12 @@
     "broader historical CI evidence for earlier merged cognition and direct-commit checkpoints"
   ],
   "next_execution_target": {
-    "name": "Category 3 — Capability & Resource Intelligence",
+    "name": "Category 4 — Ecosystem Awareness",
     "status": "NEXT",
-    "selection_rule": "Connect the existing discovery, registry, lifecycle, resource, lease, routing, permission, security, execution, verification, telemetry, and recovery control plane into a coherent operational capability/resource layer. Implement legitimate adapters, bounded scheduling/reservation, and deterministic fallback without granting authority implicitly.",
-    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → CAPABILITY DISCOVERY → EVALUATE → SELECT → PERMISSION → SECURITY CHECK → RESOURCE RESERVATION → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE"
+    "selection_rule": "Build approved live source adapters and continuous bounded observation on the existing provenance, trust, scope, ranking, telemetry, and security control plane. Do not add publishing/distribution authority as a side effect of awareness.",
+    "flow": "OBJECTIVE → OBSERVE → UNDERSTAND → PLAN → CAPABILITY DISCOVERY → EVALUATE → SELECT → PERMISSION → SECURITY CHECK → RESOURCE RESERVATION → ACT → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY PREFERENCE",
+    "category_3_completion": "Discovery, hard eligibility evaluation, local inventory, durable resource leases, and deterministic capability/resource pairing are implemented and tested. External provider execution and distributed scheduling remain intentionally outside this completion boundary."
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Continue from the actual main repository state. Category 1 and Category 2 are complete and locked; do not restart them. Begin Category 3 only when authorized. Preserve all safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
+  "resume_instruction": "Continue from the actual main repository state. Categories 1–3 are complete and locked; do not restart them. Category 4 is next. Preserve all safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
 }
