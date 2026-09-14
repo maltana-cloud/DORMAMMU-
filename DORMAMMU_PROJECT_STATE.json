@@ -1,13 +1,13 @@
 {
-  "schema_version": "2.3",
+  "schema_version": "2.4",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "d995233effb6660277933b2b84649a533c5b530a",
+  "checkpoint_commit": "276e8cf907946d707f60f1a76fe8f929889f7fb8",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "Category 7 Research & Domain Expansion implemented and tested; Category 8 Creative Intelligence is next",
-    "ci_status": "Category 7 feature-head workflow #848 passed all test steps; post-merge main CI checkpoint for merge commit be49628ed4ac7039f20823731b71e9f59bf7cb1a is not exposed by the current workflow query surface",
+    "active_work": "Category 7 Research & Domain Expansion complete and locked; Category 8 Creative Intelligence is next",
+    "ci_status": "Category 7 feature-head workflow #848 passed; main documentation checkpoint workflows #850 and #851 passed successfully",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -19,7 +19,7 @@
     "4_ecosystem_awareness": "COMPLETE_LOCKED",
     "5_engineering_intelligence": "COMPLETE_LOCKED",
     "6_language_communication": "COMPLETE_LOCKED",
-    "7_research_domain_expansion": "IMPLEMENTED_TESTED",
+    "7_research_domain_expansion": "COMPLETE_LOCKED",
     "8_creative_intelligence": "NEXT",
     "9_simulation_interactive_worlds": "MAJOR_WORK_REMAINS",
     "10_social_community_intelligence": "MAJOR_WORK_REMAINS",
@@ -51,9 +51,18 @@
     "live_approved_awareness_source_adapter": "VERIFIED",
     "engineering_static_intelligence": "VERIFIED",
     "bounded_language_intelligence": "IMPLEMENTED",
-    "bounded_domain_expansion": "TESTED",
-    "domain_registry": "TESTED",
+    "bounded_domain_expansion": "VERIFIED",
+    "domain_registry": "VERIFIED",
     "full_autonomous_ecosystem": "PARTIAL"
+  },
+  "category_7": {
+    "status": "COMPLETE_LOCKED",
+    "merge_commit": "be49628ed4ac7039f20823731b71e9f59bf7cb1a",
+    "pull_request": 68,
+    "feature_ci_run": 848,
+    "main_checkpoint_ci_runs": [850, 851],
+    "boundary": "Verified evidence, confidence, risk, capability coverage, and explicit boundaries are required for domain admission; admitted domains enter a deterministic versioned registry without receiving execution authority.",
+    "excluded": ["automatic installation", "provider execution", "authentication", "spending", "publishing", "permission grants", "platform-control bypass"]
   },
   "known_high_priority_gaps": [
     "full repository graph analysis and broader language coverage",
@@ -78,7 +87,7 @@
     "name": "Category 8 — Creative Intelligence",
     "status": "NEXT",
     "selection_rule": "Build bounded creative intelligence on the existing cognition, research/provenance, capability/resource, language, permission, security, execution, verification, telemetry, and recovery control plane.",
-    "category_7_completion": "Bounded domain proposals can be assessed using verified evidence, explicit risk, capability coverage, and explicit boundaries; only eligible proposals can enter the versioned registry, without granting execution or authority."
+    "category_7_completion": "Complete and locked: bounded domain proposals are assessed using verified evidence, explicit confidence, risk, capability coverage, and explicit boundaries; only eligible proposals enter the versioned registry, without granting execution or authority."
   },
-  "resume_instruction": "Continue from actual main repository state. Categories 1–6 are complete and locked; Category 7 is implemented and tested. Category 8 is next. Preserve all safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
+  "resume_instruction": "Continue from actual main repository state. Categories 1–7 are complete and locked; Category 8 is next. Preserve all safety, permission, security, lifecycle, resource, execution, verification, telemetry, and recovery boundaries. Never claim external integration until it is actually tested and evidenced."
 }
