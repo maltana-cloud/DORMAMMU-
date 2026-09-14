@@ -3,11 +3,11 @@
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "57dfb2ded53d671a586ee4ea240713845c9b052e",
+  "checkpoint_commit": "8e52ff9dbcf880a3b74af38ef39f687bb6eea42c",
   "verification": {
     "repository_state_checked": true,
     "active_work": "broad ecosystem capabilities",
-    "ci_status": "Semantic evaluation head CI passed before PR #62 merge; no post-merge workflow was exposed for squash commit a190e11a40843dc375777d381042825eee2eaafa; earlier runtime cognition merge still lacks exposed workflow/status evidence; documentation/governance cleanup has not been represented as CI evidence.",
+    "ci_status": "Semantic evaluation head CI passed before PR #62 merge; no post-merge workflow was exposed for squash commit a190e11a40843dc375777d381042825eee2eaafa; earlier runtime cognition merge still lacks exposed workflow/status evidence; awareness aggregation and governance/documentation cleanup have no exposed latest CI evidence.",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix": "DORMAMMU_CAPABILITY_MATRIX.md"
@@ -28,6 +28,7 @@
     "provider_semantic_goal_interpreter": "IMPLEMENTED",
     "runtime_cognition_integration": "IMPLEMENTED",
     "semantic_goal_safety_evaluation": "VERIFIED",
+    "ecosystem_awareness_aggregation": "IMPLEMENTED",
     "full_autonomous_ecosystem": "PARTIAL"
   },
   "current_verified_components": [
@@ -53,6 +54,7 @@
     "runtime-owned durable learning store, outcome-aware routing service, and semantic goal understanding entry point",
     "deterministic semantic safety evaluation with representative, ambiguous, and high-impact cases",
     "unsafe-boundary regression coverage via injectable evaluation boundary",
+    "bounded ecosystem-awareness aggregation with scope filtering, deduplication, deterministic ranking, and bounded evidence URLs",
     "DORMAMMU-named AGENTS.md constitution on main",
     "canonical DORMAMMU_PROJECT_CHARTER.md on main",
     "legacy DEVINTEL_STATUS.md reduced to a compatibility-only alias",
@@ -79,6 +81,7 @@
     "Natural-language input never grants authority or directly creates executable actions.",
     "Provider semantic output is untrusted data and cannot bypass scope, confidence, ambiguity, or high-impact gates.",
     "Semantic evaluation records structured outcomes only and never executes actions or grants authority.",
+    "Awareness aggregation only produces bounded observations; it does not publish, authenticate, contact, or grant distribution authority.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
@@ -86,7 +89,8 @@
     "broad ecosystem capabilities",
     "distributed resource/provider scheduling",
     "real-provider/model-specific operational evidence for semantic interpretation",
-    "repository-wide CI evidence for the earlier merged cognition integration"
+    "repository-wide CI evidence for the earlier merged cognition integration",
+    "latest CI evidence for direct awareness/governance commits"
   ],
   "next_execution_target": {
     "name": "broad ecosystem capabilities",
