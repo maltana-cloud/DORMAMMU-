@@ -5,6 +5,7 @@ from .evidence import EvidenceBackedExecutiveAdapter, EvidenceBackedUnderstandin
 from .routing import CollaborationPlan, CollaborationStep, RouteCandidate, RoutingRequirement, SpecialistDescriptor, SpecialistKind, SpecialistRouter
 from .nl_goal import BoundedNaturalLanguageGoalBoundary, DeterministicNaturalLanguageInterpreter, GoalInterpretation, NaturalLanguageGoalInterpreter, ProviderSemanticNaturalLanguageInterpreter
 from .outcome_routing import OutcomeAwareRoutingService
+from .cognition import CognitiveFact, CognitiveHypothesis, CognitiveSelfModel, CognitiveState, CoreCognition
 
 __all__ = [
     "DefaultGoalInterpreter", "ExecutiveEngine", "ExecutivePlan", "ExecutiveResult",
@@ -13,5 +14,5 @@ __all__ = [
     "CollaborationPlan", "CollaborationStep", "RouteCandidate", "RoutingRequirement",
     "SpecialistDescriptor", "SpecialistKind", "SpecialistRouter",
     "BoundedNaturalLanguageGoalBoundary", "DeterministicNaturalLanguageInterpreter", "GoalInterpretation", "NaturalLanguageGoalInterpreter", "ProviderSemanticNaturalLanguageInterpreter",
-    "OutcomeAwareRoutingService",
+    "OutcomeAwareRoutingService", "CognitiveFact", "CognitiveHypothesis", "CognitiveSelfModel", "CognitiveState", "CoreCognition",
 ]

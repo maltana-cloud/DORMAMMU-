@@ -8,13 +8,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .contracts import CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceKind
-from .discovery import CapabilityDiscovery
+from .contracts import CapabilityRequirement, DiscoveryResult, ResourceKind
+from .discovery import CapabilityDiscovery, DefaultEvaluator, DiscoveryPolicy
 from .inventory import local_capabilities, local_resources
 from .registry import CapabilityRegistry, ResourceRegistry
 from .resources import ResourceDecision, ResourceManager, ResourceRequest
 from .sources import CapabilitySourceConfig, ConfiguredCapabilitySource
-from .discovery import DiscoveryPolicy
 
 
 @dataclass(frozen=True)
@@ -42,7 +41,7 @@ class CapabilityResourceDiscoveryEngine:
         self.discovery_policy = discovery_policy or DiscoveryPolicy()
         self.discovery = CapabilityDiscovery(
             registry=self.capability_registry,
-            evaluator=None,
+            evaluator=DefaultEvaluator(self.discovery_policy),
         )
         self.resource_manager = ResourceManager(self.resource_registry)
         self._source_ids: list[str] = []

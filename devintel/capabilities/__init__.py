@@ -15,6 +15,7 @@ from .lifecycle import CapabilityLifecycle, LifecycleEvent
 from .registry import CapabilityRegistry, GapRegistry, ResourceRegistry
 from .resources import ResourceDecision, ResourceManager, ResourceRequest
 from .leases import ResourceLease, ResourceLeaseStore
+from .sources import CapabilitySourceConfig, CapabilitySourceStore, ConfiguredCapabilitySource
 from .store import CapabilityRegistryStore, LifecycleStore
 
 __all__ = [
@@ -30,4 +31,5 @@ __all__ = [
     "CapabilityRegistry", "GapRegistry", "ResourceRegistry",
     "ResourceDecision", "ResourceManager", "ResourceRequest",
     "ResourceLease", "ResourceLeaseStore",
+    "CapabilitySourceConfig", "CapabilitySourceStore", "ConfiguredCapabilitySource",
 ]
