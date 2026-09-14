@@ -24,7 +24,10 @@ def _capability(capability_id: str, cost: float = 0.0) -> CapabilityDescriptor:
         cost=cost,
         permissions=("approved",),
         metadata={"performance": "good", "security_status": "safe"},
-        evidence=(CapabilityEvidence("catalog", "trusted-provider", True, "https://example.com/evidence"),),
+        evidence=(CapabilityEvidence(
+            "catalog", "2026-09-14T00:00:00+00:00", "trusted-provider",
+            "https://example.com/evidence", "0123456789abcdef",
+        ),),
     )
 
 
@@ -33,22 +36,34 @@ def _engine() -> CapabilityResourceDiscoveryEngine:
     capabilities.register(_capability("model-a", 0.0))
     capabilities.register(_capability("model-b", 0.0))
     resources = ResourceRegistry()
-    resources.register(ResourceDescriptor("gpu-a", ResourceKind.GPU, "GPU A", capacity="1", availability="ready", permissions=("approved",)))
+    resources.register(ResourceDescriptor(
+        "gpu-a", ResourceKind.GPU, "GPU A", capacity="1", availability="ready",
+        permissions=("approved",),
+    ))
     return CapabilityResourceDiscoveryEngine(
         capability_registry=capabilities,
         resource_registry=resources,
         discovery_policy=DiscoveryPolicy(
-            trusted_evidence_sources=("catalog",),
-            require_provenance=True,
+            trusted_evidence_sources=("catalog",), require_provenance=True,
         ),
     )
 
 
+def _scout(engine, ids):
+    class Scout:
+        def discover(self, requirement):
+            return tuple(engine.capability_registry.get(item) for item in ids)
+    return Scout()
+
+
 def test_scheduler_selects_eligible_capability_and_reserves_resource():
     engine = _engine()
-    engine.discovery.add_scout(type("Scout", (), {"discover": lambda self, requirement: tuple(engine.capability_registry.get(x) for x in ("model-a", "model-b"))})())
+    engine.discovery.add_scout(_scout(engine, ("model-a", "model-b")))
     scheduler = CapabilityResourceScheduler(engine)
-    plan = scheduler.plan(CapabilityRequirement("inference", "run inference", ("inference",)), resource_kind=ResourceKind.GPU)
+    plan = scheduler.plan(
+        CapabilityRequirement("inference", "run inference", ("inference",)),
+        resource_kind=ResourceKind.GPU,
+    )
     assert plan.granted
     assert plan.selected_capability_id == "model-a"
     assert plan.selected_resource_id == "gpu-a"
@@ -58,10 +73,13 @@ def test_scheduler_selects_eligible_capability_and_reserves_resource():
 
 def test_scheduler_fails_closed_when_resource_capacity_is_unavailable():
     engine = _engine()
-    engine.discovery.add_scout(type("Scout", (), {"discover": lambda self, requirement: (engine.capability_registry.get("model-a"),)})())
+    engine.discovery.add_scout(_scout(engine, ("model-a",)))
     engine.reserve_resource(ResourceKind.GPU)
     scheduler = CapabilityResourceScheduler(engine)
-    plan = scheduler.plan(CapabilityRequirement("inference", "run inference", ("inference",)), resource_kind=ResourceKind.GPU)
+    plan = scheduler.plan(
+        CapabilityRequirement("inference", "run inference", ("inference",)),
+        resource_kind=ResourceKind.GPU,
+    )
     assert not plan.granted
     assert plan.selected_capability_id is None
     engine.close()
@@ -76,9 +94,12 @@ def test_scheduler_rejects_unapproved_capability_without_reserving_resource():
         permissions=(), metadata=unapproved.metadata, evidence=unapproved.evidence,
     )
     engine.capability_registry.register(unapproved)
-    engine.discovery.add_scout(type("Scout", (), {"discover": lambda self, requirement: (unapproved,)})())
+    engine.discovery.add_scout(_scout(engine, ("model-unapproved",)))
     scheduler = CapabilityResourceScheduler(engine)
-    plan = scheduler.plan(CapabilityRequirement("inference", "run inference", ("inference",)), resource_kind=ResourceKind.GPU)
+    plan = scheduler.plan(
+        CapabilityRequirement("inference", "run inference", ("inference",)),
+        resource_kind=ResourceKind.GPU,
+    )
     assert not plan.granted
     assert engine.resource_manager.active_reservations() == ()
     engine.close()
