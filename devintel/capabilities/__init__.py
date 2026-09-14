@@ -10,6 +10,7 @@ from .inventory import local_capabilities, local_resources
 from .lifecycle import CapabilityLifecycle, LifecycleEvent
 from .registry import CapabilityRegistry, GapRegistry, ResourceRegistry
 from .resources import ResourceDecision, ResourceManager, ResourceRequest
+from .leases import ResourceLease, ResourceLeaseStore
 from .store import LifecycleStore
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "CapabilityLifecycle", "LifecycleEvent", "LifecycleStore", "local_capabilities", "local_resources",
     "CapabilityRegistry", "GapRegistry", "ResourceRegistry",
     "ResourceDecision", "ResourceManager", "ResourceRequest",
+    "ResourceLease", "ResourceLeaseStore",
 ]
