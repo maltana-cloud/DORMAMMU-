@@ -15,6 +15,9 @@ class AutonomousCycleStore:
             stop_reason TEXT NOT NULL, improvement_actions_proposed INTEGER NOT NULL DEFAULT 0,
             recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )""")
+        columns = {row[1] for row in self.connection.execute("PRAGMA table_info(autonomous_cycles)")}
+        if "improvement_actions_proposed" not in columns:
+            self.connection.execute("ALTER TABLE autonomous_cycles ADD COLUMN improvement_actions_proposed INTEGER NOT NULL DEFAULT 0")
         self.connection.commit()
 
     def record(self, cycle: AutonomousCycle) -> None:
