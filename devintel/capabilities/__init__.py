@@ -9,6 +9,7 @@ from .acquisition import AcquisitionPlan, CapabilityAcquisition
 from .canary import CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy
 from .decision import CapabilityDecision, CapabilityDecisionEngine
 from .discovery import CapabilityDiscovery, DefaultEvaluator, DiscoveryPolicy
+from .engine import CapabilityResourceDiscoveryEngine, DiscoverySnapshot
 from .inventory import local_capabilities, local_resources
 from .lifecycle import CapabilityLifecycle, LifecycleEvent
 from .registry import CapabilityRegistry, GapRegistry, ResourceRegistry
@@ -24,6 +25,7 @@ __all__ = [
     "CanaryDecision", "CanaryHealth", "CanaryMonitor", "CanaryPolicy",
     "CapabilityDecision", "CapabilityDecisionEngine",
     "CapabilityDiscovery", "DefaultEvaluator", "DiscoveryPolicy",
+    "CapabilityResourceDiscoveryEngine", "DiscoverySnapshot",
     "CapabilityLifecycle", "LifecycleEvent", "LifecycleStore", "CapabilityRegistryStore", "local_capabilities", "local_resources",
     "CapabilityRegistry", "GapRegistry", "ResourceRegistry",
     "ResourceDecision", "ResourceManager", "ResourceRequest",
