@@ -14,6 +14,7 @@ from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
 from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding
+from ..modules.creative import CreativeBrief, CreativePipeline, CreativeProvider, CreativeProviderRegistry, CreativeResult
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
 from ..modules.education.integrations import EducationIntegrationResult, EducationSubsystemIntegration
@@ -52,6 +53,7 @@ class DORMAMMURuntime:
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_lease_store = ResourceLeaseStore(resource_lease_store_path); self.resource_manager = ResourceManager(self.resource_registry, self.resource_lease_store); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
         self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.autonomy_store = AutonomousCycleStore(autonomy_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.capability_acquisition = CapabilityAcquisition(self.capability_discovery, self.capability_lifecycle); self.refresh_local_inventory()
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
+        self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers)
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
@@ -64,6 +66,8 @@ class DORMAMMURuntime:
     def register_resource(self, resource: ResourceDescriptor) -> None: self.resource_registry.register(resource)
     def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
     def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
+    def register_creative_provider(self, provider: CreativeProvider) -> None: self.creative_providers.register(provider)
+    def creative_plan(self, brief: CreativeBrief) -> CreativeResult: return self.creative.run(brief)
     def snapshot(self, scope_id: str) -> RuntimeSnapshot:
         if not isinstance(scope_id, str) or not scope_id.strip(): raise ValueError("scope_id is required")
         plugins = tuple((plugin_id, state.value, generation) for plugin_id, state, generation in self.plugins.status())
