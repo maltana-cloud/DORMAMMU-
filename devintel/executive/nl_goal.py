@@ -13,7 +13,6 @@ from typing import Protocol
 from .contracts import Objective
 from ..providers.live import GenerationRequest, ProviderRouter
 
-
 @dataclass(frozen=True)
 class GoalInterpretation:
     objective: Objective | None
@@ -71,9 +70,14 @@ class ProviderSemanticNaturalLanguageInterpreter:
         intent, outcome = data.get("intent"), data.get("desired_outcome")
         confidence = data.get("confidence", 0.0); ambiguities = data.get("ambiguities", []); constraints = data.get("constraints", {}); priority = data.get("priority", 0)
         if not isinstance(intent, str) or not intent.strip() or not isinstance(outcome, str) or not outcome.strip(): return GoalInterpretation(None, 0.0, ("semantic response lacks intent or outcome",), True, "incomplete semantic response")
+        if not isinstance(confidence, (int, float)):
+            return GoalInterpretation(None, 0.0, ("invalid confidence field",), True, "invalid semantic response")
+        try: confidence_value = float(confidence)
+        except (TypeError, ValueError): return GoalInterpretation(None, 0.0, ("invalid confidence field",), True, "invalid semantic response")
+        if not 0.0 <= confidence_value <= 1.0: return GoalInterpretation(None, 0.0, ("confidence is outside the allowed range",), True, "invalid semantic response")
         if not isinstance(ambiguities, list) or not all(isinstance(item, str) for item in ambiguities): return GoalInterpretation(None, 0.0, ("invalid ambiguity field",), True, "invalid semantic response")
         if not isinstance(constraints, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in constraints.items()): return GoalInterpretation(None, 0.0, ("invalid constraints field",), True, "invalid semantic response")
         if not isinstance(priority, int): return GoalInterpretation(None, 0.0, ("invalid priority field",), True, "invalid semantic response")
         try: objective = Objective(intent.strip(), outcome.strip(), scope_id, constraints, priority)
         except (TypeError, ValueError): return GoalInterpretation(None, 0.0, ("invalid objective fields",), True, "invalid semantic response")
-        return GoalInterpretation(objective, float(confidence), tuple(ambiguities), bool(ambiguities), "provider semantic interpretation")
+        return GoalInterpretation(objective, confidence_value, tuple(ambiguities), bool(ambiguities), "provider semantic interpretation")
