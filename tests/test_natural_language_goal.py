@@ -37,5 +37,9 @@ def test_interpreter_cannot_change_scope():
     class WrongScope:
         def interpret(self, text, *, scope_id):
             return GoalInterpretation(Objective("x", "y", "other"), .99)
-    with pytest.raises(ValueError):
-        BoundedNaturalLanguageGoalBoundary(WrongScope()).understand("do useful research", scope_id="scope-a")
+    result = BoundedNaturalLanguageGoalBoundary(WrongScope()).understand(
+        "do useful research", scope_id="scope-a"
+    )
+    assert result.objective is None
+    assert result.requires_confirmation
+    assert "scope" in result.ambiguities[0]
