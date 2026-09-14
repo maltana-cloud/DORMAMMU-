@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from threading import RLock
 from .contracts import CapabilityDescriptor, CapabilityGap, ResourceDescriptor
-from .store import CapabilityRegistryStore
 
 
 class CapabilityRegistry:
