@@ -11,6 +11,8 @@ class DiscoveryPolicy:
     allow_paid: bool = False
     require_explicit_permission: bool = True
     minimum_score: float = 0.75
+    trusted_evidence_sources: tuple[str, ...] = ()
+    require_provenance: bool = False
 
 
 class DefaultEvaluator:
@@ -18,17 +20,22 @@ class DefaultEvaluator:
 
     def evaluate(self, requirement: CapabilityRequirement, candidate: CapabilityDescriptor) -> Evaluation:
         reasons: list[str] = []
-        trust = candidate.provider.strip() != "unknown"
-        security = "unsafe" not in {x.lower() for x in candidate.metadata.values()}
+        evidence_sources = {item.source for item in candidate.evidence}
+        provenance_ok = bool(candidate.evidence) and all(item.trustworthy for item in candidate.evidence)
+        source_ok = bool(evidence_sources & set(self.policy.trusted_evidence_sources)) if self.policy.trusted_evidence_sources else False
+        trust = candidate.provider.strip().lower() not in {"", "unknown"} and candidate.capability_id.strip().lower() not in {"", "unknown"} and (not self.policy.require_provenance or (provenance_ok and source_ok))
+        security = candidate.metadata.get("security_status", "").lower() in {"safe", "verified", "approved"} if self.policy.require_provenance else "unsafe" not in {x.lower() for x in candidate.metadata.values()}
         compatibility = set(requirement.required_interfaces).issubset(candidate.interfaces)
-        performance = candidate.metadata.get("performance", "unknown").lower() not in {"poor", "failed"}
-        license_ok = not requirement.required_license or candidate.license == requirement.required_license
-        cost_ok = (requirement.max_cost is None or candidate.cost <= requirement.max_cost) and (self.policy.allow_paid or candidate.cost == 0)
-        permission_ok = not self.policy.require_explicit_permission or "approved" in candidate.permissions
+        performance = candidate.metadata.get("performance", "").lower() in {"excellent", "good", "verified", "tested"} if self.policy.require_provenance else candidate.metadata.get("performance", "unknown").lower() not in {"poor", "failed"}
+        license_ok = bool(candidate.license.strip()) and (not requirement.required_license or candidate.license == requirement.required_license)
+        currency_ok = requirement.max_cost is None or candidate.currency == requirement.currency
+        cost_ok = currency_ok and (requirement.max_cost is None or candidate.cost <= requirement.max_cost) and (self.policy.allow_paid or candidate.cost == 0)
+        permission_ok = not self.policy.require_explicit_permission or "approved" in {item.lower() for item in candidate.permissions}
         checks = (trust, security, compatibility, performance, license_ok, cost_ok, permission_ok)
         score = sum(checks) / len(checks)
         for name, ok in zip(("trust", "security", "compatibility", "performance", "license", "cost", "permission"), checks):
             if not ok: reasons.append(f"{name} check failed")
+        if self.policy.minimum_score > score: reasons.append("minimum score check failed")
         return Evaluation(candidate, trust, security, compatibility, performance, license_ok, cost_ok, permission_ok, score, tuple(reasons))
 
 

@@ -2,18 +2,27 @@
 from __future__ import annotations
 
 from threading import RLock
+from typing import TYPE_CHECKING
 from .contracts import CapabilityDescriptor, CapabilityGap, ResourceDescriptor
+
+if TYPE_CHECKING:
+    from .store import CapabilityRegistryStore
 
 
 class CapabilityRegistry:
-    def __init__(self, max_items: int = 512) -> None:
+    def __init__(self, max_items: int = 512, store: CapabilityRegistryStore | None = None) -> None:
         if max_items <= 0: raise ValueError("max_items must be positive")
-        self._max = max_items; self._items: dict[str, CapabilityDescriptor] = {}; self._lock = RLock()
+        self._max = max_items; self._items: dict[str, CapabilityDescriptor] = {}; self._lock = RLock(); self._store = store
+        if store:
+            for item in store.load_all():
+                if len(self._items) >= self._max: break
+                self._items[item.capability_id] = item
 
     def register(self, item: CapabilityDescriptor) -> None:
         with self._lock:
             if item.capability_id not in self._items and len(self._items) >= self._max: raise RuntimeError("capability registry capacity reached")
             self._items[item.capability_id] = item
+            if self._store: self._store.save(item)
 
     def get(self, capability_id: str) -> CapabilityDescriptor | None:
         with self._lock: return self._items.get(capability_id)
