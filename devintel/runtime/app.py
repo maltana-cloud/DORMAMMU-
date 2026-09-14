@@ -1,6 +1,5 @@
 """Composition root connecting DORMAMMU's bounded subsystems."""
 from __future__ import annotations
-
 from dataclasses import dataclass
 import os
 from typing import Any, Sequence
@@ -13,7 +12,7 @@ from ..control.service import OwnerControlCenter
 from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
-from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec
+from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
 from ..modules.education.integrations import EducationIntegrationResult, EducationSubsystemIntegration
@@ -93,6 +92,9 @@ class DORMAMMURuntime:
         return (Observation(scope_id, "capability_inventory", tuple(self.capability_registry.get(cid) for cid in self.capability_registry.ids())), Observation(scope_id, "resource_inventory", self.resource_registry.all()), Observation(scope_id, "capability_gaps", tuple(self.capability_discovery.gaps.all())), Observation(scope_id, "resource_reservations", self.resource_manager.active_reservations()))
     def lifecycle_history(self, capability_id: str | None = None): return self.lifecycle_store.history(capability_id)
     def synthesize_knowledge(self, topic: str, claims: Sequence[VerifiedClaim], *, excluded_claims: int = 0) -> SynthesisResult: return self.knowledge_synthesis.synthesize(topic, claims, excluded_claims=excluded_claims)
+    def evidence_backed_understanding(self, objective: Objective, synthesis: SynthesisResult) -> EvidenceBackedUnderstanding: return self.executive.evidence_adapter.understand(objective, synthesis)
+    def plan_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan: return self.executive.plan_from_synthesis(objective, synthesis, tasks)
+    def run_objective_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute_from_synthesis(objective, synthesis, tasks, **kwargs)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close()
@@ -126,5 +128,4 @@ class DORMAMMURuntime:
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
 
-# Backward-compatible legacy import; DORMAMMU remains the canonical public identity.
 DEVINTELRuntime = DORMAMMURuntime
