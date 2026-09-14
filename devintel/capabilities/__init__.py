@@ -3,6 +3,7 @@ from .contracts import (
     CapabilityDescriptor, CapabilityGap, CapabilityRequirement, CapabilityStatus,
     DiscoveryResult, Evaluation, ResourceDescriptor, ResourceKind,
 )
+from .evidence import CapabilityEvidence
 from .acquisition import AcquisitionPlan, CapabilityAcquisition
 from .canary import CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy
 from .decision import CapabilityDecision, CapabilityDecisionEngine
@@ -16,7 +17,7 @@ from .store import LifecycleStore
 
 __all__ = [
     "CapabilityDescriptor", "CapabilityGap", "CapabilityRequirement", "CapabilityStatus",
-    "DiscoveryResult", "Evaluation", "ResourceDescriptor", "ResourceKind",
+    "CapabilityEvidence", "DiscoveryResult", "Evaluation", "ResourceDescriptor", "ResourceKind",
     "AcquisitionPlan", "CapabilityAcquisition",
     "CanaryDecision", "CanaryHealth", "CanaryMonitor", "CanaryPolicy",
     "CapabilityDecision", "CapabilityDecisionEngine",
