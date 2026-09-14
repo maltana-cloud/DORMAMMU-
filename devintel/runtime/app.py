@@ -5,6 +5,7 @@ import os
 from typing import Any, Sequence
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.store import AutonomousCycleStore
+from ..autonomy.learning_store import LearningStore
 from ..autonomy.contracts import Observation
 from ..capabilities import (AcquisitionPlan, CapabilityAcquisition, CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest, ResourceLeaseStore)
 from ..capabilities.contracts import CapabilityStatus
@@ -13,7 +14,7 @@ from ..control.service import OwnerControlCenter
 from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
-from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding
+from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding, SpecialistRouter, OutcomeAwareRoutingService, RoutingRequirement, RouteCandidate, BoundedNaturalLanguageGoalBoundary, ProviderSemanticNaturalLanguageInterpreter, GoalInterpretation
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
 from ..modules.education.integrations import EducationIntegrationResult, EducationSubsystemIntegration
@@ -42,7 +43,7 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
         if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
@@ -50,7 +51,10 @@ class DORMAMMURuntime:
         self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state, recovery=self.recovery); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_lease_store = ResourceLeaseStore(resource_lease_store_path); self.resource_manager = ResourceManager(self.resource_registry, self.resource_lease_store); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
-        self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.autonomy_store = AutonomousCycleStore(autonomy_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.capability_acquisition = CapabilityAcquisition(self.capability_discovery, self.capability_lifecycle); self.refresh_local_inventory()
+        self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.autonomy_store = AutonomousCycleStore(autonomy_store_path); self.learning_store = LearningStore(learning_store_path)
+        self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.capability_acquisition = CapabilityAcquisition(self.capability_discovery, self.capability_lifecycle); self.refresh_local_inventory()
+        self.specialist_router = SpecialistRouter(); self.outcome_routing = OutcomeAwareRoutingService(self.specialist_router, self.learning_store)
+        self.nl_goal_interpreter = ProviderSemanticNaturalLanguageInterpreter(self.live_providers); self.nl_goal_boundary = BoundedNaturalLanguageGoalBoundary(self.nl_goal_interpreter)
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
@@ -99,10 +103,12 @@ class DORMAMMURuntime:
     def evidence_backed_understanding(self, objective: Objective, synthesis: SynthesisResult) -> EvidenceBackedUnderstanding: return self.executive.evidence_adapter.understand(objective, synthesis)
     def plan_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan: return self.executive.plan_from_synthesis(objective, synthesis, tasks)
     def run_objective_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute_from_synthesis(objective, synthesis, tasks, **kwargs)
+    def understand_goal(self, text: str, *, scope_id: str) -> GoalInterpretation: return self.nl_goal_boundary.understand(text, scope_id=scope_id)
+    def route_specialist(self, scope_id: str, requirement: RoutingRequirement) -> RouteCandidate: return self.outcome_routing.select(scope_id, requirement)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def autonomous_cycle_history(self, scope_id: str | None = None, *, limit: int = 100): return self.autonomy_store.history(scope_id, limit=limit)
-    def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close()
+    def close(self) -> None: self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close(); self.learning_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")
