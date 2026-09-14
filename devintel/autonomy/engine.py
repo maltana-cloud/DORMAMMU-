@@ -66,23 +66,18 @@ class AutonomousEngine:
                 break
         succeeded = sum(1 for result in results if result.success)
         failed = len(results) - succeeded
-        if results and failed:
-            phases.append(AutonomyPhase.VERIFY)
-            try: verified = bool(self.verifier(scope, tuple(results)))
-            except Exception as exc: verified = False; reason = f"verification failed: {type(exc).__name__}"
-            else: reason = "action execution failed"
-        else:
-            phases.append(AutonomyPhase.VERIFY)
-            try:
-                verified = bool(self.verifier(scope, tuple(results))); reason = "" if verified else "verification rejected result"
-            except Exception as exc:
-                verified = False; reason = f"verification failed: {type(exc).__name__}"
+        phases.append(AutonomyPhase.VERIFY)
+        try:
+            verified = bool(self.verifier(scope, tuple(results)))
+            reason = "" if verified else ("action execution failed" if failed else "verification rejected result")
+        except Exception as exc:
+            verified = False; reason = f"verification failed: {type(exc).__name__}"
 
         phases.append(AutonomyPhase.RECORD)
         preliminary = AutonomousCycle(uuid4().hex, scope, tuple(phases), len(actions), succeeded, failed, verified, bool(reason), reason, 0)
+        phases.append(AutonomyPhase.IMPROVE)
         proposed = 0
         if self.improver is not None:
-            phases.append(AutonomyPhase.IMPROVE)
             try:
                 proposals = tuple(self.improver(preliminary))
                 if not all(isinstance(item, str) and item.strip() for item in proposals):
