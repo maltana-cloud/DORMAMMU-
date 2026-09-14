@@ -1,42 +1,42 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Durable resource leases are implemented on the active engineering branch.** Resource reservations now use a SQLite-backed lease store with expiry, release, persistence across runtime reopen, and transaction-protected capacity acquisition. This milestone is not yet merged or marked VERIFIED; CI and integration verification remain required.
+**Trusted capability discovery and admission is implemented and verified on `main`.** DORMAMMU now has explicit provenance evidence, strict trust-source gating, security/compatibility/performance/license/cost/permission evaluation, deterministic acquisition ranking and fallback planning, explicit owner approval, lifecycle/canary controls, and durable SQLite-backed admitted-capability state.
 
 ## Truth Rule
-Implementation claims require code, meaningful tests, integration evidence, and successful CI. `main` remains unchanged at `8ee3881a2a4c269f9ebeb0cd32b9f0ebf75f1219` while durable-lease work proceeds on `codex/durable-resource-leases`.
+Implementation claims require code, meaningful tests, integration evidence, and successful CI. The trusted capability admission milestone was merged to `main` at `d6b8431f98a13a825875a9a6e8aaaffa773a39ec` after the final branch CI passed.
 
 ## Repository Checkpoint
 - Canonical runtime: `DORMAMMURuntime`; `DEVINTELRuntime` remains a compatibility alias.
 - Evidence-backed knowledge synthesis and executive integration exist on `main`.
-- Capability/resource discovery, lifecycle, local inventory, canary evaluation, bounded decisions, operational telemetry, owner control, security and recovery remain integrated.
-- Active branch adds `ResourceLeaseStore`, durable resource reservations, lease expiry, atomic capacity acquisition, runtime-configurable lease persistence, and runtime reopen coverage.
+- Durable resource leases are implemented with expiry, atomic capacity acquisition, persistence, and runtime integration.
+- Capability discovery now has provenance-aware evidence and strict admission gates; newly discovered external candidates are not trusted automatically.
+- Capability acquisition coordinates discovery → evaluation → explicit approval → lifecycle registration → canary → fallback without installing software, acquiring credentials, spending money, executing external candidates, or bypassing owner/platform controls.
 
 ## Current Engineering Gaps
-1. **Durable resource lease verification:** active branch implementation needs full CI and final integration/security review before merge.
-2. **Trusted external capability acquisition:** scouts/adapters still need end-to-end provenance, license/terms, security, compatibility, permissions, resource, cost, rollback, and observability controls.
-3. **Evidence-backed arbitrary natural-language goal understanding:** current interpreter normalizes explicit fields rather than safely inferring arbitrary goals.
-4. **Model/agent/specialist routing and collaboration:** automated selection and coordination remain incomplete.
-5. **Reflection/learning:** telemetry exists, but no controlled outcome-learning loop yet turns evidence into bounded improvement.
-6. **Broad ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
+1. **Production capability discovery adapters:** legitimate source adapters still need to be built and explicitly trusted per source; external candidates remain untrusted until provenance and all gates pass.
+2. **Evidence-backed arbitrary natural-language goal understanding:** current interpreter normalizes explicit fields rather than safely inferring arbitrary goals.
+3. **Model/agent/specialist routing and collaboration:** automated selection and coordination remain incomplete.
+4. **Reflection/learning:** telemetry exists, but no controlled outcome-learning loop yet turns evidence into bounded improvement.
+5. **Broad ecosystem capabilities:** communication, community, creation, distribution, awareness, business/reinvestment, media, gaming, language/speech, and model evolution remain incomplete.
 
 ## Safety Boundaries
+- Capability provenance is evidence, not authority.
+- External candidates fail closed when provenance/trusted-source evidence is absent in strict mode.
+- Capability admission still requires explicit owner approval and the existing lifecycle/canary gates.
 - Resource leases only reserve already-registered resources; they never provision machines, acquire credentials, spend money, or grant authority.
-- Lease capacity acquisition is transaction-protected and fails closed when capacity is unknown or insufficient.
-- Lease expiry releases capacity automatically; release is explicit and unknown lease IDs are rejected.
-- Discovery never installs, executes, authenticates, spends money, or grants authority.
 - Core action execution remains behind the permission boundary.
 - Recovery uses externally supplied cryptographic authorization with tamper, expiry, and replay protection.
 - No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass.
 
 ## Capability Matrix
-`DORMAMMU_CAPABILITY_MATRIX.md` remains the detailed capability record. It must be updated after CI/integration verification of this branch; until then durable resource management remains `TESTED` rather than `VERIFIED`.
+`DORMAMMU_CAPABILITY_MATRIX.md` is reconciled to the verified capability-admission and durable-resource milestones.
 
 ## Next Execution Target
-Finish durable resource lease verification, merge only after successful CI and integration/security checks, then update the truthful matrix/state and proceed to the next highest-value dependency: **trusted external capability acquisition** unless repository inspection shows a more foundational blocker.
+Proceed to the next highest-value dependency: **production capability discovery adapters and source-specific trust configuration**, then verify and move to the next category.
 
-Preferred resource path:
-`REGISTERED RESOURCE → ELIGIBILITY → DURABLE LEASE → EXPIRY/RELEASE → BOUNDED OPERATION → TELEMETRY → HEALTH/CANARY`
+Preferred capability path:
+`REQUIREMENT → CAPABILITY REGISTRY → GAP → SCOUT → PROVENANCE → TRUST → SECURITY → COMPATIBILITY → PERFORMANCE → COST → LICENSE → PERMISSION → COMPARE → SELECT → EXPLICIT APPROVAL → REGISTER → CANARY → ACTIVATE → MONITOR → FALLBACK`
 
 ## Verification Note
 Repository branch-protection/ruleset enforcement has not been independently verified through the available integration, so repository-level protection is not claimed. Architectural safety boundaries remain code-enforced.
