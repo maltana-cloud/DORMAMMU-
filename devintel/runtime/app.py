@@ -14,7 +14,7 @@ from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
 from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding
-from ..modules.creative import CreativeBrief, CreativeContext, CreativeContextAdapter, CreativeCreationAdapter, CreativeCreationRequest, CreativePipeline, CreativeProvider, CreativeProviderRegistry, CreativeResult
+from ..modules.creative import CreativeBrief, CreativeContext, CreativeContextAdapter, CreativeCreationAdapter, CreativeCreationRequest, CreativeLineageStore, CreativePipeline, CreativeProvider, CreativeProviderRegistry, CreativeResult
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
 from ..modules.education.integrations import EducationIntegrationResult, EducationSubsystemIntegration
