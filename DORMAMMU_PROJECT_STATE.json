@@ -1,13 +1,12 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "base_main_commit": "8ee3881a2a4c269f9ebeb0cd32b9f0ebf75f1219",
-  "checkpoint_commit": "d73d6b609e31c3a5963b977c566fee5f4d66ca78",
+  "checkpoint_commit": "d91d89b7f5bf4c9de6f6e37c85416f77e4003334",
   "verification": {
     "repository_state_checked": true,
-    "active_work": "bounded autonomous operating path",
+    "active_work": "model/agent/specialist routing and collaboration",
     "ci_status": "passed",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
@@ -21,6 +20,8 @@
     "executive_cognition_foundation": "TESTED",
     "operational_telemetry": "TESTED",
     "knowledge_synthesis": "TESTED",
+    "model_agent_specialist_routing": "VERIFIED",
+    "controlled_reflection_learning": "PARTIAL",
     "full_autonomous_ecosystem": "PARTIAL"
   },
   "current_verified_components": [
@@ -36,17 +37,9 @@
     "conservative evidence-backed knowledge synthesis with contradiction and uncertainty controls",
     "provenance-backed JSON and bounded HTTPS capability catalog scouting",
     "finite autonomous OBSERVE/UNDERSTAND/PLAN/PERMISSION/SECURITY/ACT/VERIFY/RECORD/IMPROVE loop",
-    "complete-plan permission preflight before action",
-    "bounded autonomous plan size and fail-closed scope validation",
-    "durable SQLite autonomous cycle history integrated into runtime",
-    "proposal-only autonomous improvement with no authority or code mutation"
+    "deterministic model/agent/specialist selection with health, approval, cost, metadata, provider, and version gates",
+    "ordered specialist collaboration plans with deterministic ranked fallbacks"
   ],
-  "capability_matrix": {
-    "path": "DORMAMMU_CAPABILITY_MATRIX.md",
-    "required_fields": ["status","implementation_path","tests","ci_evidence","dependencies","security_status","known_limitations","next_action","version","last_verified_commit"],
-    "status_vocabulary": ["PLANNED","DESIGNED","PARTIAL","IMPLEMENTED","TESTED","VERIFIED","DEPLOYED","BLOCKED"],
-    "blocked_major_capabilities": []
-  },
   "safety_boundaries": [
     "Discovery never installs, executes, authenticates, spends money, or grants authority.",
     "Lifecycle transitions are explicit and state-validated; capability approval requires permission.",
@@ -58,26 +51,26 @@
     "Contradictory or low-confidence synthesis signals cannot become executive requirements.",
     "Autonomous plans are scope-bound and permission-preflighted before any action is executed.",
     "Autonomous plan size is bounded and execution stops on failed actions.",
+    "Routing selects only registered, approved, healthy, requirement-compatible specialists and never grants authority.",
+    "Routing fallbacks remain subject to the same eligibility requirements.",
     "Autonomous improvement can propose changes but cannot mutate code, handlers, permissions, credentials, or authority.",
     "Autonomous cycle history is durable audit evidence, not an authority source.",
     "Core action execution remains behind the permission boundary.",
     "Recovery is externally authorized and protected against tampering, expiry, and replay.",
-    "Canary failure can trigger bounded rollback rather than silent activation.",
-    "External content cannot promote itself into instructions, credentials, permissions, or owner authority.",
     "No unrestricted self-modification, automatic paid acquisition, credential fabrication, CAPTCHA bypass, or platform-control bypass."
   ],
   "known_high_priority_gaps": [
-    "model/agent/specialist routing and collaboration",
     "controlled reflection/outcome learning",
     "evidence-backed arbitrary natural-language goal understanding",
     "production source-specific capability discovery configuration",
-    "broad ecosystem capabilities"
+    "broad ecosystem capabilities",
+    "distributed resource/provider scheduling"
   ],
   "next_execution_target": {
-    "name": "model/agent/specialist routing and collaboration",
-    "status": "NOT_STARTED",
-    "flow": "OBSERVE → UNDERSTAND → PLAN → SELECT CAPABILITY → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → IMPROVE"
+    "name": "controlled reflection and outcome learning",
+    "status": "PARTIAL",
+    "flow": "OBSERVE → EXECUTE → VERIFY → RECORD → REFLECT → LEARN → BOUNDED POLICY UPDATE"
   },
   "production_readiness": "NOT_CLAIMED",
-  "resume_instruction": "Inspect the verified autonomous operating path on main, then implement the highest-priority unfinished dependency: bounded model/agent/specialist routing and collaboration. Preserve explicit permission, provenance, security, verification, fallback, and owner authority boundaries."
+  "resume_instruction": "Inspect verified routing and autonomous execution on main, then implement controlled reflection/outcome learning. Learning must be evidence-backed, bounded, auditable, reversible, and must not grant authority or mutate privileged code/security controls."
 }
