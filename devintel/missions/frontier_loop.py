@@ -7,7 +7,6 @@ from datetime import datetime, timezone
 from ..autonomy.learning import OutcomeEvidence
 from ..autonomy.mission_learning import MissionLearningBridge
 from ..autonomy.next_objective import ObjectiveCandidate
-from ..intelligence.gap_missions import MissionProposal
 from .executive_bridge import MissionExecutiveBridge, MissionExecutionPolicy
 from .store import Mission, MissionStep, MissionStore
 
