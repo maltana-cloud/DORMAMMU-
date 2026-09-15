@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 18 — Intelligence & Knowledge System is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded intelligence knowledge boundary that integrates verified research claims with durable scoped persistence, deterministic retrieval, provenance preservation, freshness filtering, explicit contradiction detection, and versioned assertion updates.
+**Category 19 — Research & Discovery Engine is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded, provider-isolated source discovery boundary that produces canonicalized, deduplicated, deterministic, untrusted research candidates for the established ingestion and verification pipeline.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -25,30 +25,31 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 16. Persistent Intelligence Infrastructure — COMPLETE / LOCKED
 17. Real Capability & Provider Infrastructure — COMPLETE / LOCKED
 18. Intelligence & Knowledge System — COMPLETE / LOCKED
+19. Research & Discovery Engine — COMPLETE / LOCKED
 
-## Category 18 Completion Evidence
-- `KnowledgeIntelligence` integrates with the existing `KnowledgeStore` rather than creating a second persistence system;
-- admission is restricted to existing `VerifiedClaim` values, preserving the established verification boundary;
-- knowledge assertions use deterministic identity for stable versioned updates;
-- verified confidence is retained and evidence provenance is merged across repeated observations;
-- retrieval is scope-isolated, bounded, deterministic, and supports explicit freshness filtering;
-- contradictions for the same normalized subject/predicate are surfaced explicitly rather than silently resolved;
-- persisted knowledge survives store close/reopen through the existing durable SQLite layer;
-- stored claim payloads have an explicit versioned encoding and malformed/unsupported records fail closed;
-- regression coverage verifies admission boundaries, provenance, scope isolation, bounded retrieval, conflict detection, versioning, and persistence;
-- no knowledge admission grants authority, permissions, credentials, or action capability;
-- implementation remains additive and preserves locked security, owner-control, verification, audit, runtime, provider, and persistence boundaries.
+## Category 19 Completion Evidence
+- `ResearchDiscoveryEngine` adds a dedicated provider-isolated discovery boundary without replacing the established research pipeline;
+- discovery accepts the existing `ResearchCandidate` contract and reuses canonical HTTP(S) URL normalization;
+- candidate retrieval is explicitly bounded by caller limit and engine maximums;
+- provider failures are isolated so later providers can continue to contribute candidates;
+- malformed or wrong-type provider output is rejected at the untrusted discovery boundary;
+- canonical URL duplicates are removed across providers before final results are returned;
+- results are deterministic, sorted by canonical URL and title, and remain bounded;
+- discovery output is explicitly untrusted and cannot grant authority, permissions, credentials, or execution capability;
+- regression coverage verifies fallback after deduplication, canonicalization, bounds, malformed output rejection, and provider-failure isolation;
+- CI run #1095 passed for the final Category 19 implementation commit;
+- implementation remains additive and preserves locked verification, knowledge, security, owner-control, runtime, provider, persistence, audit, and truth boundaries.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Knowledge is evidence-backed state, not authority. External content cannot cross into trusted knowledge without the established verification boundary. Knowledge retrieval cannot grant permission or cause an action by itself. Contradictions and uncertainty remain visible instead of being converted into false certainty.
+Discovery produces candidates, not trusted knowledge. External source content cannot become verified truth merely because it was discovered. Discovery cannot execute discovered content, alter policy, bypass provider controls, or grant permissions.
 
 ## Production Boundary
-Category 18 is complete at the repository architecture level, not a claim that DORMAMMU has production-scale knowledge infrastructure. Production still requires workload-specific database sizing/indexing, backup/restore and migration operations, retention policy, distributed storage/coordination where needed, provenance freshness policy, substantive fact-checking providers, monitoring/alerting, access controls, and deployment-specific operational evidence.
+Category 19 is complete at the repository architecture level, not a claim that DORMAMMU has production-scale web discovery. Production still requires workload-specific source/provider selection, network timeout/retry policy, rate-limit handling, source reputation and freshness policy, content extraction hardening, substantive fact-checking, monitoring/alerting, distributed coordination where needed, and deployment-specific operational evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–18 are now complete/locked at their defined repository boundaries. **Category 19 — Research & Discovery Engine** is the next planned capability boundary.
+Categories 1–19 are now complete/locked at their defined repository boundaries. **Category 20 — Problem & Opportunity Discovery** is the next planned capability boundary.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
