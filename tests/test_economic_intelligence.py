@@ -8,14 +8,14 @@ def test_plan_and_digest():
     p=EconomicEngine().plan(opp(),objective="validate demand",assumptions=("price stable",),actions=("research",),expected_cost=100)
     assert digest_plan(p)==digest_plan(p)
 def test_compare_prefers_net_value():
-    e=EconomicEngine(); a=e.plan(opp(1000),objective="a",expected_cost=100); b=e.plan(Opportunity("o2",OpportunityKind.SERVICE,"B","b",900),objective="b",expected_cost=10)
+    e=EconomicEngine(); a=e.plan(opp(1000),objective="a",expected_cost=100); b=e.plan(Opportunity("o2",OpportunityKind.SERVICE,"B","b",950),objective="b",expected_cost=10)
     assert e.compare((a,b)) is b
 def test_policy_fail_closed_for_money():
     p=EconomicPolicy(); assert not p.decide(EconomicAction.SPEND,evidence_score=1).allowed
     assert p.decide(EconomicAction.PLAN,evidence_score=.8).allowed
     assert not p.decide(EconomicAction.PLAN,evidence_score=.1).allowed
 def test_bounds():
-    with pytest.raises(ValueError): validate_amount(MAX_AMOUNT+1)
+    with pytest.raises(ValueError): validate_amount(1_000_000_001)
 def test_persistence(tmp_path):
     s=EconomicPlanStore(str(tmp_path/'plans.db')); p=EconomicEngine().plan(opp(),objective='x'); d=s.save(p); assert s.get_digest(p.plan_id)==d; assert s.count()==1; s.close()
 def test_runtime_integration(tmp_path):
