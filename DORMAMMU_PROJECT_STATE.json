@@ -1,13 +1,13 @@
 {
-  "schema_version":"3.3",
+  "schema_version":"3.4",
   "project":"DORMAMMU",
   "repository":"maltana-cloud/DORMAMMU-",
-  "branch":"main",
-  "checkpoint_commit":"e03d1a9711a8d48cc617f235b549dcaab27009a4",
+  "branch":"codex/omega-five-frontier",
+  "checkpoint_commit":"e4e346abeb2d183af6fbfa505f3e5d1af373e77d",
   "verification":{
     "repository_state_checked":true,
-    "active_work":"Ω.1 bounded distributed mission coordination complete and locked; Ω remains open",
-    "ci_status":"PR #90 merged as 5ca981b8fc0cab0b008d6459308883430f807648; feature-head CI #1209 passed; post-merge main CI #1210 passed; status checkpoint CI #1214 passed",
+    "active_work":"Ω.2 integrated frontier control plane implemented and awaiting complete CI verification",
+    "ci_status":"Ω.2 feature branch CI pending",
     "truth_rule":"Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane":"DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix":"DORMAMMU_CAPABILITY_MATRIX.md"
@@ -17,16 +17,18 @@
   },
   "omega_frontier":{
     "omega_1_bounded_distributed_mission_coordination":{
-      "status":"COMPLETE_LOCKED",
-      "pull_request":90,
-      "merge_commit":"5ca981b8fc0cab0b008d6459308883430f807648",
-      "feature_ci_run":1209,
-      "post_merge_ci_run":1210,
-      "documentation_ci_run":1214,
+      "status":"COMPLETE_LOCKED","pull_request":90,"merge_commit":"5ca981b8fc0cab0b008d6459308883430f807648","feature_ci_run":1209,"post_merge_ci_run":1210,"documentation_ci_run":1214,
       "boundary":"Atomic worker ownership for durable missions using finite SQLite leases, expiry takeover, renewal, and ownership-checked completion. Coordination only; no new authority path."
+    },
+    "omega_2_integrated_frontier_control_plane":{
+      "status":"IMPLEMENTED_TESTING","branch":"codex/omega-five-frontier",
+      "scope":["external capability credential indirection","durable worker queue and retry isolation","scope-bound resource budgeting","provider/capability coordination boundary","evidence-backed outcome reflection"],
+      "files":["devintel/frontier/__init__.py","devintel/frontier/control.py","tests/test_frontier_control.py"],
+      "boundary":"Repository-level coordination, resource, credential-reference, and reflection primitives. No secret storage, authority grant, automatic installation, or unrestricted external execution.",
+      "ci_required":true
     }
   },
   "production_readiness":"NOT_CLAIMED",
-  "next_execution_target":{"name":"Ω Unknown Frontier","status":"OPEN","selection_rule":"Do not invent a fixed final category. Select the next capability from verified repository gaps, user value, dependencies, security, resource constraints, and architectural leverage. Preserve all locked boundaries."},
-  "resume_instruction":"Continue from actual main repository state. Categories 1-27 are complete and locked. Ω.1 is complete and locked. Ω remains open-ended. Never claim external integration or production readiness without evidence."
+  "next_execution_target":{"name":"Ω Unknown Frontier","status":"OPEN","selection_rule":"After Ω.2 CI, re-audit the repository and select the next capability from verified gaps, user value, dependencies, security, resources, and architectural leverage. Preserve all locked boundaries."},
+  "resume_instruction":"Continue from actual repository state. Categories 1-27 and Ω.1 are locked. Ω.2 is implemented on codex/omega-five-frontier and must not be marked complete until full CI passes. Never claim external integration or production readiness without evidence."
 }
