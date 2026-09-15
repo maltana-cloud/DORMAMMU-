@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 12 — Owner & Platform Security is COMPLETE / LOCKED at the repository architecture level.** Owner-control authorization now has a cryptographic proof boundary, the legacy boolean path is fail-closed for protected commands, emergency recovery remains independently cryptographically authorized, containment remains scoped, and the audit trail is tamper-evident within bounded retention.
+**Category 13 — Autonomous Operations is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded autonomous cycle plus a bounded operational supervisor for repeated cycles, with explicit cycle/duration limits, fail-closed stop behavior, scoped observations/plans, permission preflight, verification, durable cycle history, operational telemetry, capability/resource integration, and learning proposals that cannot self-modify authority or code.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -19,32 +19,33 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 10. Social & Community Intelligence — COMPLETE / LOCKED
 11. Economic & Business Intelligence — COMPLETE / LOCKED
 12. Owner & Platform Security — COMPLETE / LOCKED
-13. Autonomous Operations — PARTIAL
+13. Autonomous Operations — COMPLETE / LOCKED
 14. Evolution & Self-Improvement — EARLY
 
-## Category 12 Completion Evidence
-- scoped HMAC-SHA256 owner-approval tokens bound to command and scope;
-- short-lived approvals with configurable freshness window;
-- single-use nonce protection and external secret provisioning;
-- fail-closed OwnerControlCenter integration for authenticated approval;
-- legacy `owner_approved=True` retained only as a compatibility parameter and explicitly rejected as authorization for protected owner-control commands;
-- tamper-evident chained AuditLog with bounded-retention integrity verification;
-- emergency recovery remains independently cryptographically authorized and scope-bound;
-- scoped containment/recovery/safe-degraded controls remain isolated from unrelated scopes;
-- security regression coverage for approval success, replay, scope mismatch, tampering, expiry, weak secrets, migration boundary, audit tampering, bounded retention, containment, and recovery;
-- PR #73 feature-head CI #1029 passed: **352 tests passed**;
-- branch is based directly on main `7e349b9d228200ceebc32da7a0cf32461a9560ba` with no divergence behind main.
+## Category 13 Completion Evidence
+- bounded `AutonomousEngine` implements scoped OBSERVE → UNDERSTAND → PLAN → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → IMPROVE;
+- cross-scope observations and plans are rejected before execution;
+- action count is explicitly bounded and execution remains behind the core permission path;
+- failures, invalid observations/plans, permission denial, verification failure, and improvement errors fail closed without granting authority;
+- autonomous cycles persist durably through `AutonomousCycleStore`;
+- operation telemetry records success, verification, duration, capability, and resource observations;
+- capability/resource inventory and bounded operation paths are already integrated through the runtime composition root;
+- `AutonomousSupervisor` adds finite repeated operation with explicit maximum-cycle and optional maximum-duration limits;
+- supervisor stops on failed/unverified cycles by default and never creates an unrestricted background loop;
+- improvement remains proposal-only and cannot self-modify code, authority, secrets, or security policy;
+- regression coverage added for repeated cycles, failure stop behavior, and invalid unbounded policy values;
+- CI verification is required before merge and the final main checkpoint will record the passing run.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-This category establishes and hardens the repository-level authorization and recovery boundaries. The approval token proves possession of the configured owner-approval secret for a specific pending command/scope and time window; it is not a claim that arbitrary model output, external content, or a runtime component is the owner.
+Autonomous operation never becomes authority. Every action is still permission-checked through the core, scope is explicit, limits are finite, verification is required, and failures stop safely. Owner-controlled, recovery, containment, and security boundaries remain authoritative.
 
 ## Known Limitations
-Production deployment still requires secure external secret management, real owner identity/authentication/session integration, operational key rotation, deployment hardening, monitoring, and environment-specific security testing. These are deployment concerns and are not falsely claimed as implemented by the repository-level category.
+Production deployment still requires a real scheduler/worker deployment, distributed coordination, durable production databases, provider/resource health infrastructure, monitoring/alerting, and environment-specific operational testing. Category 13 does not claim unrestricted autonomous background execution, distributed multi-worker consensus, or production deployment.
 
 ## Next Execution Target
-**Category 13 — Autonomous Operations.** Do not restart Categories 1–12.
+**Category 14 — Evolution & Self-Improvement.** Do not restart Categories 1–13.
 
 ## Handoff Rule
-Every AI working on DORMAMMU must verify the repository itself, leave a truthful test-backed checkpoint, finish the active category before moving to the next category, and continue from the repository rather than treating prior chat history as authoritative.
+Every AI working on DORMAMMU must verify the repository itself, leave a truthful test-backed checkpoint, finish the active category before moving to the next, and continue from the repository rather than treating prior chat history as authoritative.
