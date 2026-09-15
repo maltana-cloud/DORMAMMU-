@@ -15,7 +15,7 @@ def test_owner_approval_is_scoped_and_single_use():
     authority = OwnerApprovalAuthority(SECRET)
     center = OwnerControlCenter(DEVINTELRuntime(), approval_authority=authority)
     command = center.request("scope:a", "sensitive")
-    approval = authority.approve(command, issued_at=1000)
+    approval = authority.approve(command)
 
     assert center.consume(command, approval=approval).value == "allow"
     assert center.decide(command, approval=approval).value == "deny"
@@ -26,7 +26,7 @@ def test_owner_approval_rejects_wrong_scope():
     center = OwnerControlCenter(DEVINTELRuntime(), approval_authority=authority)
     command = center.request("scope:a", "sensitive")
     other = center.request("scope:b", "sensitive")
-    approval = authority.approve(command, issued_at=1000)
+    approval = authority.approve(command)
 
     assert center.decide(other, approval=approval).value == "deny"
 
