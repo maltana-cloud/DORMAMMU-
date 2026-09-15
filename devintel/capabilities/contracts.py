@@ -112,9 +112,11 @@ class Evaluation:
     permission_ok: bool
     score: float
     reasons: tuple[str, ...] = ()
+    minimum_score: float = 0.75
+
     @property
     def eligible(self) -> bool:
-        return self.score >= 0.75 and all((self.trust_ok, self.security_ok, self.compatibility_ok, self.performance_ok, self.license_ok, self.cost_ok, self.permission_ok))
+        return self.score >= self.minimum_score and all((self.trust_ok, self.security_ok, self.compatibility_ok, self.performance_ok, self.license_ok, self.cost_ok, self.permission_ok))
 
 
 @dataclass(frozen=True)
