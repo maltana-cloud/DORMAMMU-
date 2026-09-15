@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from time import monotonic
 from typing import Callable, Mapping
 
 from .engine import MissionRunPolicy
@@ -27,18 +28,18 @@ StepExecutor = Callable[[Mission, MissionStep], StepOutcome]
 
 
 class PersistentMissionRunner:
-    """Advance durable mission steps until a bounded budget is exhausted.
+    """Advance durable mission steps until explicit execution bounds are exhausted.
 
-    The mission store is the source of truth. A step is advanced only after its
-    executor explicitly reports both success and verification. Failed or
-    unverified work never advances the durable checkpoint. Reopening the store
-    therefore resumes from the first incomplete step without a manual continue
+    The mission store is the source of truth. A step advances only after its
+    executor explicitly reports both success and verification. Reopening the
+    store resumes from the first incomplete step without a manual continue
     prompt, while authority and external actions remain the executor's normal
     responsibility.
     """
 
-    def __init__(self, store: MissionStore) -> None:
+    def __init__(self, store: MissionStore, *, clock: Callable[[], float] = monotonic) -> None:
         self.store = store
+        self.clock = clock
 
     def define(self, mission_id: str, steps: tuple[MissionStep, ...]) -> tuple[MissionStepRecord, ...]:
         return self.store.define_steps(mission_id, steps)
@@ -57,16 +58,22 @@ class PersistentMissionRunner:
             raise TypeError("execute must be callable")
         if now < 0:
             raise ValueError("now must be non-negative")
+        if (worker_id is None) != (policy.lease_ttl_seconds is None):
+            raise ValueError("worker_id and lease_ttl_seconds must be supplied together")
+        if worker_id is not None and not worker_id.strip():
+            raise ValueError("worker_id is required")
         results: list[Mission] = []
         steps_run = 0
+        started = self.clock()
         while steps_run < policy.max_steps:
+            if policy.max_duration_seconds is not None and self.clock() - started >= policy.max_duration_seconds:
+                break
             mission = self.store.claim_due(now=now, scope_id=scope_id, worker_id=worker_id, lease_ttl_seconds=policy.lease_ttl_seconds)
             if mission is None:
                 break
             records = self.store.steps(mission.mission_id)
             if len(records) != mission.total_steps:
-                self.store.fail(mission.mission_id, "mission steps are undefined or incomplete", now=now, backoff_seconds=policy.retry_backoff_seconds, worker_id=worker_id)
-                results.append(self.store.get(mission.mission_id))  # type: ignore[arg-type]
+                results.append(self.store.fail(mission.mission_id, "mission steps are undefined or incomplete", now=now, backoff_seconds=policy.retry_backoff_seconds, worker_id=worker_id))
                 steps_run += 1
                 continue
             current = records[mission.current_step]
