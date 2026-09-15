@@ -1,5 +1,5 @@
 from devintel.actions import ActionExecutor, ActionOutcome, ActionRegistry, ActionSpec, ActionStatus
-from devintel.core import ActionRisk, PermissionPolicy
+from devintel.core import ActionRisk
 
 
 class Provider:
@@ -26,11 +26,12 @@ def spec(risk=ActionRisk.LOW, key="k", dry_run=False):
 
 def test_high_risk_requires_owner_approval():
     registry = ActionRegistry()
-    registry.register(Provider("p1"))
+    provider = Provider("p1")
+    registry.register(provider)
     executor = ActionExecutor(registry)
     denied = executor.execute(spec(ActionRisk.HIGH))
     assert denied.status is ActionStatus.DENIED
-    assert not registry.providers("publish")[0].calls
+    assert provider.calls == 0
     allowed = executor.execute(spec(ActionRisk.HIGH, "approved"), owner_approved=True)
     assert allowed.status is ActionStatus.SUCCEEDED
 
@@ -65,6 +66,18 @@ def test_verifier_is_explicit_and_failure_is_isolated():
     executor = ActionExecutor(registry, verifier=lambda _spec, _outcome: True)
     outcome = executor.execute(spec(key="verified"))
     assert outcome.verified is True
+
+
+def test_verifier_exception_does_not_retry_external_side_effect():
+    provider = Provider("p1")
+    registry = ActionRegistry()
+    registry.register(provider)
+    executor = ActionExecutor(registry, verifier=lambda _spec, _outcome: 1 / 0)
+    outcome = executor.execute(spec(key="verify-error"))
+    assert outcome.status is ActionStatus.SUCCEEDED
+    assert outcome.verified is False
+    assert provider.calls == 1
+    assert executor.execute(spec(key="verify-error")) == outcome
 
 
 def test_invalid_provider_result_fails_closed():
