@@ -47,17 +47,23 @@ def test_atomic_claim_allows_one_worker_and_expiry_takeover() -> None:
         second.close()
 
 
-def test_expired_worker_cannot_complete_after_takeover_window() -> None:
+def test_expired_worker_cannot_complete_before_or_after_takeover() -> None:
     with tempfile.TemporaryDirectory() as directory:
-        store = FrontierJobStore(str(Path(directory) / "frontier.db"))
-        store.enqueue(scope_id="s", kind="task", payload={}, job_id="job-1")
-        assert store.claim(worker_id="a", now=1, lease_ttl=2)
-        assert store.claim(worker_id="b", now=4, lease_ttl=2) is not None
+        path = str(Path(directory) / "frontier.db")
+        first = FrontierJobStore(path)
+        second = FrontierJobStore(path)
+        first.enqueue(scope_id="s", kind="task", payload={}, job_id="job-1")
+        assert first.claim(worker_id="a", now=1, lease_ttl=2)
         with pytest.raises(ValueError):
-            store.complete("job-1", worker_id="a", now=4, success=True)
-        done = store.complete("job-1", worker_id="b", now=5, success=True)
+            first.complete("job-1", worker_id="a", now=4, success=True)
+        assert second.recover_expired(now=4) == 1
+        assert second.claim(worker_id="b", now=4, lease_ttl=2) is not None
+        with pytest.raises(ValueError):
+            first.complete("job-1", worker_id="a", now=4, success=True)
+        done = second.complete("job-1", worker_id="b", now=5, success=True)
         assert done.state is JobState.SUCCEEDED
-        store.close()
+        first.close()
+        second.close()
 
 
 def test_retry_then_dead_letter_is_bounded() -> None:
