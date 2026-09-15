@@ -6,7 +6,6 @@ profile. It never treats unverified material as knowledge or grants authority.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 from ..modules.research.normalization import normalize_text
 from ..modules.research.synthesis import SynthesisResult
@@ -58,13 +57,15 @@ class DomainIntelligenceEngine:
             raise ValueError("limit is outside the configured bound")
 
         signals: list[DomainSignal] = []
+        malformed = 0
         for item in synthesis.signals:
             parts = item.statement.split(" ", 2)
             if len(parts) != 3:
+                malformed += 1
                 continue
-            subject, predicate, object_value = (normalize_text(part) for part in parts)
-            signals.append(
-                DomainSignal(
+            try:
+                subject, predicate, object_value = (normalize_text(part) for part in parts)
+                signal = DomainSignal(
                     subject,
                     predicate,
                     object_value,
@@ -72,7 +73,10 @@ class DomainIntelligenceEngine:
                     item.evidence_urls,
                     item.uncertain,
                 )
-            )
+            except (TypeError, ValueError):
+                malformed += 1
+                continue
+            signals.append(signal)
 
         signals.sort(key=lambda item: (-item.confidence, item.subject.lower(), item.predicate.lower(), item.object.lower()))
         bounded = tuple(signals[:limit])
@@ -80,9 +84,11 @@ class DomainIntelligenceEngine:
         topics = tuple(sorted({signal.object for signal in bounded}, key=str.lower))
 
         if not bounded:
-            uncertainty = "high: no verified domain signals available"
+            uncertainty = "high: no valid verified domain signals available"
         elif synthesis.uncertainty.startswith("high:") or any(signal.uncertain for signal in bounded):
             uncertainty = "high: domain profile contains unresolved synthesis uncertainty"
+        elif malformed or len(signals) > limit:
+            uncertainty = "bounded: profile contains verified signals with preserved provenance and exclusions"
         else:
             uncertainty = "bounded: profile contains verified signals with preserved provenance"
         return DomainProfile(normalized_domain, bounded, entities, topics, uncertainty)
