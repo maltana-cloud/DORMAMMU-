@@ -5,15 +5,17 @@ import os
 from typing import Any, Sequence
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
 from ..autonomy.store import AutonomousCycleStore
+from ..autonomy.learning_store import LearningStore
 from ..autonomy.contracts import Observation
 from ..capabilities import (AcquisitionPlan, CapabilityAcquisition, CapabilityDescriptor, CapabilityDiscovery, CapabilityGap, CapabilityLifecycle, CapabilityRegistry, CapabilityRequirement, DiscoveryResult, ResourceDescriptor, ResourceRegistry, LifecycleStore, CapabilityDecision, CapabilityDecisionEngine, CanaryDecision, CanaryHealth, CanaryMonitor, CanaryPolicy, ResourceDecision, ResourceManager, ResourceRequest, ResourceLeaseStore)
 from ..capabilities.contracts import CapabilityStatus
 from ..capabilities.inventory import local_capabilities, local_resources
-from ..control.service import OwnerControlCenter
+from ..control import AuthorityMode, AuthorityStore, OwnerControlCenter
 from ..core.audit import AuditLog
 from ..core.orchestrator import Orchestrator
 from ..core.runtime import RuntimeContext
-from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding
+from ..executive import ExecutiveEngine, ExecutivePlan, ExecutiveResult, Objective, TaskSpec, EvidenceBackedUnderstanding, SpecialistRouter, OutcomeAwareRoutingService, RoutingRequirement, RouteCandidate, BoundedNaturalLanguageGoalBoundary, ProviderSemanticNaturalLanguageInterpreter, GoalInterpretation
+from ..memory import MemoryEntry, MemoryKind, MemoryStore
 from ..modules.creative import CreativeBrief, CreativeContext, CreativeContextAdapter, CreativeCreationAdapter, CreativeCreationRequest, CreativeLineageStore, CreativePipeline, CreativeProvider, CreativeProviderRegistry, CreativeResult
 from ..modules.education.contracts import Assessment, EducationMode
 from ..modules.education.engine import EducationEngine
@@ -44,7 +46,7 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", memory_store_path: str = ":memory:", authority_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
         if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
@@ -52,11 +54,14 @@ class DORMAMMURuntime:
         self.security = SecurityOrchestrator(events=self.context.events, audit=self.audit, runtime_state=self.context.state, recovery=self.recovery); self.monitoring = MonitoringEngine(); self.plugins = PluginService()
         self.providers = ProviderRegistry(); self.live_providers = ProviderRouter(); self._configure_live_providers()
         self.capability_registry = CapabilityRegistry(); self.resource_registry = ResourceRegistry(); self.resource_lease_store = ResourceLeaseStore(resource_lease_store_path); self.resource_manager = ResourceManager(self.resource_registry, self.resource_lease_store); self.capability_discovery = CapabilityDiscovery(registry=self.capability_registry)
-        self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.autonomy_store = AutonomousCycleStore(autonomy_store_path); self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.capability_acquisition = CapabilityAcquisition(self.capability_discovery, self.capability_lifecycle); self.refresh_local_inventory()
+        self.lifecycle_store = LifecycleStore(lifecycle_store_path); self.operation_store = OperationalTelemetryStore(operation_store_path); self.autonomy_store = AutonomousCycleStore(autonomy_store_path); self.learning_store = LearningStore(learning_store_path); self.memory_store = MemoryStore(memory_store_path); self.authority_store = AuthorityStore(authority_store_path)
+        self.capability_lifecycle = CapabilityLifecycle(self.capability_registry, recorder=self.lifecycle_store.record); self.canary_monitor = CanaryMonitor(self.capability_lifecycle, canary_policy); self.capability_decisions = CapabilityDecisionEngine(self.capability_registry, self.capability_discovery); self.capability_acquisition = CapabilityAcquisition(self.capability_discovery, self.capability_lifecycle); self.refresh_local_inventory()
+        self.specialist_router = SpecialistRouter(); self.outcome_routing = OutcomeAwareRoutingService(self.specialist_router, self.learning_store)
+        self.nl_goal_interpreter = ProviderSemanticNaturalLanguageInterpreter(self.live_providers); self.nl_goal_boundary = BoundedNaturalLanguageGoalBoundary(self.nl_goal_interpreter)
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
         self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter(); self.creative_creation = CreativeCreationAdapter()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
-        self.frontier = FrontierControlPlane(FrontierJobStore(frontier_store_path)); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
+        self.frontier = FrontierControlPlane(FrontierJobStore(frontier_store_path)); self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
     def _configure_live_providers(self) -> None:
         gemini, wikipedia = configured_live_providers(); self.register_research_provider(wikipedia.provider_id, wikipedia, priority=1000)
@@ -109,13 +114,20 @@ class DORMAMMURuntime:
     def evidence_backed_understanding(self, objective: Objective, synthesis: SynthesisResult) -> EvidenceBackedUnderstanding: return self.executive.evidence_adapter.understand(objective, synthesis)
     def plan_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan: return self.executive.plan_from_synthesis(objective, synthesis, tasks)
     def run_objective_from_synthesis(self, objective: Objective, synthesis: SynthesisResult, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute_from_synthesis(objective, synthesis, tasks, **kwargs)
+    def understand_goal(self, text: str, *, scope_id: str) -> GoalInterpretation: return self.nl_goal_boundary.understand(text, scope_id=scope_id)
+    def route_specialist(self, scope_id: str, requirement: RoutingRequirement) -> RouteCandidate: return self.outcome_routing.select(scope_id, requirement)
+    def remember(self, entry: MemoryEntry) -> MemoryEntry: return self.memory_store.remember(entry)
+    def recall_memory(self, scope_id: str, *, query: str = "", kinds: Sequence[MemoryKind] = (), limit: int = 100): return self.memory_store.recall(scope_id, query=query, kinds=kinds, limit=limit)
+    def revise_memory(self, previous_id: str, entry: MemoryEntry) -> MemoryEntry: return self.memory_store.revise(previous_id, entry)
+    def set_authority(self, scope_id: str, capability: str, mode: AuthorityMode, *, expires_at=None, expected_version: int | None = None): return self.authority_store.set(scope_id, capability, mode, expires_at=expires_at, expected_version=expected_version)
+    def authority(self, scope_id: str, capability: str): return self.authority_store.decide(scope_id, capability)
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def autonomous_cycle_history(self, scope_id: str | None = None, *, limit: int = 100): return self.autonomy_store.history(scope_id, limit=limit)
     def frontier_submit(self, **kwargs: Any): return self.frontier.submit(**kwargs)
     def frontier_reflect(self, reflection: FrontierReflection): return self.frontier.reflect(reflection)
     def close(self) -> None:
-        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close()
+        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close(); self.learning_store.close(); self.memory_store.close(); self.authority_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")
