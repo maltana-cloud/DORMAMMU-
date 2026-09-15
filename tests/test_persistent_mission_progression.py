@@ -1,7 +1,8 @@
 import pytest
 
 from devintel.missions.progression import PersistentMissionRunner, StepOutcome
-from devintel.missions import MissionRunPolicy, MissionStatus, MissionStep, MissionStore
+from devintel.missions import MissionRunPolicy, MissionStatus, MissionStore
+from devintel.missions.store import MissionStep
 
 
 def test_progression_persists_steps_and_resumes_after_reopen(tmp_path):
