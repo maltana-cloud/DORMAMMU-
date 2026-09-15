@@ -6,7 +6,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Current checkpoint:** Categories 1–13 are complete and locked at the repository architecture level. Production readiness remains unclaimed.
+**Current checkpoint:** Categories 1–14 are complete and locked at the repository architecture level. Production readiness remains unclaimed.
 
 | Capability | Status | Implementation / evidence | Security boundary | Known limitation |
 |---|---|---|---|---|
@@ -23,11 +23,11 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | Economic & Business Intelligence | COMPLETE / LOCKED | bounded opportunity/evidence analysis; deterministic business planning/comparison; durable advisory-plan persistence; runtime telemetry; fail-closed financial action policy | intelligence never grants spending/investment/payment/credential authority | real financial feeds, commerce adapters and production financial controls remain future work |
 | Owner & Platform Security | COMPLETE / LOCKED | cryptographically authenticated owner approvals; fail-closed migration boundary; bounded single-use approvals; tamper-evident audit chain; scoped containment/recovery; recovery authorization; security regression coverage; PR #73; CI #1029 (352 passed) | owner proof is scoped/time-bound; intelligence, external content, models, capabilities, and runtime state do not grant authority; recovery remains independently protected | production identity/session integration, secret rotation, secure deployment, and operational security evidence remain external/deployment work |
 | Autonomous Operations | COMPLETE / LOCKED | bounded autonomous cycle; scoped observe/plan/permission/act/verify/record/improve loop; durable cycle history; operation telemetry; capability/resource integration; bounded multi-cycle supervisor with cycle/duration limits and fail-closed stop behavior | autonomy remains finite and permission-gated; improvement is proposal-only; no unrestricted background execution | production scheduler/workers, distributed coordination, durable production infrastructure, live health/alerting and deployment evidence remain future work |
-| Evolution & Self-Improvement | EARLY | controlled reflection/learning foundations | no unrestricted self-modification | training/evaluation/model factory not built |
+| Evolution & Self-Improvement | COMPLETE / LOCKED | verified outcome learning; bounded improvement candidates; independent evaluation gates; reversible versioned promotion; stale-version protection; durable candidate/evaluation/promotion records; rollback; regression coverage | evolution cannot target authority, security, secrets, credentials, owner control, recovery, or code | production experimentation/model training and operational canary evidence remain deployment/future-capability work |
 
-## Category 13 completion boundary
+## Category 14 completion boundary
 
-Category 13 is complete at the repository architecture level: autonomous execution is bounded, scoped, permission-preflighted, verified, durably recorded, observable, and repeatable under explicit finite supervisory limits. Failure stops are fail-closed. Learning/improvement produces proposals only and cannot modify code, authority, secrets, or security policy. Production schedulers, distributed workers, deployment infrastructure, and environment-specific operational evidence remain explicit external/deployment dependencies.
+Category 14 is complete at the repository architecture level: verified learning can produce bounded behavioral/routing candidates; candidates require sufficient evidence and confidence; independent evaluation must demonstrate safety and measurable gain; only current-version candidates can be promoted; promotions are versioned and reversible; evolution records are durable. Protected authority and security surfaces are excluded from evolution.
 
 ## Verification rule
 
