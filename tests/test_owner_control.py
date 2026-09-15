@@ -1,5 +1,8 @@
-from devintel.control import ControlDecision, OwnerControlCenter
+from devintel.control import ControlDecision, OwnerApprovalAuthority, OwnerControlCenter
 from devintel.runtime import DEVINTELRuntime
+
+
+SECRET = b"dormammu-owner-approval-test-secret-32-bytes!"
 
 
 def test_control_snapshot_is_observation_only():
@@ -18,17 +21,27 @@ def test_pending_approvals_are_scoped():
     assert center.snapshot("scope:b").pending_approvals == 1
 
 
-def test_sensitive_command_is_approval_gated_and_consumed_after_approval():
-    center = OwnerControlCenter(DEVINTELRuntime())
+def test_sensitive_command_requires_authenticated_owner_approval():
+    authority = OwnerApprovalAuthority(SECRET)
+    center = OwnerControlCenter(DEVINTELRuntime(), approval_authority=authority)
     command = center.request("channel:test", "sensitive", reason="owner action")
-    assert center.decide(command) is ControlDecision.APPROVAL_REQUIRED
-    assert center.decide(command, owner_approved=True) is ControlDecision.ALLOW
-    assert center.consume(command, owner_approved=True) is ControlDecision.ALLOW
+    assert center.decide(command) is ControlDecision.DENY
     assert center.decide(command, owner_approved=True) is ControlDecision.DENY
+    approval = authority.approve(command)
+    assert center.consume(command, approval=approval) is ControlDecision.ALLOW
+    assert center.decide(command, approval=approval) is ControlDecision.DENY
+
+
+def test_authenticated_approval_is_required_even_when_legacy_flag_is_true():
+    center = OwnerControlCenter(DEVINTELRuntime())
+    command = center.request("channel:test", "sensitive")
+    assert center.consume(command, owner_approved=True) is ControlDecision.DENY
 
 
 def test_unknown_command_fails_closed():
-    center = OwnerControlCenter(DEVINTELRuntime())
+    authority = OwnerApprovalAuthority(SECRET)
+    center = OwnerControlCenter(DEVINTELRuntime(), approval_authority=authority)
     command = center.request("scope:a", "x")
     foreign = type(command)("foreign", command.scope_id, command.action)
-    assert center.decide(foreign, owner_approved=True) is ControlDecision.DENY
+    approval = authority.approve(command)
+    assert center.decide(foreign, approval=approval) is ControlDecision.DENY
