@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 15 — Production Runtime & Orchestration is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has durable job state, explicit worker execution, restart recovery, and externally driven scheduling without creating an implicit unrestricted background loop.
+**Category 16 — Persistent Intelligence Infrastructure is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a durable, scoped persistence boundary for intelligence knowledge and operational state, with explicit schema versioning and restart persistence.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -22,32 +22,31 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 13. Autonomous Operations — COMPLETE / LOCKED
 14. Evolution & Self-Improvement — COMPLETE / LOCKED
 15. Production Runtime & Orchestration — COMPLETE / LOCKED
+16. Persistent Intelligence Infrastructure — COMPLETE / LOCKED
 
-## Category 15 Completion Evidence
-- `RuntimeJobStore` provides durable SQLite-backed job state with queued/running/succeeded/failed transitions;
-- jobs have stable identifiers, scope IDs, action names, payloads, attempt counts, timestamps, and bounded error records;
-- `claim_next()` performs an atomic queued-to-running transition so a worker does not execute the same queued job twice through normal competing claims;
-- `recover_running()` converts interrupted running work back to queued state after process restart;
-- `RuntimeWorker` executes at most a caller-defined finite number of jobs per invocation and records success/failure;
-- `RuntimeScheduler` provides externally driven due-work scheduling and deterministic next-run advancement;
-- schedules can be disabled and validate positive intervals;
-- no implicit background thread/process or unrestricted runtime loop is created;
-- scheduling therefore remains compatible with an external OS/container/queue scheduler while keeping DORMAMMU's bounded autonomy model intact;
-- regression coverage verifies persistence across reopen, restart recovery, bounded worker execution, failure recording, due scheduling, and disabled schedules;
-- runtime orchestration primitives are exported through `devintel.runtime` without replacing existing runtime contracts.
+## Category 16 Completion Evidence
+- `KnowledgeStore` provides durable SQLite-backed scoped knowledge records and operational state;
+- knowledge records retain provenance, version, creation time, and update time;
+- state records are JSON-serializable, scoped by scope ID and key, and versioned on update;
+- persistence uses an explicit schema version with fail-closed rejection of unsupported versions;
+- SQLite foreign-key enforcement and WAL journaling are enabled;
+- scope-aware retrieval prevents accidental cross-scope knowledge reads;
+- runtime exports expose the persistence primitives without replacing existing contracts;
+- regression coverage verifies persistence across close/reopen, version advancement, scope isolation, state updates, and missing-state behavior;
+- the implementation remains additive and compatible with the existing runtime/job persistence boundary.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Runtime orchestration does not grant authority. A queued action remains subject to the existing runtime orchestrator, permission, security, owner-control, verification, and audit boundaries. Scheduling is not authorization.
+Persistence stores state; it does not grant authority. Stored content is data, not executable instruction or permission. Existing permission, security, owner-control, verification, audit, and recovery boundaries remain authoritative.
 
 ## Production Boundary
-Category 15 is complete at the repository architecture level, not a claim that DORMAMMU is deployed to production. A real deployment still needs environment-specific workers/schedulers, durable production database operations, distributed coordination where required, secrets/key management and rotation, identity/session integration, provider/resource health, monitoring/alerting, backup/restore procedures, and operational security/performance evidence.
+Category 16 is complete at the repository architecture level, not a claim of production database readiness. Production still requires environment-specific database operations, backup/restore, encryption and access controls appropriate to deployment, migrations, retention/data lifecycle policy, concurrency/load evidence, monitoring/alerting, and distributed storage/coordination where required.
 
 ## Post-Roadmap Engineering
-Categories 1–15 are now complete/locked at their defined repository boundaries. Future work is productionization and capability expansion, not reopening the locked foundation. Category 16 — Persistent Intelligence Infrastructure is the next planned capability boundary.
+Categories 1–16 are now complete/locked at their defined repository boundaries. **Category 17 — Real Capability & Provider Infrastructure** is the next planned capability boundary.
 
-New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, and rollback rules.
+New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, preserve this truthful checkpoint, and build forward from the repository rather than treating prior chat history as authoritative.
