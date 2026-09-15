@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from tempfile import NamedTemporaryFile
 
 from devintel.executive import ExecutiveResult, Objective, TaskSpec
 from devintel.intelligence import GapMissionEngine
@@ -11,13 +12,9 @@ from devintel.missions import MissionExecutionPolicy, MissionExecutiveBridge, Mi
 @dataclass
 class FakeExecutive:
     calls: int = 0
-    approved: list[bool] | None = None
 
     def execute(self, objective: Objective, tasks: tuple[TaskSpec, ...], *, owner_approved: bool, capability_approved: bool | set[str]) -> ExecutiveResult:
         self.calls += 1
-        if self.approved is None:
-            self.approved = []
-        self.approved.append(owner_approved)
         return ExecutiveResult(objective.objective_id, object(), (), True, "verified")  # type: ignore[arg-type]
 
 
@@ -29,11 +26,8 @@ def test_mission_bridge_continues_all_persisted_steps_without_manual_continue():
         MissionStep("two", "two", {"intent": "second", "desired_outcome": "second done"}),
     ))
     executive = FakeExecutive()
+    bridge = MissionExecutiveBridge(store, executive, lambda *_: (object(),))
 
-    def tasks(_mission, step, objective):
-        return (object(),)  # fake executive does not inspect task values
-
-    bridge = MissionExecutiveBridge(store, executive, tasks)
     results = bridge.continue_due(now=1, policy=MissionExecutionPolicy(max_steps=4))
 
     assert executive.calls == 2
@@ -42,22 +36,37 @@ def test_mission_bridge_continues_all_persisted_steps_without_manual_continue():
     store.close()
 
 
-def test_mission_bridge_resumes_from_first_unfinished_step():
+def test_persistent_mission_resume_uses_first_unfinished_step():
+    with NamedTemporaryFile(suffix=".sqlite") as handle:
+        store = MissionStore(handle.name)
+        mission = store.create("scope", "objective", 2, now=0)
+        store.define_steps(mission.mission_id, (MissionStep("one", "one"), MissionStep("two", "two")))
+        assert store.claim_due(now=1) is not None
+        store.record_step(mission.mission_id, 0, verified=True, message="done")
+        store.checkpoint(mission.mission_id, current_step=1, now=1)
+        store.close()
+
+        reopened = MissionStore(handle.name)
+        executive = FakeExecutive()
+        bridge = MissionExecutiveBridge(reopened, executive, lambda *_: (object(),))
+        results = bridge.continue_due(now=2, policy=MissionExecutionPolicy(max_steps=1))
+        assert executive.calls == 1
+        assert results[-1].current_step == 2
+        assert reopened.get(mission.mission_id).status.value == "succeeded"
+        reopened.close()
+
+
+def test_bridge_requires_tuple_tasks_and_fails_closed():
     store = MissionStore()
-    mission = store.create("scope", "objective", 2, now=0)
-    store.define_steps(mission.mission_id, (MissionStep("one", "one"), MissionStep("two", "two")))
-    claimed = store.claim_due(now=1)
-    assert claimed is not None
-    store.record_step(mission.mission_id, 0, verified=True, message="done")
-    store.checkpoint(mission.mission_id, current_step=1, now=1)
+    mission = store.create("scope", "objective", 1, now=0)
+    store.define_steps(mission.mission_id, (MissionStep("one", "one"),))
+    bridge = MissionExecutiveBridge(store, FakeExecutive(), lambda *_: [])
+    results = bridge.continue_due(now=1)
+    assert results[-1].status.value == "failed"
     store.close()
 
-    reopened = MissionStore()
-    # The in-memory database is intentionally not reused: persistence requires a file-backed store.
-    reopened.close()
 
-
-def test_gap_engine_only_materializes_confident_non_uncertain_candidates():
+def test_gap_engine_excludes_low_confidence_and_uncertain_candidates():
     result = SynthesisResult(
         "topic",
         (
@@ -67,8 +76,7 @@ def test_gap_engine_only_materializes_confident_non_uncertain_candidates():
         ),
         (), 0, "bounded",
     )
-    engine = GapMissionEngine(max_proposals=10)
-    proposals = engine.propose(result, scope_id="scope")
+    proposals = GapMissionEngine(max_proposals=10).propose(result, scope_id="scope")
     assert len(proposals) == 1
     assert proposals[0].kind == "problem"
     assert proposals[0].confidence == 0.9
