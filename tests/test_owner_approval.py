@@ -17,9 +17,8 @@ def test_owner_approval_is_scoped_and_single_use():
     command = center.request("scope:a", "sensitive")
     approval = authority.approve(command, issued_at=1000)
 
-    assert center.decide(command, approval=approval) is not None
-    # The approval is consumed by verification and cannot authorize a second use.
-    assert center.consume(command, approval=approval).value == "deny"
+    assert center.consume(command, approval=approval).value == "allow"
+    assert center.decide(command, approval=approval).value == "deny"
 
 
 def test_owner_approval_rejects_wrong_scope():
@@ -34,7 +33,8 @@ def test_owner_approval_rejects_wrong_scope():
 
 def test_owner_approval_rejects_tampering_and_expiry():
     authority = OwnerApprovalAuthority(SECRET, max_age_seconds=10)
-    command = OwnerControlCenter(DEVINTELRuntime()).request("scope:a", "sensitive")
+    center = OwnerControlCenter(DEVINTELRuntime(), approval_authority=authority)
+    command = center.request("scope:a", "sensitive")
     approval = authority.approve(command, issued_at=1000)
 
     with pytest.raises(ApprovalAuthorizationError):
