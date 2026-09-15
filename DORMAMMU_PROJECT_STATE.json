@@ -3,11 +3,11 @@
   "project":"DORMAMMU",
   "repository":"maltana-cloud/DORMAMMU-",
   "branch":"main",
-  "checkpoint_commit":"b286bafb1958527be65ea5ecc873894e894c1416",
+  "checkpoint_commit":"e03d1a9711a8d48cc617f235b549dcaab27009a4",
   "verification":{
     "repository_state_checked":true,
     "active_work":"Ω.1 bounded distributed mission coordination complete and locked; Ω remains open",
-    "ci_status":"PR #90 merged as 5ca981b8fc0cab0b008d6459308883430f807648; feature-head CI #1209 passed; post-merge main CI #1210 completed the full Run tests step successfully",
+    "ci_status":"PR #90 merged as 5ca981b8fc0cab0b008d6459308883430f807648; feature-head CI #1209 passed; post-merge main CI #1210 passed; status checkpoint CI #1214 passed",
     "truth_rule":"Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "engineering_control_plane":"DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix":"DORMAMMU_CAPABILITY_MATRIX.md"
@@ -22,6 +22,7 @@
       "merge_commit":"5ca981b8fc0cab0b008d6459308883430f807648",
       "feature_ci_run":1209,
       "post_merge_ci_run":1210,
+      "documentation_ci_run":1214,
       "boundary":"Atomic worker ownership for durable missions using finite SQLite leases, expiry takeover, renewal, and ownership-checked completion. Coordination only; no new authority path."
     }
   },
