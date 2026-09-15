@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from types import SimpleNamespace
 import pytest
 from devintel.autonomy.learning import OutcomeEvidence, OutcomeLearner
 from devintel.autonomy.learning_store import LearningStore
@@ -45,7 +46,7 @@ def test_learning_rejects_mixed_scope_and_unverified_state():
     with pytest.raises(ValueError):
         bridge.transition(evidence("s", "1", .2), (ObjectiveCandidate("a", "A", "other", "gap"),))
     with pytest.raises(ValueError):
-        NextObjectiveSelector().select(candidates(), verified_outcomes=(evidence("s", "1", .2),))
+        NextObjectiveSelector().select(candidates(), verified_outcomes=(SimpleNamespace(verified=False),))
 
 
 def test_selection_is_deterministic_for_same_state():
