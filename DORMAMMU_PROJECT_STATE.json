@@ -1,18 +1,20 @@
 {
-  "schema_version": "3.9",
+  "schema_version": "4.0",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "6de723cea31575f1a3d2a73102bfcce6c21c9d2e",
-  "documentation_head": "042213eb27149fc712b45482b0ace59f29297b65",
+  "checkpoint_commit": "68bc0d4a99f747ff6c0e22632dfbd0f71d94e15c",
   "verification": {
     "repository_state_checked": true,
-    "previous_scheduler_ci_run": 1300,
-    "previous_scheduler_ci_conclusion": "success",
-    "worker_pr": 97,
-    "worker_merge_commit": "6de723cea31575f1a3d2a73102bfcce6c21c9d2e",
-    "worker_ci": "not_observed_by_available_commit_workflow_endpoint",
-    "worker_status": "IMPLEMENTED",
+    "scheduler_ci_run": 1300,
+    "scheduler_ci_conclusion": "success",
+    "runtime_worker_pr": 98,
+    "runtime_worker_merge_commit": "68bc0d4a99f747ff6c0e22632dfbd0f71d94e15c",
+    "runtime_worker_pr_ci_run": 1317,
+    "runtime_worker_pr_ci_conclusion": "success",
+    "runtime_worker_post_merge_ci_run": 1318,
+    "runtime_worker_post_merge_ci_conclusion": "success",
+    "runtime_worker_test_count": 455,
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "requirement_truth_ladder": ["REQUIREMENT", "ARCHITECTURAL DESIGN", "IMPLEMENTED", "TESTED", "PRODUCTION VERIFIED"],
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
@@ -20,10 +22,10 @@
     "detailed_audit_matrix": "DORMAMMU_AUDIT_MATRIX.md"
   },
   "frontier_changes": {
-    "identity_migration": {"status": "VERIFIED", "distribution_name": "dormammu", "canonical_facade": "dormammu/__init__.py", "legacy_namespace": "devintel", "tests": ["tests/test_identity.py"], "ci": "run 1284 success"},
-    "capability_discovery": {"status": "VERIFIED", "changes": ["bounded scouts/candidates", "failure isolation", "invalid candidate rejection", "deterministic ordering", "minimum-score enforcement", "best eligible view", "integrated acquisition/lifecycle/canary path"], "tests": ["tests/test_capability_discovery.py", "tests/test_capability_discovery_integration.py"], "ci": "runs 1288 and 1289 success"},
-    "resource_scheduler": {"status": "TESTED", "changes": ["planning is side-effect free", "explicit admission creates reservation", "resource-kind binding", "stale-plan fail-closed validation"], "tests": ["tests/test_capability_resource_scheduler.py"], "ci": "run 1300 success", "security_boundary": "planning does not reserve resources; admission remains explicit and bounded"},
-    "runtime_resource_worker": {"status": "IMPLEMENTED", "changes": ["provider-neutral WorkerRequest/WorkerOutcome contracts", "execution requires an admitted reservation", "exact capability identity is enforced", "lease release is guaranteed with finally", "measured execution duration"], "tests": ["tests/test_bounded_resource_worker.py"], "ci": "not_observed", "security_boundary": "worker layer grants no authority and does not install software or acquire credentials"}
+    "identity_migration": {"status": "VERIFIED", "distribution_name": "dormammu", "canonical_facade": "dormammu/__init__.py", "legacy_namespace": "devintel", "ci": "run 1284 success"},
+    "capability_discovery": {"status": "VERIFIED", "changes": ["bounded scouts/candidates", "failure isolation", "invalid candidate rejection", "deterministic ordering", "minimum-score enforcement", "best eligible view", "integrated acquisition/lifecycle/canary path"], "ci": "runs 1288 and 1289 success"},
+    "resource_scheduler": {"status": "VERIFIED", "changes": ["planning is side-effect free", "explicit admission creates reservation", "resource-kind binding", "stale-plan fail-closed validation"], "ci": "run 1300 success", "security_boundary": "planning does not reserve resources; admission remains explicit and bounded"},
+    "runtime_resource_worker": {"status": "VERIFIED", "changes": ["provider-neutral WorkerRequest/WorkerOutcome contracts", "execution requires an admitted reservation", "exact capability identity is enforced", "runtime authority is checked before worker invocation", "approval-required authority requires owner approval", "worker lifecycle events use the existing event bus", "outcomes use the existing operational telemetry store", "explicit verification is supported", "lease release is guaranteed on every execution path", "measured execution duration"], "tests": ["tests/test_bounded_resource_worker.py"], "ci": "PR run 1317 success; post-merge main run 1318 success; 455 tests passed", "security_boundary": "no authority is created by the worker; no installation, credential acquisition, spending, external account action, or owner-policy bypass"}
   },
   "category_status": {
     "1_foundation_governance": "COMPLETE_LOCKED", "2_core_intelligence": "COMPLETE_LOCKED", "3_capability_resource_intelligence": "COMPLETE_LOCKED", "4_ecosystem_awareness": "COMPLETE_LOCKED", "5_engineering_intelligence": "COMPLETE_LOCKED", "6_language_communication": "COMPLETE_LOCKED", "7_research_domain_expansion": "COMPLETE_LOCKED", "8_creative_intelligence": "COMPLETE_LOCKED", "9_simulation_interactive_worlds": "COMPLETE_LOCKED", "10_social_community_intelligence": "COMPLETE_LOCKED", "11_economic_business_intelligence": "COMPLETE_LOCKED", "12_owner_platform_security": "COMPLETE_LOCKED", "13_autonomous_operations": "COMPLETE_LOCKED", "14_evolution_self_improvement": "COMPLETE_LOCKED", "15_production_runtime_orchestration": "COMPLETE_LOCKED", "16_persistent_intelligence_infrastructure": "COMPLETE_LOCKED", "17_real_capability_provider_infrastructure": "COMPLETE_LOCKED", "18_intelligence_knowledge_system": "COMPLETE_LOCKED", "19_research_discovery_engine": "COMPLETE_LOCKED", "20_problem_opportunity_discovery": "COMPLETE_LOCKED", "21_domain_intelligence": "COMPLETE_LOCKED", "22_human_dormammu_collaboration": "COMPLETE_LOCKED", "23_long_running_mission_system": "COMPLETE_LOCKED", "24_ecosystem_multi_agent_coordination": "COMPLETE_LOCKED", "25_real_world_action_infrastructure": "COMPLETE_LOCKED", "26_global_intelligence_continuous_discovery": "COMPLETE_LOCKED", "27_dormammu_ecosystem_evolution": "COMPLETE_LOCKED"
@@ -32,10 +34,10 @@
     "omega_1_bounded_distributed_mission_coordination": {"status": "COMPLETE_LOCKED", "pull_request": 90, "merge_commit": "5ca981b8fc0cab0b008d6459308883430f807648"},
     "omega_2_integrated_frontier_control_plane": {"status": "COMPLETE_LOCKED", "pull_request": 91, "merge_commit": "22b03ec885361eb2a8cecf87d70fa52426ddb483"},
     "omega_3_persistent_memory_dynamic_authority_runtime_cognition": {"status": "COMPLETE_LOCKED", "pull_requests": [92, 93], "merge_commits": ["102a0025c0487ed1dade618da06c95b86020fbf5", "8c3cbe914ba05fd758c77a4fb0488ad493c681ba"]},
-    "omega_unknown_frontier": {"status": "OPEN", "current_target": "integrate worker execution with runtime authority and operation telemetry, then continue to persistent mission progression"}
+    "omega_unknown_frontier": {"status": "OPEN", "completed_target": "integrate worker execution with runtime authority, operation telemetry, and verification", "next_target": "persistent mission progression using the existing executive/autonomy boundaries"}
   },
   "future_capability_authority": {"status": "REQUIREMENT_AND_ARCHITECTURAL_DESIGN", "rule": "Every future capability must use existing capability, permission, security, verification, audit, and owner-control boundaries. Discovering a need or possessing credentials never grants authority."},
   "production_readiness": "NOT_CLAIMED",
-  "next_execution_target": {"name": "Ω Unknown Frontier", "status": "OPEN", "selection_rule": "Integrate the bounded worker facade with runtime live authority and operation telemetry, test fail-closed and release behavior, verify CI, then continue to persistent mission progression without reopening locked foundations."},
-  "resume_instruction": "Pull and inspect current main before further changes. Treat worker execution as implemented but not CI-verified until workflow evidence exists. Continue forward; never claim external integration or production readiness without evidence."
+  "next_execution_target": {"name": "Ω Unknown Frontier — persistent mission progression", "status": "OPEN", "selection_rule": "Build durable mission state and resumable objective/task progression on top of existing executive/autonomy contracts; persist progress and verified outcomes; resume unfinished work without requiring manual continue prompts; preserve permission, security, capability, resource, verification, telemetry, audit, and owner-control boundaries."},
+  "resume_instruction": "Pull and inspect current main before further changes. The runtime worker integration is VERIFIED by PR CI run 1317 and post-merge main CI run 1318 with 455 tests passing. Continue to persistent mission progression without reopening locked foundations or claiming production readiness."
 }
