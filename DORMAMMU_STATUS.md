@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 19 — Research & Discovery Engine is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded, provider-isolated source discovery boundary that produces canonicalized, deduplicated, deterministic, untrusted research candidates for the established ingestion and verification pipeline.
+**Category 20 — Problem & Opportunity Discovery is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded, evidence-backed identification boundary that converts verified research synthesis into ranked advisory problem/opportunity candidates while preserving provenance and uncertainty.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -26,30 +26,30 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 17. Real Capability & Provider Infrastructure — COMPLETE / LOCKED
 18. Intelligence & Knowledge System — COMPLETE / LOCKED
 19. Research & Discovery Engine — COMPLETE / LOCKED
+20. Problem & Opportunity Discovery — COMPLETE / LOCKED
 
-## Category 19 Completion Evidence
-- `ResearchDiscoveryEngine` adds a dedicated provider-isolated discovery boundary without replacing the established research pipeline;
-- discovery accepts the existing `ResearchCandidate` contract and reuses canonical HTTP(S) URL normalization;
-- candidate retrieval is explicitly bounded by caller limit and engine maximums;
-- provider failures are isolated so later providers can continue to contribute candidates;
-- malformed or wrong-type provider output is rejected at the untrusted discovery boundary;
-- canonical URL duplicates are removed across providers before final results are returned;
-- results are deterministic, sorted by canonical URL and title, and remain bounded;
-- discovery output is explicitly untrusted and cannot grant authority, permissions, credentials, or execution capability;
-- regression coverage verifies fallback after deduplication, canonicalization, bounds, malformed output rejection, and provider-failure isolation;
-- CI run #1095 passed for the final Category 19 implementation commit;
-- implementation remains additive and preserves locked verification, knowledge, security, owner-control, runtime, provider, persistence, audit, and truth boundaries.
+## Category 20 Completion Evidence
+- `ProblemOpportunityEngine` consumes only the established `SynthesisResult` boundary, so raw or unverified research does not enter the problem/opportunity layer;
+- problem and opportunity candidates preserve statement, confidence, evidence provenance, and unresolved uncertainty;
+- detection is bounded by configurable candidate limits and caller limits;
+- deterministic ranking combines evidence-backed confidence and provenance coverage without using money as a proxy for usefulness;
+- contradictory verified evidence remains explicitly uncertain and is prevented from receiving high confidence;
+- unrelated verified statements are excluded rather than being converted into invented opportunities;
+- invalid engine inputs and invalid detection-term configuration fail closed;
+- regression coverage verifies problem detection, opportunity detection, contradiction handling, exclusion, bounds, and invalid inputs;
+- Category 19 discovery remains the upstream untrusted source boundary; Category 20 does not grant authority, permissions, credentials, or execution capability;
+- CI must pass on the completed Category 20 branch/merge before this checkpoint is considered repository-verified.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Discovery produces candidates, not trusted knowledge. External source content cannot become verified truth merely because it was discovered. Discovery cannot execute discovered content, alter policy, bypass provider controls, or grant permissions.
+Problem/opportunity identification is advisory intelligence. It cannot execute discovered solutions, grant permissions, alter policy, or turn demand signals into owner authority. External content and model/provider output remain untrusted until independently validated.
 
 ## Production Boundary
-Category 19 is complete at the repository architecture level, not a claim that DORMAMMU has production-scale web discovery. Production still requires workload-specific source/provider selection, network timeout/retry policy, rate-limit handling, source reputation and freshness policy, content extraction hardening, substantive fact-checking, monitoring/alerting, distributed coordination where needed, and deployment-specific operational evidence.
+Category 20 is complete at the repository architecture level, not a claim that DORMAMMU has production-grade market/problem intelligence. Production still requires domain-specific detection models, stronger entity resolution, longitudinal demand measurement, source reputation/freshness policy, substantive fact-checking, bias/adversarial evaluation, monitoring/alerting, distributed coordination where needed, and deployment-specific operational evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–19 are now complete/locked at their defined repository boundaries. **Category 20 — Problem & Opportunity Discovery** is the next planned capability boundary.
+Categories 1–20 are now complete/locked at their defined repository boundaries. **Category 21 — Domain Intelligence** is the next planned capability boundary.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
