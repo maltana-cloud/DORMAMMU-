@@ -1,12 +1,12 @@
-# DORMAMMU — ECONOMIC INTELLIGENCE & WEALTH ENGINE
+# DORMAMMU — ECONOMIC INTELLIGENCE, VALUE, COMMERCE & GROWTH ENGINE
 
-> Canonical architectural specification for DORMAMMU's financial, economic, opportunity-discovery, enterprise-strategy, and legitimate income/value-realization capabilities. This document is a design contract, not evidence that these capabilities are implemented.
+> Canonical architectural specification for DORMAMMU's cross-domain financial, economic, opportunity-discovery, enterprise-strategy, value-realization, autonomous agent/bot creation, pricing, currency, payments, commerce, awareness, distribution, and growth capabilities. This document is a design contract, not evidence that these capabilities are implemented.
 
 ## Purpose
 
-DORMAMMU should be able to understand economic systems, discover unmet needs and opportunities, design and compare businesses, validate hypotheses, learn from measured outcomes, and identify scalable legitimate value-creation pathways.
+DORMAMMU should be able to understand economic systems, discover unmet needs and opportunities, design and compare businesses and specialized agents, validate hypotheses, create legitimate value, determine appropriate commercial models, distribute useful solutions, measure outcomes, learn from reality, and identify scalable value-creation pathways.
 
-The goal is not a guaranteed-money machine. The goal is **extreme breadth, search depth, iteration speed, evidence quality, and optimization in legitimate value creation** while preserving truth, owner authority, security, permission, licensing, and financial controls.
+The goal is not a guaranteed-money machine or an engagement machine. The goal is **extreme breadth, search depth, iteration speed, evidence quality, user value, and optimization in legitimate value creation and distribution** while preserving truth, safety, owner authority, modularity, resilience, user welfare, platform rules, licensing, and financial controls.
 
 ## Capability layers
 
@@ -24,6 +24,8 @@ Continuously transform verified signals into:
 
 Signals may come from economic conditions, technology, research, social demand, supply chains, regulation, prices, industry changes, customer behavior, and other authorized sources.
 
+The opportunity space is open-ended. DORMAMMU should not require a predefined domain list to recognize a valuable problem or opportunity.
+
 ### 3. Universal Wealth & Enterprise Model
 
 Represent how value is:
@@ -32,25 +34,194 @@ Represent how value is:
 
 across business models, industries, customer segments, geographies, skills, assets, technology, distribution, partnerships, and capital constraints.
 
+Economic value must not be reduced to currency. Track monetary and non-monetary value separately where relevant, including productivity, avoided cost, capability creation, intellectual property, network effects, customer value, strategic assets, and measurable outcomes.
+
 ### 4. Autonomous Business Strategy Engine
 
-Generate, compare, stress-test, and improve legitimate business strategies using demand, pain, willingness-to-pay, market size, advantage, scalability, feasibility, margin, capital, risk, time-to-revenue, and execution complexity.
+Generate, compare, stress-test, and improve legitimate business strategies using demand, pain, willingness-to-pay, market size, advantage, scalability, feasibility, margin, capital, risk, time-to-revenue, execution complexity, user welfare, and regulatory/platform constraints.
 
 The engine should favor cheap validation before large commitments and update strategy from actual outcomes.
 
-### 5. Income & Value Realization Engine
+### 5. Universal Agent / Bot Factory
 
-Map validated opportunities to authorized revenue mechanisms such as products, services, software, licensing, partnerships, marketplaces, distribution, and other legitimate commercial models. Track assumptions, experiments, acquisition, conversion, pricing, revenue, costs, unit economics, margin, retention, customer value, cash requirements, and realized results.
+DORMAMMU should eventually be able to determine when a specialized bot, agent, workflow, software product, human-AI system, or other solution is the appropriate response to an identified problem. It must not assume that every problem requires a bot.
 
-## Universal economic reasoning loop
+Target lifecycle:
 
-`OBSERVE → ACQUIRE EVIDENCE → NORMALIZE → PROVENANCE → MODEL → DETECT GAPS/INEFFICIENCIES → GENERATE OPPORTUNITIES → SCORE → DESIGN BUSINESS HYPOTHESES → MODEL UNIT ECONOMICS → VALIDATE → MEASURE → VERIFY → LEARN → UPDATE → IMPROVE → SCALE WHEN EVIDENCE SUPPORTS IT`
+`DISCOVER → QUALIFY → SPECIFY → DESIGN → BUILD → TEST → SIMULATE/VALIDATE → REQUEST/VERIFY PERMISSION → DEPLOY IF AUTHORIZED → OBSERVE → OPTIMIZE → SCALE OR RETIRE`
 
-Reason across:
+The factory should use reusable, composable modules rather than unrestricted free-form generation alone. Common modules may include perception/data acquisition, knowledge, reasoning, planning, memory/state, tool adapters, policy, execution, monitoring, evaluation, billing, monetization, growth, and recovery.
 
-`GLOBAL ECONOMY → COUNTRY → INDUSTRY → MARKET → VALUE CHAIN → COMPANY → PRODUCT/SERVICE → CUSTOMER → TRANSACTION → UNIT ECONOMICS`
+A universal bot/agent contract should be able to represent at least:
 
-while connecting finance with technology, science, geography, policy, geopolitics, logistics, social signals, and human needs.
+- identity and version;
+- domain and objective;
+- users and problem definition;
+- inputs, data sources, provenance, and freshness;
+- models and reasoning components;
+- tools and provider adapters;
+- memory/state boundaries;
+- strategy and planning policy;
+- permissions and action boundaries;
+- risk and security controls;
+- metrics/KPIs and evaluation criteria;
+- resource/cost limits;
+- rollback and kill-switch behavior;
+- audit events;
+- jurisdiction/platform/compliance requirements;
+- commercial and monetization terms.
+
+The same factory may produce financial research agents, trading-analysis systems, rental/property-management agents, sales systems, commerce agents, logistics agents, education systems, research agents, community systems, operational agents, or solutions in domains not yet anticipated.
+
+Generated agents remain bounded by DORMAMMU's existing owner, security, truth, permission, verification, and audit boundaries.
+
+### 6. Financial and Trading Intelligence
+
+Financial agents may combine appropriate market structure, technical features, fundamentals, macroeconomic conditions, cross-market relationships, liquidity, volatility, sentiment where reliable, regime detection, uncertainty, transaction costs, slippage, exposure, position sizing, and risk constraints.
+
+A trading strategy must be able to determine **NO TRADE** when evidence, risk, uncertainty, cost, or conditions do not justify action.
+
+Strategies should be evaluated through appropriate backtesting, walk-forward/out-of-sample validation, simulation or paper trading, robustness checks, degradation monitoring, and realized-performance measurement before any live execution. No model or metric guarantees profit.
+
+Live financial execution is a protected capability requiring explicit authorization and applicable controls; analysis does not itself grant trading authority.
+
+### 7. Property, Rental and Operations Intelligence
+
+Where authorized and appropriate, property/rental agents may monitor listings and demand signals, analyze pricing and occupancy, support inquiries, scheduling, tenant communication, payment reminders, maintenance workflows, competitive intelligence, vacancy analysis, and owner reporting.
+
+Property acquisition, binding contracts, financial commitments, payments, or other consequential actions remain permission-gated and jurisdiction-aware.
+
+The same architecture should extend to other operational domains without creating separate authority paths.
+
+## Pricing, Currency, Commerce & Payments
+
+### 8. Universal Pricing & Monetization Intelligence
+
+DORMAMMU should be capable of determining an **exact proposed commercial amount** for a product, service, agent, bot, subscription, transaction, license, commission, or other legitimate offer when sufficient evidence exists.
+
+The price engine should not simply convert a fixed global price. It should reason from:
+
+`VALUE → DEMAND → WILLINGNESS-TO-PAY SIGNALS → MARKET → COMPETITION → CUSTOMER SEGMENT → DELIVERY/OPERATING COST → RISK → COMPLEXITY → ACQUISITION COST → EXPECTED MARGIN → LONG-TERM VALUE → APPROPRIATE PRICE`
+
+It may produce a precise price, price range, tiers, discounts, usage rates, commissions, subscriptions, setup fees, revenue-share terms, or other structures according to the product and market.
+
+Pricing outputs must preserve assumptions, evidence, confidence, sensitivity, effective date, and applicable jurisdiction. A calculated price is a recommendation/offer, not permission to charge. The customer or authorized owner must agree to commercial terms before a charge or binding commitment.
+
+The engine should optimize sustainable value exchange, not maximum extraction. User comfort, affordability, transparency, convenience, trust, security, cancellation, fees, and welfare are legitimate pricing constraints.
+
+### 9. Universal Currency Intelligence
+
+Currency is a measurement, pricing, accounting, conversion, and settlement dimension — not the source of value or income.
+
+DORMAMMU should support, where data and providers permit:
+
+- currency identification and normalization;
+- ISO currency codes, symbols, names, and jurisdictions;
+- current and historical exchange rates;
+- exchange-rate timestamps and provenance;
+- inflation and purchasing-power context;
+- local pricing conventions;
+- billing currency versus accounting/reporting currency;
+- settlement currency;
+- conversion costs and spreads;
+- multi-currency revenue, costs, margins, and reporting.
+
+DORMAMMU should infer or obtain the relevant customer/market context through authorized signals rather than assuming one country or one currency. Where location, tax, payment, or jurisdiction information is ambiguous or consequential, it should request or verify the required information rather than silently guess.
+
+Local pricing must not be treated as a mere exchange-rate conversion when market conditions justify a different commercial price.
+
+### 10. Universal Commerce & Payment Intelligence
+
+DORMAMMU should select appropriate payment and settlement mechanisms for the product, platform, customer, jurisdiction, currency, fees, reliability, security, convenience, and applicable rules.
+
+Potential rails include, where legitimately supported and appropriate:
+
+- cards;
+- bank transfers;
+- mobile money and local payment methods;
+- digital wallets;
+- payment processors;
+- invoices and business settlement;
+- recurring billing;
+- usage-based billing;
+- marketplace payments;
+- app/platform-native billing;
+- Telegram Stars for eligible Telegram products and flows;
+- in-platform credits or other legitimate payment representations;
+- commissions, licensing, subscriptions, and revenue-share arrangements.
+
+DORMAMMU must distinguish:
+
+`PRICE ≠ CURRENCY ≠ PAYMENT METHOD ≠ PAYMENT FEE ≠ SETTLEMENT ≠ REVENUE ≠ PROFIT`
+
+Payment selection should prioritize user comfort, transparency, security, reliability, reasonable cost, local availability, platform fit, and legitimate business sustainability. Multiple appropriate options may be presented when practical so the user can choose.
+
+The system must never bypass payment-platform controls, KYC/AML requirements, authentication, licensing, regional restrictions, or other security/compliance boundaries.
+
+### 11. Commercial Accounting & Revenue Attribution
+
+DORMAMMU should track, where applicable:
+
+`GROSS VALUE → PRICE → PAYMENT → FEES/TAXES/ADJUSTMENTS → GROSS REVENUE → OPERATING COST → NET REVENUE → PROFIT/SURPLUS → DISTRIBUTION`
+
+Revenue-share or performance-based arrangements must define attribution, measurement windows, eligible revenue/profit, costs, refunds, losses, disputes, caps/floors where applicable, auditability, and customer agreement before becoming effective.
+
+The system must distinguish projected revenue from realized revenue and value attributed to DORMAMMU from value merely correlated with its activity.
+
+## Universal Awareness, Distribution & Growth
+
+### 12. Universal Growth & Awareness Engine
+
+DORMAMMU should eventually be able to create and optimize legitimate awareness and distribution for **DORMAMMU itself, user-owned products, services, businesses, bots, agents, channels, accounts, communities, brands, media projects, educational projects, marketplaces, events, and other authorized ventures**.
+
+The objective is not simply to advertise DORMAMMU. It is to understand what deserves attention, identify the appropriate audience, select suitable distribution paths, create useful communication, and measure actual outcomes.
+
+The growth loop is:
+
+`OBJECTIVE → AUDIENCE DISCOVERY → POSITIONING → CONTENT/OFFER → CHANNEL SELECTION → DISTRIBUTION → AWARENESS → ENGAGEMENT → ACTIVATION → CONVERSION → RETENTION → REFERRAL → MEASURE → LEARN → IMPROVE`
+
+The engine should reason about platform-specific capabilities, audience behavior, content formats, discovery mechanisms, community dynamics, posting constraints, permitted automation, analytics, conversion paths, and platform policies.
+
+### 13. Channels, Accounts & Communities
+
+Growth intelligence should support authorized management or assistance for different distribution surfaces without assuming that every surface behaves the same way.
+
+Potential surfaces include:
+
+- Telegram channels;
+- Telegram communities/groups;
+- social accounts and pages;
+- websites and blogs;
+- newsletters;
+- media/content channels;
+- educational communities;
+- marketplaces;
+- events and partner distribution;
+- other authorized platforms.
+
+DORMAMMU may help create, operate, moderate, analyze, and grow such ecosystems only within the permissions and platform capabilities available to it.
+
+Community growth must be based on genuine value. No fake members, fake followers, fake votes, fake reviews, fake engagement, impersonation, spam, harassment, deceptive popularity, or platform-control circumvention.
+
+### 14. Growth Optimization
+
+Do not optimize only for impressions, followers, views, or likes. Depending on the objective, measure:
+
+`ATTENTION → RELEVANCE → TRUST → ENGAGEMENT → VALUE → RETENTION → ACTION → OUTCOME`
+
+The system should identify whether a weak result comes from product quality, positioning, pricing, distribution, onboarding, audience mismatch, trust, or retention rather than blindly increasing promotion.
+
+If a product is not ready, DORMAMMU should be able to recommend improving the product before spending additional growth resources.
+
+The growth engine should optimize for **maximum legitimate awareness and distribution per unit of authorized resources**, not manipulation.
+
+## Universal Value-to-Market Operating Loop
+
+The combined economic/commercial loop is:
+
+`OBSERVE → ACQUIRE EVIDENCE → NORMALIZE → PROVENANCE → MODEL → DETECT NEEDS/PROBLEMS/GAPS → GENERATE OPPORTUNITIES → QUALIFY → SCORE → DESIGN SOLUTION/BUSINESS/AGENT → MODEL UNIT ECONOMICS → VALIDATE → PRICE → SELECT CURRENCY → SELECT PAYMENT/SETTLEMENT → LAUNCH IF AUTHORIZED → DISTRIBUTE → CREATE AWARENESS → MEASURE → VERIFY → LEARN → UPDATE → IMPROVE → SCALE WHEN EVIDENCE SUPPORTS IT`
+
+The growth and monetization layers must never override truth, security, owner authority, user welfare, platform rules, or required permissions.
 
 ## Opportunity scoring contract
 
@@ -60,11 +231,11 @@ A replaceable heuristic may begin with:
 
 This is a heuristic, not a law. DORMAMMU must preserve evidence, assumptions, confidence, uncertainty, and sensitivity behind every score.
 
-The system must distinguish observed demand from assumed demand, revenue potential from realized revenue, profit potential from realized profit, forecasts from outcomes, opportunities from validated businesses, correlation from causation, and strategy quality from guaranteed success.
+The system must distinguish observed demand from assumed demand, revenue potential from realized revenue, profit potential from realized profit, forecasts from outcomes, opportunities from validated businesses, correlation from causation, strategy quality from guaranteed success, and engagement from actual value.
 
 ## Opportunity search space
 
-The engine should remain extensible across software/SaaS, AI and automation, digital products/IP, local and global services, education, agriculture, manufacturing, logistics, marketplaces, media, consulting, infrastructure, fintech, energy, emerging technology, underserved markets, and legitimate cross-border trade.
+The engine should remain extensible across software/SaaS, AI and automation, digital products/IP, local and global services, education, agriculture, manufacturing, logistics, marketplaces, media, consulting, infrastructure, fintech, energy, emerging technology, underserved markets, legitimate cross-border trade, communities, creator ecosystems, and domains not yet known.
 
 ## Experimentation and validation
 
@@ -78,22 +249,36 @@ Where possible, optimize for value of information: use the least authorized reso
 
 A validated opportunity may progress through:
 
-`PROBLEM → MANUAL SOLUTION → REPEATABLE OFFER → PRODUCTIZATION → AUTOMATION → DISTRIBUTION → SCALE → PORTFOLIO/ECOSYSTEM`
+`PROBLEM → MANUAL SOLUTION → REPEATABLE OFFER → PRODUCTIZATION → AUTOMATION/AGENTIZATION → DISTRIBUTION → SCALE → PORTFOLIO/ECOSYSTEM`
 
-Scaling is evidence-gated. Capacity, acquisition, delivery, economics, competition, dependencies, and operational constraints must be tested before assuming scalability.
+Scaling is evidence-gated. Capacity, acquisition, delivery, economics, competition, dependencies, user experience, payment reliability, and operational constraints must be tested before assuming scalability.
+
+## Autonomy and authority boundary
+
+Economic, commercial, growth, agent, payment, and financial capabilities use the same existing DORMAMMU authority boundary. They do not create parallel permission paths.
+
+`DISCOVER NEED → DEFINE CAPABILITY → EVALUATE → REGISTER/IMPLEMENT → REQUEST AUTHORITY → LIVE PERMISSION CHECK → SECURITY CHECK → EXECUTE → VERIFY → RECORD`
+
+Routine low-risk analysis and planning may be automated within policy. External communications, account actions, publication, spending, payment collection, binding contracts, financial execution, sensitive data access, and other consequential actions require appropriate live authorization and applicable controls.
 
 ## Financial and commercial safety boundary
 
-This specification does not authorize automatic spending, unrestricted trading or investing, borrowing or financial commitments without authorization, bypassing KYC/AML/exchange/payment/licensing/authentication controls, manipulation, fraud, deception, market abuse, unauthorized access, guaranteed-return claims, or external transactions without required permission.
+This specification does not authorize automatic spending, unrestricted trading or investing, borrowing or financial commitments without authorization, bypassing KYC/AML/exchange/payment/licensing/authentication controls, manipulation, fraud, deception, market abuse, unauthorized access, spam, fake engagement, guaranteed-return claims, or external transactions without required permission.
 
-Financial models remain analytical. External financial actions require DORMAMMU's existing permission, security, action, verification, and audit boundaries.
+Financial models remain analytical. External financial and commercial actions require DORMAMMU's existing permission, security, action, verification, and audit boundaries.
 
 ## Relationship to universal intelligence
 
-`WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ STRATEGY ENGINE ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
+`WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ AGENT/BOT FACTORY ↔ PRICING ↔ CURRENCY ↔ COMMERCE/PAYMENTS ↔ GROWTH/DISTRIBUTION ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
 
-Economic intelligence must consume and contribute verified cross-domain knowledge rather than becoming a silo.
+Economic, commercial, and growth intelligence must consume and contribute verified cross-domain knowledge rather than becoming isolated silos.
 
 ## Implementation status rule
 
 This specification may define future architecture before implementation. Documentation is not implementation evidence. Future builders must inspect existing contracts and implement missing pieces additively, with tests, verification, security review, and checkpoint updates. Existing locked foundation and authority boundaries remain authoritative.
+
+Every capability remains subject to the canonical truth ladder:
+
+`REQUIREMENT → ARCHITECTURAL DESIGN → IMPLEMENTED → TESTED → PRODUCTION VERIFIED`
+
+The capabilities described here are architectural targets unless separately proven at each level.
