@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 22 — Human–DORMAMMU Collaboration is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded collaboration contract for human review, explicit response status, deterministic content-bound request identity, and scoped context/evidence limits without treating human input as implicit authority.
+**Category 23 — Long-Running Mission System is IMPLEMENTED / PENDING FINAL CI + MERGE.** DORMAMMU now has durable, scoped mission state with finite step bounds, checkpoint/resume behavior, explicit pause/resume/cancel lifecycle, bounded retries/backoff, restart recovery, and externally driven execution without an unrestricted background loop.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -29,36 +29,34 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 20. Problem & Opportunity Discovery — COMPLETE / LOCKED
 21. Domain Intelligence — COMPLETE / LOCKED
 22. Human–DORMAMMU Collaboration — COMPLETE / LOCKED
+23. Long-Running Mission System — IMPLEMENTED / PENDING FINAL CI + MERGE
 
-## Category 22 Scope
-Category 22 provides bounded human-in-the-loop collaboration: DORMAMMU can create reviewable requests, receive explicit human responses, and transition request status only when the response matches the exact request. Human input remains data and review state; it does not become authority by existing.
+## Category 23 Scope
+Category 23 extends the bounded autonomy/runtime foundation into durable missions that can span multiple externally driven invocations. A mission has an explicit finite step count and durable checkpoint state. Execution remains caller-driven; there is no implicit background loop or self-authorized indefinite execution.
 
-## Category 22 Completion Evidence
-- collaboration requests require explicit scope and objective;
-- request identity is deterministic and computed from the normalized content actually stored in the request;
-- context and evidence counts are bounded;
-- invalid evidence types fail closed rather than being silently discarded;
-- responses require request ID, responder identity, explicit acceptance, and message;
-- mismatched responses fail closed;
-- only pending requests can transition to accepted/rejected, preventing repeated response transitions;
-- acceptance/rejection is explicit and reviewable at the contract level;
-- no credential creation, policy mutation, owner-authority grant, or consequential execution is exposed;
-- regression tests cover deterministic identity, normalization, invalid inputs, accepted/rejected flows, single-response lifecycle, mismatches, and bounds;
-- PR #84 established Category 22 and was merged as `ab82519c724bacb84f80620f35a3df413dc014e8`;
-- post-merge hardening PR #85 corrected identity/input/lifecycle edge cases and was merged as `e8310d668a99198d458ea3b46e86eeb3a9ffbffa`;
-- hardening CI run #1146 passed with 400 tests;
-- the earlier hardening CI run #1144 caught a real test-contract mismatch and the test was corrected before merge.
+## Category 23 Completion Evidence
+- durable SQLite mission records preserve scope, objective, progress, status, attempts, retry timing, and bounded error state;
+- mission progress is checkpointed after successful steps and can resume after reopening the store;
+- execution is bounded by an explicit per-invocation `max_steps` and optional duration limit;
+- pause, resume, and cancel are explicit lifecycle operations;
+- failed steps retry only within an explicit `max_attempts` bound, with optional caller-defined backoff;
+- exhausted retries become terminal `FAILED` rather than looping indefinitely;
+- interrupted `RUNNING` missions can be recovered to `QUEUED` explicitly;
+- deterministic due-work ordering and scope filtering prevent uncontrolled selection;
+- regression tests cover durability, resume, retry exhaustion, lifecycle controls, bounds, and invalid inputs;
+- no authority grant, credential creation, policy mutation, or consequential action is introduced by the mission layer;
+- the mission runner delegates the actual step to a caller-supplied function and never creates a background worker itself.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Human collaboration is not an authorization bypass. Explicit human responses can record review state, but consequential actions still require the existing permission/security/owner-control path.
+Long-running mission state is operational state, not authority. A mission cannot bypass permission/security/owner-control gates merely because it is durable or resumable.
 
 ## Production Boundary
-Category 22 does not claim production-grade human messaging, identity/session integration, notification delivery, durable collaboration history, conflict resolution, or external communication platform integration. Those require explicit provider contracts, authentication/session controls, persistence, audit integration, delivery guarantees, abuse controls, observability, and deployment evidence.
+Category 23 does not claim production-grade distributed locking, queue infrastructure, multi-host coordination, scheduler persistence, mission DAG/dependency planning, exactly-once side effects, deployment orchestration, or full operational observability. Those require explicit infrastructure and deployment evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–22 are complete/locked at their defined repository boundaries. **Category 23 — Long-Running Mission System** is the next capability boundary.
+Categories 1–22 are complete/locked at their defined repository boundaries. Category 23 is active until final CI and merge. **Category 24 — Ecosystem & Multi-Agent Coordination** follows after Category 23 is verified and merged.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
