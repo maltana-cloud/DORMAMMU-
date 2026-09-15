@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Ω — CONTINUOUS FRONTIER — ACTIVE.** The protected foundations and Ω.1–Ω.3 boundaries remain locked. Persistent mission progression, mission-to-executive continuation, and evidence-backed gap-to-mission proposal flow are now **IMPLEMENTED / TESTED / VERIFIED** at repository CI level.
+**Ω — CONTINUOUS FRONTIER — ACTIVE.** The protected foundations and Ω.1–Ω.3 boundaries remain locked. Persistent mission progression, mission-to-executive continuation, evidence-backed gap-to-mission proposals, verified-outcome learning, deterministic next-objective selection, and the bounded mission verification→learning→next-mission loop are now **IMPLEMENTED / TESTED / VERIFIED** at repository CI level.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence. Requirements and designs must not be represented as implemented or production verified merely because they are documented.
@@ -17,12 +17,11 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 5. **Persistent mission progression** — durable ordered steps and verified outcomes, resumable from the first incomplete step, with verified-success checkpoint gating. Verified by PR #99 run 1332 and merged-main run 1334.
 6. **Mission continuation orchestration** — `devintel/missions/executive_bridge.py` drives persisted mission steps through the existing `ExecutiveEngine`, preserving mission bounds, leases, authority, capability/resource checks, verification and telemetry. PR #100 CI run 1356 and merged-main CI run 1359 passed.
 7. **Evidence-backed gap → mission proposals** — `devintel/intelligence/gap_missions.py` converts sufficiently confident, non-uncertain problem/opportunity candidates into deterministic bounded proposals and idempotently materializes them as durable missions. PR #100 CI run 1356 and merged-main CI run 1359 passed.
+8. **Verified outcome → learning + deterministic next objective** — `devintel/autonomy/mission_learning.py` durably records verified outcomes, emits only bounded reversible learning proposals, and feeds verified evidence into `NextObjectiveSelector`. `LearningStore` proposal identity is idempotent. PR #101 CI run 1376 and merged-main run 1377 passed.
+9. **Closed mission verification → learning → next mission loop** — `devintel/missions/frontier_loop.py` consumes terminal verified missions, records verified learning evidence, selects a bounded deterministic next objective, and materializes at most one idempotent next mission. PR #102 CI run 1383 and merged-main run 1384 passed with 473 tests.
 
-## Mission Continuation Boundary
-A persisted mission can now continue without a manual “continue” prompt: the durable journal selects the next unfinished step, the bridge constructs a scoped objective, an explicit task factory supplies executable task contracts, and the existing executive runtime performs the authorized operation. Checkpoint advancement still requires successful verification. Invalid task construction, execution failure, stale state, or exhausted bounds fail closed.
-
-## Gap-Driven Mission Boundary
-Problem/opportunity discovery remains evidence-backed and advisory. Only non-uncertain candidates at or above the configured confidence threshold become mission proposals. Proposal identity is deterministic; materialization is idempotent. Proposal creation never grants authority, credentials, permissions, spending, publication, or external-account control.
+## Closed Frontier Loop Boundary
+The repository now has a bounded continuation path: **gap/mission proposal → persisted mission → executive execution → verified terminal state → durable learning evidence → deterministic next-objective selection → at most one next persisted mission**. Learning cannot be entered by unverified evidence; failed/non-terminal missions do not create positive learning; candidate scope must match the verified outcome scope; next-mission materialization is deterministic and idempotent. The loop itself grants no authority and introduces no parallel execution path.
 
 ## Authority / Identity / Credential Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
@@ -40,7 +39,7 @@ The canonical economic architecture remains `DORMAMMU_ECONOMIC_INTELLIGENCE_AND_
 **Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, payment settlement, live financial execution, external growth operations, and rollback evidence require authorized operational environments.
 
 ## Next Boundary
-**Ω — Unknown Frontier remains open.** The next repository-solvable work is to deepen the closed loop around gap detection → bounded mission creation → executive execution → verified outcomes → learning/next-objective selection, while preserving existing authority and owner-control boundaries. Do not reopen locked foundations.
+**Ω — Unknown Frontier remains open.** The core repository-solvable gap-detection → mission → execution → verification → learning → next-objective loop is now implemented and verified at repository CI level. The next work must deepen this loop through real knowledge/evidence integration, richer objective sources, safe capability acquisition, and operationally authorized adapters without weakening the existing authority, owner-control, resource, verification, audit, or recovery boundaries.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, distinguish requirement/design/implementation/test/production evidence, and build forward from the repository rather than treating prior chat history as authoritative.
