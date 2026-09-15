@@ -27,34 +27,33 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 18. Intelligence & Knowledge System — COMPLETE / LOCKED
 19. Research & Discovery Engine — COMPLETE / LOCKED
 20. Problem & Opportunity Discovery — COMPLETE / LOCKED
+21. Domain Intelligence — IMPLEMENTED / PENDING FINAL CI + MERGE
 
-## Category 20 Completion Evidence
-- `ProblemOpportunityEngine` consumes only the established `SynthesisResult` contract;
-- candidates are explicitly classified as `problem` or `opportunity` and remain advisory;
-- evidence URLs are preserved on every candidate;
-- candidate confidence and ranking are bounded to `[0, 1]`;
-- contradictory synthesis remains explicitly uncertain and confidence is capped conservatively;
-- candidate counts are bounded by caller and engine limits;
-- deterministic ranking is used for reproducibility;
-- detection terms are normalized and validated;
-- no money-based value assumption is introduced by the discovery layer;
-- unrelated verified statements are excluded rather than converted into invented opportunities;
-- regression tests cover problem detection, opportunity detection, contradiction handling, irrelevant evidence, bounds, and validation;
-- CI run #1106 passed after correcting an upstream test-fixture type mismatch exposed by Category 20 integration tests;
-- PR #82 was merged into `main` as `976958430a9f638ccb6d0875955d8dd01a167246`;
-- the test-fixture correction was limited to the test contract and did not weaken production validation;
-- implementation remains additive and preserves locked discovery, verification, knowledge, security, owner-control, runtime, provider, persistence, audit, and truth boundaries.
+## Category 21 Scope
+Category 21 builds bounded domain profiles from verified research claims. It normalizes domain signals, preserves provenance and uncertainty, deterministically ranks signals, extracts domain entities/topics, and enforces input/result bounds without granting authority or executing actions.
+
+## Category 21 Completion Evidence
+- `DomainIntelligenceEngine` accepts only established `VerifiedClaim` values;
+- raw/unverified claims are rejected at the intelligence boundary;
+- domain names and signal fields are normalized and validated;
+- evidence URLs remain attached to each domain signal;
+- uncertain signals cannot be represented with high confidence;
+- signal counts are bounded by caller and engine limits;
+- deterministic ordering makes domain profiles reproducible;
+- entities and topics are derived only from bounded verified signals;
+- regression coverage verifies verified-only admission, bounds, deterministic ordering, provenance preservation, and input validation;
+- final CI and merge are required before Category 21 becomes COMPLETE / LOCKED.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Problem/opportunity discovery produces advisory intelligence only. It cannot execute discovered opportunities, grant permissions, create credentials, alter policy, or bypass owner/security controls.
+Domain intelligence is analysis, not authority. A domain profile cannot install capabilities, grant permissions, create credentials, execute external actions, or alter owner/security policy.
 
 ## Production Boundary
-Category 20 does not claim autonomous real-world opportunity detection at production scale. Production requires domain-specific signal definitions, source diversity, substantive verification/fact-checking, freshness and reputation policies, longitudinal evidence, calibrated scoring, monitoring/alerting, workload/resource controls, and deployment-specific operational evidence.
+Category 21 does not claim comprehensive production-grade expertise in arbitrary domains. Production requires domain-specific ontologies, richer entity resolution, temporal modeling, source diversity, substantive verification, calibrated confidence, freshness policy, domain expert evaluation where appropriate, monitoring, and deployment-specific operational evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–20 are now complete/locked at their defined repository boundaries. **Category 21 — Domain Intelligence** is the next planned capability boundary.
+Categories 1–20 are complete/locked at their defined repository boundaries. **Category 21 — Domain Intelligence** is the active capability boundary; **Category 22 — Human–DORMAMMU Collaboration** follows only after Category 21 passes final verification and is merged.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
