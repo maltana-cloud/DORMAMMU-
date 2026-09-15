@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from tempfile import NamedTemporaryFile
 
 from devintel.executive import ExecutiveResult, Objective, TaskSpec
-from devintel.intelligence import GapMissionEngine
+from devintel.intelligence import GapMissionEngine, ProblemOpportunityEngine
 from devintel.modules.research.synthesis import SynthesisResult, SynthesisSignal
 from devintel.missions import MissionExecutionPolicy, MissionExecutiveBridge, MissionStep, MissionStore
 
@@ -66,8 +66,8 @@ def test_bridge_requires_tuple_tasks_and_fails_closed():
     store.close()
 
 
-def test_gap_engine_excludes_low_confidence_and_uncertain_candidates():
-    result = SynthesisResult(
+def _problem_result() -> object:
+    synthesis = SynthesisResult(
         "topic",
         (
             SynthesisSignal("users need reliable transport", 0.9, ("https://example.com/a",), False),
@@ -76,7 +76,11 @@ def test_gap_engine_excludes_low_confidence_and_uncertain_candidates():
         ),
         (), 0, "bounded",
     )
-    proposals = GapMissionEngine(max_proposals=10).propose(result, scope_id="scope")
+    return ProblemOpportunityEngine().identify(synthesis, limit=10)
+
+
+def test_gap_engine_excludes_low_confidence_and_uncertain_candidates():
+    proposals = GapMissionEngine(max_proposals=10).propose(_problem_result(), scope_id="scope")
     assert len(proposals) == 1
     assert proposals[0].kind == "problem"
     assert proposals[0].confidence == 0.9
@@ -84,11 +88,11 @@ def test_gap_engine_excludes_low_confidence_and_uncertain_candidates():
 
 def test_gap_materialization_is_deterministic_and_idempotent():
     result = SynthesisResult("topic", (SynthesisSignal("need better tooling", 0.8, (), False),), (), 0, "bounded")
-    engine = GapMissionEngine()
-    proposal = engine.propose(result, scope_id="scope")[0]
+    problem_result = ProblemOpportunityEngine().identify(result, limit=10)
+    proposal = GapMissionEngine().propose(problem_result, scope_id="scope")[0]
     store = MissionStore()
-    first = engine.materialize(store, proposal)
-    second = engine.materialize(store, proposal)
+    first = GapMissionEngine().materialize(store, proposal)
+    second = GapMissionEngine().materialize(store, proposal)
     assert first.mission_id == second.mission_id
     assert len(store.steps(first.mission_id)) == 1
     store.close()
