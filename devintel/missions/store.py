@@ -91,7 +91,7 @@ class MissionStore:
     def claim_due(self, *, now: float, scope_id: str | None = None, worker_id: str | None = None, lease_ttl_seconds: float | None = None) -> Mission | None:
         if now < 0:
             raise ValueError("now must be non-negative")
-        if worker_id is not None and (not worker_id.strip() or lease_ttl_seconds is None or lease_ttl_seconds <= 0):
+        if worker_id is not None and (not isinstance(worker_id, str) or not worker_id.strip() or lease_ttl_seconds is None or lease_ttl_seconds <= 0):
             raise ValueError("worker_id requires a positive lease_ttl_seconds")
         if worker_id is None and lease_ttl_seconds is not None:
             raise ValueError("lease_ttl_seconds requires worker_id")
@@ -120,27 +120,32 @@ class MissionStore:
     def release_lease(self, mission_id: str, *, worker_id: str, now: float) -> Mission:
         if not isinstance(worker_id, str) or not worker_id.strip() or now < 0:
             raise ValueError("invalid lease release inputs")
-        updated = self._db.execute("UPDATE missions SET lease_worker_id=NULL, lease_expires_at=NULL, updated_at=? WHERE mission_id=? AND lease_worker_id=?", (_now(), mission_id, worker_id.strip()))
+        updated = self._db.execute("UPDATE missions SET lease_worker_id=NULL, lease_expires_at=NULL, updated_at=? WHERE mission_id=? AND lease_worker_id=? AND status='running'", (_now(), mission_id, worker_id.strip()))
         if updated.rowcount != 1:
             raise ValueError("active lease is not owned by worker")
         return self._require(mission_id)
 
     def checkpoint(self, mission_id: str, *, current_step: int, now: float, worker_id: str | None = None) -> Mission:
         mission = self._require_running(mission_id)
-        self._check_owner(mission, worker_id, now)
+        if now < 0:
+            raise ValueError("now must be non-negative")
         if not 0 <= current_step <= mission.total_steps:
             raise ValueError("current_step is outside mission bounds")
         status = MissionStatus.SUCCEEDED if current_step == mission.total_steps else MissionStatus.QUEUED
-        saved = (status, current_step, now, _now(), "", mission_id)
         if worker_id is None:
-            self._db.execute("UPDATE missions SET status=?, current_step=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running'", saved)
+            updated = self._db.execute("UPDATE missions SET status=?, current_step=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running'", (status, current_step, now, _now(), "", mission_id))
         else:
-            self._db.execute("UPDATE missions SET status=?, current_step=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running' AND lease_worker_id=?", (*saved, worker_id.strip()))
+            if not worker_id.strip():
+                raise ValueError("worker_id is required")
+            updated = self._db.execute("UPDATE missions SET status=?, current_step=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running' AND lease_worker_id=?", (status, current_step, now, _now(), "", mission_id, worker_id.strip()))
+        if updated.rowcount != 1:
+            raise ValueError("active lease is not owned by worker")
         return self._require(mission_id)
 
     def fail(self, mission_id: str, error: str, *, now: float, backoff_seconds: float = 0.0, worker_id: str | None = None) -> Mission:
         mission = self._require_running(mission_id)
-        self._check_owner(mission, worker_id, now)
+        if now < 0:
+            raise ValueError("now must be non-negative")
         if not isinstance(error, str) or not error.strip():
             raise ValueError("error is required")
         if backoff_seconds < 0:
@@ -148,9 +153,13 @@ class MissionStore:
         status = MissionStatus.FAILED if mission.attempts >= mission.max_attempts else MissionStatus.QUEUED
         next_run = now + backoff_seconds if status is MissionStatus.QUEUED else now
         if worker_id is None:
-            self._db.execute("UPDATE missions SET status=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running'", (status, next_run, _now(), error[:2000], mission_id))
+            updated = self._db.execute("UPDATE missions SET status=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running'", (status, next_run, _now(), error[:2000], mission_id))
         else:
-            self._db.execute("UPDATE missions SET status=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running' AND lease_worker_id=?", (status, next_run, _now(), error[:2000], mission_id, worker_id.strip()))
+            if not worker_id.strip():
+                raise ValueError("worker_id is required")
+            updated = self._db.execute("UPDATE missions SET status=?, next_run_at=?, updated_at=?, last_error=?, lease_worker_id=NULL, lease_expires_at=NULL WHERE mission_id=? AND status='running' AND lease_worker_id=?", (status, next_run, _now(), error[:2000], mission_id, worker_id.strip()))
+        if updated.rowcount != 1:
+            raise ValueError("active lease is not owned by worker")
         return self._require(mission_id)
 
     def pause(self, mission_id: str) -> Mission:
@@ -190,15 +199,6 @@ class MissionStore:
             raise ValueError("worker_id is required")
         if now < 0 or lease_ttl_seconds <= 0:
             raise ValueError("invalid lease timing")
-
-    @staticmethod
-    def _check_owner(mission: Mission, worker_id: str | None, now: float) -> None:
-        if worker_id is not None:
-            if not worker_id.strip() or mission.lease_worker_id if False else False:
-                pass
-        # Ownership is enforced by the conditional UPDATE; this method only validates caller timing.
-        if now < 0:
-            raise ValueError("now must be non-negative")
 
     def _require(self, mission_id: str) -> Mission:
         mission = self.get(mission_id)
