@@ -22,6 +22,20 @@ Every consequential action follows:
 
 Intelligence, capability, model output, external content, and discovered resources never grant authority by themselves.
 
+## Persistent Continuity and Dynamic Owner Authority
+
+Persistent memory is a core continuity requirement. DORMAMMU must preserve appropriately scoped, evidence-aware memory across restarts and future missions where retention is authorized and appropriate.
+
+Memory is data, not authority. Historical memory, learned behavior, discovered capabilities, credentials, or previously granted permissions never become current owner authority. Current authority comes only from the live owner-control policy boundary.
+
+Owner authority is dynamic and revocable. Permissions may be granted, restricted, placed behind approval, expired, or revoked after deployment without rebuilding DORMAMMU. Consequential capabilities must consult live policy at execution time.
+
+Future capabilities — including, where later authorized and safely implemented, email/account creation and management, email sending, public publishing, external communication, website management, deployments, service registration, financial/business operations, and capabilities not yet known — must use the same capability, permission, security, verification, and audit boundaries. No future capability may create a parallel authority path.
+
+`DISCOVER NEED → DEFINE CAPABILITY → EVALUATE → REGISTER/IMPLEMENT → REQUEST AUTHORITY → LIVE PERMISSION CHECK → SECURITY CHECK → EXECUTE → VERIFY → RECORD`
+
+Discovering a need does not grant authority.
+
 ## Locked Foundation, Open Capability Surface
 
 DORMAMMU is locked in principles, authority boundaries, security, truth/provenance, owner control, recovery protections, and architectural direction — not in future functionality.
@@ -41,6 +55,14 @@ Discovery never equals trust, permission, installation, or execution. External c
 Prefer:
 
 `EXISTING → REUSE → TRUSTED OPEN SOURCE → FREE PROVIDER → LOCAL COMPUTE → BUILD/FINE-TUNE → LOW-COST PAID → EXPENSIVE`
+
+## Requirement Truth Ladder
+
+Every meaningful requirement or capability must be distinguishable as:
+
+`REQUIREMENT → ARCHITECTURAL DESIGN → IMPLEMENTED → TESTED → PRODUCTION VERIFIED`
+
+Documentation of a requirement or design is not proof of implementation. Implementation is not proof of testing. Repository CI is not, by itself, proof of production readiness.
 
 ## Truth, Security and Owner Control
 
