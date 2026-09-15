@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from devintel.intelligence import KnowledgeIntelligence, KnowledgeQuery
 from devintel.modules.research import Claim, VerifiedClaim
 from devintel.modules.research.verification import VerificationResult
@@ -17,6 +19,20 @@ def test_only_verified_claims_are_admitted_and_provenance_is_preserved():
     assert item.provenance == ("https://example.com/source",)
     assert item.confidence == 0.9
     assert intelligence.query(KnowledgeQuery("scope-a", "motto"))[0].object == "Beyond What Is Known"
+    store.close()
+
+
+def test_unverified_claim_cannot_cross_the_admission_boundary():
+    store = KnowledgeStore()
+    intelligence = KnowledgeIntelligence(store)
+    claim = Claim("x", "status", "unknown", 1.0, ("https://example.com/source",))
+    try:
+        intelligence.admit("scope", [claim])
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("unverified claim was admitted")
+    assert intelligence.query(KnowledgeQuery("scope")).__len__() == 0
     store.close()
 
 
@@ -41,7 +57,7 @@ def test_conflicts_are_explicit_not_silently_resolved():
     store.close()
 
 
-def test_duplicate_assertion_is_versioned_without_losing_provenance():
+def test_duplicate_assertion_is_versioned_and_merges_provenance():
     store = KnowledgeStore()
     intelligence = KnowledgeIntelligence(store)
     first = intelligence.admit("scope", [verified("x", "status", "active", confidence=0.7, url="https://example.com/a")])[0]
@@ -49,5 +65,17 @@ def test_duplicate_assertion_is_versioned_without_losing_provenance():
     assert second.version == first.version + 1
     item = intelligence.query(KnowledgeQuery("scope"))[0]
     assert item.confidence == 0.9
-    assert item.provenance == ("https://example.com/b",)
+    assert item.provenance == ("https://example.com/a", "https://example.com/b")
     store.close()
+
+
+def test_knowledge_survives_store_reopen(tmp_path: Path):
+    path = tmp_path / "knowledge.db"
+    store = KnowledgeStore(path)
+    KnowledgeIntelligence(store).admit("scope", [verified("x", "status", "persistent")])
+    store.close()
+    reopened = KnowledgeStore(path)
+    result = KnowledgeIntelligence(reopened).query(KnowledgeQuery("scope"))
+    assert len(result) == 1
+    assert result[0].object == "persistent"
+    reopened.close()
