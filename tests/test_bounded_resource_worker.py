@@ -12,7 +12,9 @@ from devintel.capabilities import (
 )
 from devintel.capabilities.contracts import CapabilityRequirement
 from devintel.capabilities.registry import CapabilityRegistry, ResourceRegistry
+from devintel.control.authority import AuthorityMode
 from devintel.operations.worker import BoundedResourceWorker, WorkerOutcome, WorkerRequest
+from devintel.runtime.app import DORMAMMURuntime
 
 
 def _engine():
@@ -71,3 +73,50 @@ def test_worker_rejects_capability_mismatch_without_consuming_lease():
     assert engine.resource_manager.active_reservations()
     scheduler.release(admitted)
     engine.close()
+
+
+def test_runtime_worker_requires_authority_and_releases_lease_on_denial():
+    engine = _engine(); scheduler, planned = _plan(engine); admitted = scheduler.admit(planned)
+    runtime = DORMAMMURuntime()
+    worker_called = False
+    def worker(_):
+        nonlocal worker_called
+        worker_called = True
+        return WorkerOutcome("op-4", "model-a", True, True, "ok", {}, 0.0)
+    with pytest.raises(PermissionError, match="denied by runtime authority"):
+        BoundedResourceWorker(scheduler, runtime).execute(admitted, WorkerRequest("op-4", "model-a", {}), worker, scope_id="test")
+    assert not worker_called
+    assert engine.resource_manager.active_reservations() == ()
+    runtime.close(); engine.close()
+
+
+def test_runtime_worker_records_verified_outcome_and_measured_duration():
+    engine = _engine(); scheduler, planned = _plan(engine); admitted = scheduler.admit(planned)
+    runtime = DORMAMMURuntime()
+    runtime.set_authority("test", "model-a", AuthorityMode.ALLOWED)
+    outcome = BoundedResourceWorker(scheduler, runtime).execute(
+        admitted, WorkerRequest("op-5", "model-a", {}),
+        lambda request: WorkerOutcome(request.operation_id, request.capability_id, True, True, "ok", {"output": 7}, 999.0),
+        scope_id="test", verifier=lambda result: result.data.get("output") == 7,
+    )
+    history = runtime.operation_history("model-a")
+    assert outcome.success and outcome.verified and outcome.duration_ms < 999.0
+    assert len(history) == 1 and history[0].operation_id == "op-5" and history[0].verified
+    assert engine.resource_manager.active_reservations() == ()
+    runtime.close(); engine.close()
+
+
+def test_runtime_worker_records_failed_verification_and_releases_lease():
+    engine = _engine(); scheduler, planned = _plan(engine); admitted = scheduler.admit(planned)
+    runtime = DORMAMMURuntime()
+    runtime.set_authority("test", "model-a", AuthorityMode.ALLOWED)
+    outcome = BoundedResourceWorker(scheduler, runtime).execute(
+        admitted, WorkerRequest("op-6", "model-a", {}),
+        lambda request: WorkerOutcome(request.operation_id, request.capability_id, True, True, "ok", {"output": 7}, 0.0),
+        scope_id="test", verifier=lambda _: False,
+    )
+    assert outcome.success and not outcome.verified
+    history = runtime.operation_history("model-a")
+    assert len(history) == 1 and not history[0].verified
+    assert engine.resource_manager.active_reservations() == ()
+    runtime.close(); engine.close()
