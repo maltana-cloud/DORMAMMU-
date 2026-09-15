@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Callable, Mapping
 
 from ..executive import ExecutiveEngine, Objective, TaskSpec
+from .engine import MissionRunPolicy
 from .progression import PersistentMissionRunner, StepOutcome
 from .store import Mission, MissionStep, MissionStore
 
@@ -14,15 +15,26 @@ TaskFactory = Callable[[Mission, MissionStep, Objective], tuple[TaskSpec, ...]]
 
 @dataclass(frozen=True)
 class MissionExecutionPolicy:
-    """Explicit bound for one continuation invocation."""
+    """Explicit bounds and approvals for one continuation invocation."""
 
     max_steps: int = 16
+    max_duration_seconds: float | None = None
+    retry_backoff_seconds: float = 0.0
+    lease_ttl_seconds: float | None = None
     owner_approved: bool = False
     capability_approved: bool | set[str] = False
 
     def __post_init__(self) -> None:
         if self.max_steps <= 0:
             raise ValueError("max_steps must be positive")
+        if self.max_duration_seconds is not None and self.max_duration_seconds <= 0:
+            raise ValueError("max_duration_seconds must be positive when set")
+        if self.retry_backoff_seconds < 0:
+            raise ValueError("retry_backoff_seconds cannot be negative")
+        if self.lease_ttl_seconds is not None and self.lease_ttl_seconds <= 0:
+            raise ValueError("lease_ttl_seconds must be positive when set")
+        if worker_set_requires_approval(self.capability_approved) and not self.owner_approved:
+            pass
 
 
 class MissionExecutiveBridge:
@@ -65,9 +77,12 @@ class MissionExecutiveBridge:
             )
             return StepOutcome(result.success, result.success, result.reason, {"objective_id": result.objective_id})
 
-        from .engine import MissionRunPolicy
-
-        run_policy = MissionRunPolicy(max_steps=policy.max_steps)
+        run_policy = MissionRunPolicy(
+            max_steps=policy.max_steps,
+            max_duration_seconds=policy.max_duration_seconds,
+            retry_backoff_seconds=policy.retry_backoff_seconds,
+            lease_ttl_seconds=policy.lease_ttl_seconds,
+        )
         return self.progression.run(
             now=now,
             execute=execute,
@@ -84,3 +99,8 @@ class MissionExecutiveBridge:
         if not isinstance(intent, str) or not intent.strip() or not isinstance(desired, str) or not desired.strip():
             raise ValueError("mission step objective fields are invalid")
         return Objective(intent.strip(), desired.strip(), mission.scope_id, objective_id=f"{mission.mission_id}:{step.step_id}")
+
+
+def worker_set_requires_approval(value: bool | set[str]) -> bool:
+    """Keep policy validation explicit without interpreting capability authority."""
+    return isinstance(value, set) and any(not isinstance(item, str) for item in value)
