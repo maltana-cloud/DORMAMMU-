@@ -41,6 +41,9 @@ The governing flow is:
 
 Discovering a need or capability does not grant authority. Historical memory is not current authority. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries.
 
+## Architecture
+Persistent memory is data, not authority. Authority is live policy, not memory. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries. Owner policy can be changed, expired, or revoked after deployment without rebuilding DORMAMMU.
+
 ## Canonical Economic / Commercial Architecture
 `WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ AGENT/BOT FACTORY ↔ PRICING ↔ CURRENCY ↔ COMMERCE/PAYMENTS ↔ GROWTH/DISTRIBUTION ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
 
@@ -51,6 +54,11 @@ The architecture is intentionally cross-domain: DORMAMMU may eventually create s
 Economic value is not synonymous with currency. Pricing, currency, payment method, settlement, revenue, profit, and broader value are distinct concepts and must remain separately represented and auditable.
 
 User comfort, affordability, transparency, convenience, security, trust, legitimate platform rules, and user authority are explicit commercial/growth constraints. Growth must optimize genuine value and legitimate awareness, not fake engagement or manipulation.
+
+## Security Boundary
+`IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
+
+Memory entries, learning records, leases, resource budgets, queue items, provider references, and authority rules do not by themselves grant credentials or unrestricted execution.
 
 ## Production Boundary
 **Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, payment settlement, live financial execution, external growth operations, and rollback evidence require authorized operational environments.
