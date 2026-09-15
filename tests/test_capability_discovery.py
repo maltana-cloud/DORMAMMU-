@@ -2,6 +2,7 @@ import pytest
 from devintel.capabilities import (
     CapabilityDescriptor, CapabilityDiscovery, CapabilityEvidence, CapabilityRequirement, CapabilityStatus,
     DefaultEvaluator, DiscoveryPolicy, ResourceDescriptor, ResourceKind, ResourceRegistry,
+    CapabilityResourceDiscoveryEngine, CapabilityLifecycle, LifecycleStore,
 )
 
 
@@ -86,3 +87,34 @@ def test_resource_registry_isolated_from_capabilities():
     resource = ResourceDescriptor("gpu-1", ResourceKind.GPU, "Local GPU", capacity="8GB", availability="ready")
     registry.register(resource)
     assert registry.get("gpu-1") == resource
+
+
+def test_engine_admission_requires_owner_approval_and_records_lifecycle():
+    lifecycle_store = LifecycleStore()
+    engine = CapabilityResourceDiscoveryEngine(
+        discovery_policy=policy(),
+        lifecycle_store=lifecycle_store,
+    )
+    engine.discovery.add_scout(Scout())
+    plan = engine.plan_acquisition(CapabilityRequirement("research.search", "find sources", ("research",)))
+    assert plan.ready_for_approval
+    with pytest.raises(PermissionError):
+        engine.approve_and_register(plan)
+    registered = engine.approve_and_register(plan, owner_approved=True)
+    assert registered.status is CapabilityStatus.REGISTERED
+    history = lifecycle_store.history("free-search")
+    assert [event.to_status for event in history] == [CapabilityStatus.EVALUATED, CapabilityStatus.APPROVED, CapabilityStatus.REGISTERED]
+    engine.close()
+
+
+def test_engine_canary_activation_and_fallback_are_explicit():
+    engine = CapabilityResourceDiscoveryEngine(discovery_policy=policy())
+    engine.discovery.add_scout(Scout())
+    plan = engine.plan_acquisition(CapabilityRequirement("research.search", "find sources", ("research",)))
+    engine.approve_and_register(plan, owner_approved=True)
+    engine.enter_canary("free-search")
+    decision = engine.evaluate_canary("free-search", __import__("devintel.capabilities", fromlist=["CanaryHealth"]).CanaryHealth(True, 1.0, 0.0, 10.0))
+    assert decision.activated
+    fallback = engine.fallback(plan, "free-search")
+    assert fallback is None
+    engine.close()
