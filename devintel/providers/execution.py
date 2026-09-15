@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
 
 from .contracts import ProviderCapability, ProviderHealth, ProviderResult
-from .live import GenerationRequest, ResearchRequest
-from .live import ProviderRouter
+from .live import GenerationRequest, ProviderRouter, ResearchRequest
 
 
 @dataclass(frozen=True)
@@ -17,11 +15,7 @@ class CapabilityExecution:
 
 
 class CapabilityExecutor:
-    """Execute replaceable provider capabilities without granting authority.
-
-    Routing is bounded by ``max_attempts``. Provider output remains untrusted
-    until the caller's normal verification and permission boundaries accept it.
-    """
+    """Execute replaceable provider capabilities without granting authority."""
 
     def __init__(self, router: ProviderRouter, *, max_attempts: int = 3) -> None:
         if not isinstance(router, ProviderRouter):
@@ -42,6 +36,11 @@ class CapabilityExecutor:
     def health(self, capability: ProviderCapability) -> tuple[ProviderHealth, ...]:
         statuses = self.router.status(capability)
         return tuple(
-            ProviderHealth(provider_id, enabled, "registered provider", {"priority": str(priority), "failures": str(failures)})
+            ProviderHealth(
+                provider_id,
+                enabled,
+                "registered provider",
+                {"priority": str(priority), "failures": str(failures)},
+            )
             for provider_id, priority, enabled, failures in statuses
         )
