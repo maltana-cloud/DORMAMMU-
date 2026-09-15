@@ -53,10 +53,13 @@ def test_scout_failure_is_isolated():
 
 
 def test_discovery_uses_configured_minimum_score():
-    engine = CapabilityDiscovery(evaluator=DefaultEvaluator(DiscoveryPolicy(minimum_score=1.0, trusted_evidence_sources=("catalog",))))
-    engine.add_scout(Scout())
+    class PartiallyValidScout:
+        def discover(self, requirement):
+            evidence = (CapabilityEvidence("catalog", "2026-09-14T00:00:00+00:00", "trusted-catalog", "https://catalog.example/capabilities/search", "0123456789abcdef"),)
+            return [CapabilityDescriptor("partial", "Partial", "1", ("research",), "trusted", "MIT", permissions=("approved",), metadata={"performance": "poor"}, evidence=evidence)]
+    engine = CapabilityDiscovery(evaluator=DefaultEvaluator(DiscoveryPolicy(minimum_score=0.9, trusted_evidence_sources=("catalog",))))
+    engine.add_scout(PartiallyValidScout())
     result = engine.discover(CapabilityRequirement("research.search", "find sources", ("research",)))
-    assert not result.best.eligible if result.best else True
     assert result.best is None
     assert "minimum score check failed" in result.evaluations[0].reasons
 
