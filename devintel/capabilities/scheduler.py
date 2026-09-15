@@ -43,51 +43,34 @@ class CapabilityResourceScheduler:
         eligible = [item for item in evaluations if item.eligible]
         return tuple(sorted(eligible, key=lambda item: (-item.score, item.candidate.cost, item.candidate.capability_id)))
 
-    def plan(
-        self,
-        requirement: CapabilityRequirement,
-        *,
-        resource_kind: ResourceKind,
-        gap_id: str | None = None,
-    ) -> CapabilityResourcePlan:
+    def plan(self, requirement: CapabilityRequirement, *, resource_kind: ResourceKind, gap_id: str | None = None) -> CapabilityResourcePlan:
         result = self.engine.discover(requirement, gap_id)
         attempts: list[str] = []
-        evaluations = self._ordered(result.evaluations)
         decision = self.engine.decide_resource(resource_kind, 1.0, max_cost=requirement.max_cost)
         if not decision.granted:
-            return CapabilityResourcePlan(
-                requirement, resource_kind, None, None, None, tuple(attempts),
-                "no registered resource with sufficient capacity",
-            )
-        for evaluation in evaluations[:_MAX_ATTEMPTS]:
+            return CapabilityResourcePlan(requirement, resource_kind, None, None, None, (), "no registered resource with sufficient capacity")
+        for evaluation in self._ordered(result.evaluations)[:_MAX_ATTEMPTS]:
             attempts.append(evaluation.candidate.capability_id)
-            return CapabilityResourcePlan(
-                requirement, resource_kind, evaluation.candidate.capability_id,
-                decision.resource_id, None, tuple(attempts),
-                "eligible capability selected and resource capacity confirmed",
-            )
+            return CapabilityResourcePlan(requirement, resource_kind, evaluation.candidate.capability_id, decision.resource_id, None, tuple(attempts), "eligible capability selected and resource capacity confirmed")
         reason = "no discovered capability passed the hard eligibility gates"
         if not result.evaluations:
             reason = "no capability candidates were discovered"
         return CapabilityResourcePlan(requirement, resource_kind, None, None, None, tuple(attempts), reason)
 
     def admit(self, plan: CapabilityResourcePlan) -> CapabilityResourcePlan:
-        """Create the actual bounded resource reservation after explicit admission."""
+        """Create a bounded resource reservation only after validating the plan state."""
         if not plan.granted:
             raise PermissionError("resource admission requires a granted plan")
-        decision = self.engine.reserve_resource(
-            plan.resource_kind, 1.0, max_cost=plan.requirement.max_cost,
-        )
+        selected = self.engine.resource_registry.get(plan.selected_resource_id or "")
+        if selected is None or selected.kind is not plan.resource_kind:
+            raise RuntimeError("resource changed between planning and admission")
+        decision = self.engine.reserve_resource(plan.resource_kind, 1.0, max_cost=plan.requirement.max_cost)
         if not decision.granted:
             raise RuntimeError("planned resource capacity is no longer available")
         if decision.resource_id != plan.selected_resource_id:
             self.engine.release_resource(decision.reservation_id or "")
             raise RuntimeError("resource changed between planning and admission")
-        return CapabilityResourcePlan(
-            plan.requirement, plan.resource_kind, plan.selected_capability_id,
-            plan.selected_resource_id, decision.reservation_id, plan.attempts,
-            "resource reservation admitted",
-        )
+        return CapabilityResourcePlan(plan.requirement, plan.resource_kind, plan.selected_capability_id, plan.selected_resource_id, decision.reservation_id, plan.attempts, "resource reservation admitted")
 
     def release(self, plan: CapabilityResourcePlan) -> None:
         if plan.reservation_id:
