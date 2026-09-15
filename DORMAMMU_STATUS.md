@@ -34,7 +34,8 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 - supervisor stops on failed/unverified cycles by default and never creates an unrestricted background loop;
 - improvement remains proposal-only and cannot self-modify code, authority, secrets, or security policy;
 - regression coverage added for repeated cycles, failure stop behavior, and invalid unbounded policy values;
-- CI verification is required before merge and the final main checkpoint will record the passing run.
+- PR #74 merged to `main` as `495acc3a28d4377fffe5c8ccf79c71fa6f54158e`;
+- PR #74 CI run #1042 passed successfully on commit `386b89a5ccb4f68b6a8edf6a221007c8a194a0cb`.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
