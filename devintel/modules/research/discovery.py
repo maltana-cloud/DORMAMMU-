@@ -41,11 +41,10 @@ class ResearchDiscoveryEngine:
         found: list[ResearchCandidate] = []
         rejected = 0
         for provider in self.providers:
-            remaining = limit - len(found)
-            if remaining <= 0:
+            if len(found) >= limit:
                 break
             try:
-                candidates = provider.discover(query.strip(), limit=remaining)
+                candidates = provider.discover(query.strip(), limit=self.max_candidates)
             except Exception:
                 rejected += 1
                 continue
