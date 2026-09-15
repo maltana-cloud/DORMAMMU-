@@ -1,0 +1,86 @@
+"""Bridge durable mission steps into the existing bounded executive runtime."""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Callable, Mapping
+
+from ..executive import ExecutiveEngine, Objective, TaskSpec
+from .progression import PersistentMissionRunner, StepOutcome
+from .store import Mission, MissionStep, MissionStore
+
+
+TaskFactory = Callable[[Mission, MissionStep, Objective], tuple[TaskSpec, ...]]
+
+
+@dataclass(frozen=True)
+class MissionExecutionPolicy:
+    """Explicit bound for one continuation invocation."""
+
+    max_steps: int = 16
+    owner_approved: bool = False
+    capability_approved: bool | set[str] = False
+
+    def __post_init__(self) -> None:
+        if self.max_steps <= 0:
+            raise ValueError("max_steps must be positive")
+
+
+class MissionExecutiveBridge:
+    """Execute persisted mission steps through the already-authorized executive path.
+
+    The bridge owns orchestration only. Task construction remains an explicit
+    caller contract, while execution continues through ExecutiveEngine and its
+    existing runtime permission, capability, resource, verification and
+    telemetry boundaries.
+    """
+
+    def __init__(self, store: MissionStore, executive: ExecutiveEngine, task_factory: TaskFactory) -> None:
+        if not callable(task_factory):
+            raise TypeError("task_factory must be callable")
+        self.store = store
+        self.executive = executive
+        self.task_factory = task_factory
+        self.progression = PersistentMissionRunner(store)
+
+    def continue_due(
+        self,
+        *,
+        now: float,
+        scope_id: str | None = None,
+        worker_id: str | None = None,
+        policy: MissionExecutionPolicy | None = None,
+    ) -> tuple[Mission, ...]:
+        policy = policy or MissionExecutionPolicy()
+
+        def execute(mission: Mission, step: MissionStep) -> StepOutcome:
+            objective = self._objective(mission, step)
+            tasks = self.task_factory(mission, step, objective)
+            if not isinstance(tasks, tuple) or not tasks:
+                raise ValueError("task_factory must return a non-empty tuple")
+            result = self.executive.execute(
+                objective,
+                tasks,
+                owner_approved=policy.owner_approved,
+                capability_approved=policy.capability_approved,
+            )
+            return StepOutcome(result.success, result.success, result.reason, {"objective_id": result.objective_id})
+
+        from .engine import MissionRunPolicy
+
+        run_policy = MissionRunPolicy(max_steps=policy.max_steps)
+        return self.progression.run(
+            now=now,
+            execute=execute,
+            policy=run_policy,
+            scope_id=scope_id,
+            worker_id=worker_id,
+        )
+
+    @staticmethod
+    def _objective(mission: Mission, step: MissionStep) -> Objective:
+        payload: Mapping[str, object] = step.payload or {}
+        intent = payload.get("intent", step.name)
+        desired = payload.get("desired_outcome", f"Complete mission step: {step.name}")
+        if not isinstance(intent, str) or not intent.strip() or not isinstance(desired, str) or not desired.strip():
+            raise ValueError("mission step objective fields are invalid")
+        return Objective(intent.strip(), desired.strip(), mission.scope_id, objective_id=f"{mission.mission_id}:{step.step_id}")
