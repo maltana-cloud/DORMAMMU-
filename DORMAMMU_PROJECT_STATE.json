@@ -4,7 +4,7 @@
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
   "checkpoint_commit": "80953a168ebb9419b03d24fc762e5c0e8af0d3d9",
-  "documentation_head": "773b53ae6f7dab1be0d7055d606c0ba718254b58",
+  "documentation_head": "9210795261fe09996ddfa15765ca7bf32be0c9b6",
   "verification": {
     "repository_state_checked": true,
     "scheduler_ci_run": 1300,
@@ -28,10 +28,10 @@
     "detailed_audit_matrix": "DORMAMMU_AUDIT_MATRIX.md"
   },
   "frontier_changes": {
-    "identity_migration": {"status": "VERIFIED", "distribution_name": "dormammu", "canonical_facade": "dormammu/__init__.py", "legacy_namespace": "devintel", "ci": "run 1284 success"},
+    "identity_migration": {"status": "VERIFIED", "ci": "run 1284 success"},
     "capability_discovery": {"status": "VERIFIED", "ci": "runs 1288 and 1289 success"},
-    "resource_scheduler": {"status": "VERIFIED", "ci": "run 1300 success", "security_boundary": "planning does not reserve resources; admission remains explicit and bounded"},
-    "runtime_resource_worker": {"status": "VERIFIED", "ci": "PR run 1317 success; post-merge main run 1318 success; 455 tests passed", "security_boundary": "no authority is created by the worker; no installation, credential acquisition, spending, external account action, or owner-policy bypass"},
+    "resource_scheduler": {"status": "VERIFIED", "ci": "run 1300 success"},
+    "runtime_resource_worker": {"status": "VERIFIED", "ci": "PR run 1317 success; post-merge main run 1318 success; 455 tests passed"},
     "persistent_mission_progression": {"status": "VERIFIED", "changes": ["durable ordered mission step definitions", "durable verified step outcomes", "resume from first incomplete step after reopen", "verified-success checkpoint gating", "legacy mission compatibility", "bounded retry and fail-closed executor contract"], "tests": ["tests/test_persistent_mission_progression.py", "tests/test_missions.py"], "ci": "PR run 1332 success; merged-main run 1334 success", "security_boundary": "progression grants no authority; external actions remain behind existing runtime permission, security, capability, resource, verification, telemetry, audit, and owner-control boundaries"}
   },
   "category_status": {
