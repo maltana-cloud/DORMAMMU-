@@ -35,7 +35,7 @@ Documentation is not implementation proof. Unit tests are not automatically prod
 
 ## Current repository checkpoint
 
-Categories 1–26 are complete and locked at their defined repository boundaries. Category 27, DORMAMMU Ecosystem Evolution, has been implemented on `codex/category-27-ecosystem-evolution` and is pending CI/merge verification. Production readiness remains unclaimed.
+Categories 1–27 are complete and locked. Ω.1, Bounded Distributed Mission Coordination, is complete and locked. Production readiness remains unclaimed.
 
 ## Implemented foundation
 
@@ -52,7 +52,8 @@ Categories 1–26 are complete and locked at their defined repository boundaries
 - bounded real-world action contracts and execution with permission, provider health/fallback, dry-run, idempotency, verification, and audit;
 - bounded multi-source continuous discovery with source health/failure isolation, scope/freshness gates, deduplication, ranking, and scheduling boundary;
 - controlled learning/evolution with evidence gates, versioned promotion, durable records, and rollback;
-- ecosystem-level evolution orchestration with finite proposal/candidate budgets and capability-health gating.
+- ecosystem-level evolution orchestration with finite proposal/candidate budgets and capability-health gating;
+- durable mission worker coordination with atomic SQLite leases, expiry takeover, renewal, and ownership-checked completion.
 
 ## Repository map
 
@@ -67,6 +68,7 @@ Categories 1–26 are complete and locked at their defined repository boundaries
 - `devintel/actions/` — provider-independent bounded real-world action execution.
 - `devintel/intelligence/` — bounded global multi-source discovery.
 - `devintel/ecosystem/` — bounded ecosystem evolution orchestration.
+- `devintel/missions/` — durable missions and bounded worker coordination.
 - `DORMAMMU_CHARTER.md` — architectural constitution.
 - `DORMAMMU_STATUS.md` — current human-readable state.
 - `DORMAMMU_PROJECT_STATE.json` — machine-readable checkpoint.
@@ -88,6 +90,9 @@ Action path:
 
 Evolution path:
 `VERIFIED OUTCOMES → LEARNING PROPOSALS → BOUNDED CANDIDATES → CAPABILITY HEALTH → INDEPENDENT EVALUATION → VERSIONED PROMOTION → MONITOR → ROLLBACK IF NEEDED`
+
+Mission path:
+`DURABLE MISSION → ATOMIC WORKER CLAIM → FINITE LEASE → EXECUTE STEP → RENEW IF NEEDED → OWNERSHIP-CHECKED CHECKPOINT/FAILURE → RELEASE/COMPLETE`
 
 Broader target:
 `OBJECTIVE → UNDERSTAND → DECOMPOSE → EVIDENCE SYNTHESIS → CAPABILITY DISCOVERY → MODEL/AGENT SELECTION → SPECIALIST COLLABORATION → EXECUTE → VERIFY → REFLECT → LEARN → EVOLVE → OUTCOME`
@@ -118,11 +123,14 @@ Authorized actions have stable contracts, deterministic provider fallback, dry-r
 ### 7. Global discovery boundary — locked
 Continuous discovery is externally driven and bounded; source failures, scope, freshness, deduplication, ranking, and scheduling are explicit.
 
-### 8. Ecosystem evolution — implemented, pending CI/merge verification
+### 8. Ecosystem evolution — locked
 Verified learning proposals can be evaluated and promoted into reversible scoped versions under bounded policy and capability-health gates. Protected surfaces remain outside evolution.
 
-### 9. Ω Unknown Frontier
-Future work is selected from verified capability gaps rather than a fixed assumption about what the ecosystem must become. Candidate work must preserve the locked constitution and be implemented, tested, integrated, verified, documented, and reversible where applicable.
+### 9. Ω.1 Bounded distributed mission coordination — locked
+Durable mission execution now has an atomic worker ownership boundary with finite leases, expiry takeover, renewal, and ownership-checked completion. This is repository-level coordination, not a claim of production multi-host scheduling.
+
+### 10. Ω Unknown Frontier
+Future work remains open-ended and is selected from verified capability gaps rather than a fixed assumption about what the ecosystem must become. Candidate work must preserve the locked constitution and be implemented, tested, integrated, verified, documented, and reversible where applicable.
 
 ## Capability acquisition policy
 
@@ -154,6 +162,7 @@ A meaningful capability needs a stable contract, runtime integration where appli
 - broad trusted external capability acquisition;
 - complete model/agent/specialist routing;
 - production-grade heterogeneous compute orchestration;
+- production-grade multi-host mission scheduling and lease infrastructure;
 - complete communication/community ecosystem;
 - full creation/distribution/awareness/monetization loop;
 - controlled reflection/learning expansion;
