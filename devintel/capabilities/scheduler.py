@@ -1,9 +1,9 @@
 """Bounded capability/resource scheduling with deterministic fallback.
 
 Scheduling selects already-discovered eligible capabilities and registered
-resources. It does not install software, acquire credentials, spend money, or
-invoke external providers. Resource reservations are durable leases and remain
-separate from capability authority.
+resources. Planning is side-effect free; resource reservations happen only
+through explicit admission. It does not install software, acquire credentials,
+spend money, or invoke external providers.
 """
 from __future__ import annotations
 
@@ -63,16 +63,16 @@ class CapabilityResourceScheduler:
         for evaluation in self._ordered(result.evaluations)[:_MAX_ATTEMPTS]:
             capability_id = evaluation.candidate.capability_id
             attempts.append(capability_id)
-            decision = self.engine.reserve_resource(resource_kind, 1.0, max_cost=requirement.max_cost)
+            decision = self.engine.decide_resource(resource_kind, 1.0, max_cost=requirement.max_cost)
             if not decision.granted:
                 continue
             return CapabilityResourcePlan(
                 requirement,
                 capability_id,
                 decision.resource_id,
-                decision.reservation_id,
+                None,
                 tuple(attempts),
-                "eligible capability selected and resource reserved",
+                "eligible capability selected and resource capacity confirmed",
             )
         reason = "no eligible capability could be paired with sufficient registered resource capacity"
         if not result.evaluations:
@@ -80,6 +80,29 @@ class CapabilityResourceScheduler:
         elif not attempts:
             reason = "no discovered capability passed the hard eligibility gates"
         return CapabilityResourcePlan(requirement, None, None, None, tuple(attempts), reason)
+
+    def admit(self, plan: CapabilityResourcePlan) -> CapabilityResourcePlan:
+        """Create the actual bounded resource reservation after explicit admission."""
+        if not plan.granted:
+            raise PermissionError("resource admission requires a granted plan")
+        decision = self.engine.reserve_resource(
+            self._kinds.get(plan.selected_capability_id, ResourceKind.OTHER),
+            1.0,
+            max_cost=plan.requirement.max_cost,
+        )
+        if not decision.granted:
+            raise RuntimeError("planned resource capacity is no longer available")
+        if decision.resource_id != plan.selected_resource_id:
+            self.engine.release_resource(decision.reservation_id or "")
+            raise RuntimeError("resource changed between planning and admission")
+        return CapabilityResourcePlan(
+            plan.requirement,
+            plan.selected_capability_id,
+            plan.selected_resource_id,
+            decision.reservation_id,
+            plan.attempts,
+            "resource reservation admitted",
+        )
 
     def release(self, plan: CapabilityResourcePlan) -> None:
         if plan.reservation_id:
