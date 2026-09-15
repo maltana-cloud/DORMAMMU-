@@ -35,21 +35,24 @@ Documentation is not implementation proof. Unit tests are not automatically prod
 
 ## Current repository checkpoint
 
-Knowledge synthesis feature was merged to `main` as `19d4d3ae0682cf4a34f80db0a0da7d6fd6379aae` after feature-head CI run **#603** passed on `c78dfeae0f5de5f027d8fd1f44333d902948e694`. Post-merge main CI has not yet been independently observed, so the synthesis milestone remains `TESTED` rather than `VERIFIED`.
+Categories 1–26 are complete and locked at their defined repository boundaries. Category 27, DORMAMMU Ecosystem Evolution, has been implemented on `codex/category-27-ecosystem-evolution` and is pending CI/merge verification. Production readiness remains unclaimed.
 
-## Implemented/tested foundation
+## Implemented foundation
 
 - core state/tasks/planning/events/permissions;
 - security, containment, owner control, cryptographic recovery;
 - truth/research/provenance and provider routing;
 - capability/resource contracts, registry, discovery/evaluation, lifecycle, canary;
 - conservative local CPU/RAM/storage/GPU inventory;
-- bounded resource reservation with fail-closed capacity;
+- bounded resource reservation and durable lease infrastructure;
 - bounded operation execution and verification;
-- explicit executive objective/goal/task contracts and dependency/scope validation;
+- executive objective/goal/task contracts and evidence-backed executive understanding;
 - SQLite-backed operational telemetry and derived health;
-- telemetry-fed operational health path into the existing canary/lifecycle boundary;
-- evidence-backed knowledge synthesis with verified-claim gating, provenance preservation, contradiction detection, uncertainty, and executive-requirement filtering.
+- evidence-backed knowledge synthesis with verified-claim gating, provenance preservation, contradiction detection, uncertainty, and executive-requirement filtering;
+- bounded real-world action contracts and execution with permission, provider health/fallback, dry-run, idempotency, verification, and audit;
+- bounded multi-source continuous discovery with source health/failure isolation, scope/freshness gates, deduplication, ranking, and scheduling boundary;
+- controlled learning/evolution with evidence gates, versioned promotion, durable records, and rollback;
+- ecosystem-level evolution orchestration with finite proposal/candidate budgets and capability-health gating.
 
 ## Repository map
 
@@ -61,7 +64,9 @@ Knowledge synthesis feature was merged to `main` as `19d4d3ae0682cf4a34f80db0a0d
 - `devintel/capabilities/` — capability/resource discovery, inventory, lifecycle, canary, decisions.
 - `devintel/modules/research/` — research, provenance, synthesis.
 - `devintel/providers/` — provider contracts/routing/live adapters.
-- `devintel/modules/education/` — education lifecycle.
+- `devintel/actions/` — provider-independent bounded real-world action execution.
+- `devintel/intelligence/` — bounded global multi-source discovery.
+- `devintel/ecosystem/` — bounded ecosystem evolution orchestration.
 - `DORMAMMU_CHARTER.md` — architectural constitution.
 - `DORMAMMU_STATUS.md` — current human-readable state.
 - `DORMAMMU_PROJECT_STATE.json` — machine-readable checkpoint.
@@ -73,65 +78,51 @@ Legacy `DEVINTEL_*` names and the `devintel/` namespace remain only where compat
 ## How the implemented pieces connect
 
 Current bounded path:
-`OBJECTIVE → GOAL UNDERSTANDING → TASK DECOMPOSITION → CAPABILITY DECISION → RESOURCE DECISION → PERMISSION → LIFECYCLE/CANARY WHEN NEEDED → ACT → MEASURE → VERIFY → RECORD`
+`OBJECTIVE → GOAL UNDERSTANDING → EVIDENCE/SYNTHESIS WHEN AVAILABLE → TASK DECOMPOSITION → CAPABILITY DECISION → RESOURCE DECISION → PERMISSION → LIFECYCLE/CANARY WHEN NEEDED → ACT → MEASURE → VERIFY → RECORD`
 
-Evidence path now available:
-`RESEARCH → VERIFY EVIDENCE → NORMALIZE CLAIMS → SYNTHESIZE → CHECK CONTRADICTIONS → EXPOSE PROVENANCE/UNCERTAINTY → EXECUTIVE REQUIREMENTS`
+Discovery path:
+`GLOBAL DISCOVERY → SCOPE/FRESHNESS GATES → DEDUP/RANK → RESEARCH/VERIFY → KNOWLEDGE SYNTHESIS → EXECUTIVE REQUIREMENTS`
+
+Action path:
+`ACTION SPEC → PERMISSION → PROVIDER HEALTH → DETERMINISTIC ROUTE → ACT → VERIFY → AUDIT`
+
+Evolution path:
+`VERIFIED OUTCOMES → LEARNING PROPOSALS → BOUNDED CANDIDATES → CAPABILITY HEALTH → INDEPENDENT EVALUATION → VERSIONED PROMOTION → MONITOR → ROLLBACK IF NEEDED`
 
 Broader target:
-`OBJECTIVE → UNDERSTAND → DECOMPOSE → EVIDENCE SYNTHESIS → CAPABILITY DISCOVERY → MODEL/AGENT SELECTION → SPECIALIST COLLABORATION → EXECUTE → VERIFY → REFLECT → LEARN → OUTCOME`
+`OBJECTIVE → UNDERSTAND → DECOMPOSE → EVIDENCE SYNTHESIS → CAPABILITY DISCOVERY → MODEL/AGENT SELECTION → SPECIALIST COLLABORATION → EXECUTE → VERIFY → REFLECT → LEARN → EVOLVE → OUTCOME`
 
 Capability expansion:
 `DISCOVER GAP → DEFINE CONTRACT → ISOLATE → PERMISSION → SECURITY CHECK → BUILD/INTEGRATE → TEST → VERIFY → REGISTER/VERSION → CANARY → MONITOR → KEEP OR ROLLBACK`
 
-Controlled improvement:
-`OBSERVE → MEASURE → IDENTIFY WEAKNESS → RESEARCH → EXPERIMENT → EVALUATE → VERIFY → APPROVE → INTEGRATE → MONITOR`
-
 ## Current build order
 
-### 1. Foundation — locked direction
-
+### 1. Foundation — locked
 Protect core authority, security, truth, owner control, recovery, auditability, modularity, backward compatibility, capability/resource discovery, lifecycle, canary, and rollback.
 
-### 2. Bounded operating path — tested
+### 2. Bounded operating path — locked
+Capability/resource decisions connect to permission, lifecycle/canary, action execution, verification, telemetry, and recording.
 
-Capability and resource decisions are connected to permission, lifecycle/canary, action execution, verification, and recording.
+### 3. Executive cognition — locked
+Objective understanding, explicit task decomposition, evidence-backed requirements, and scope/dependency validation exist without pretending that model output is authority or truth.
 
-### 3. Executive cognition — tested foundation
+### 4. Operational telemetry — locked
+Execution observations are durable and feed operational health and canary handling.
 
-`Objective`, `GoalUnderstanding`, `TaskSpec`, and `ExecutivePlan` exist. The default interpreter intentionally normalizes explicit fields only. Task decomposition is explicit and scope/dependency checked.
+### 5. Evidence-backed knowledge synthesis — locked
+Verified claims are normalized and synthesized conservatively with provenance, contradictions, uncertainty, and executive filtering.
 
-### 4. Operational telemetry — tested foundation
+### 6. Real-world action boundary — locked
+Authorized actions have stable contracts, deterministic provider fallback, dry-run, idempotency, explicit verification, and tamper-evident audit.
 
-Execution observations are durable in SQLite and include duration, success, verification, stage, and resource reservation metadata. Health requires a minimum sample count. Healthy active capabilities can be verified without reactivation; unhealthy active health goes through existing canary/lifecycle handling.
+### 7. Global discovery boundary — locked
+Continuous discovery is externally driven and bounded; source failures, scope, freshness, deduplication, ranking, and scheduling are explicit.
 
-### 5. Evidence-backed knowledge synthesis — tested
+### 8. Ecosystem evolution — implemented, pending CI/merge verification
+Verified learning proposals can be evaluated and promoted into reversible scoped versions under bounded policy and capability-health gates. Protected surfaces remain outside evolution.
 
-`devintel/modules/research/synthesis.py` combines verified claims conservatively, canonicalizes provenance, detects contradictions after normalization, exposes uncertainty, excludes unsupported inputs, and prevents contradictory/low-confidence signals from becoming executive requirements. Runtime integration is present. Feature-head CI #603 passed; post-merge main CI remains to be observed.
-
-### 6. Next: evidence-backed executive intelligence
-
-Build the adapter between synthesis and executive planning:
-
-`SYNTHESIS → REQUIREMENTS/SUCCESS CRITERIA → SCOPE/DEPENDENCIES → PLAN → BOUNDED EXECUTION → VERIFY`
-
-It must preserve provenance and uncertainty and reject contradictory/insufficient evidence. Evidence must never grant authority.
-
-### 7. Durable resource leases
-
-Move active resource reservations from process-local memory toward durable, scoped, crash-safe leases with expiry, release, recovery, and audit semantics before heterogeneous multi-host orchestration.
-
-### 8. Trusted external capability/resource expansion
-
-External scouts/adapters must be evaluated for provenance/trust, license/terms, dependencies, compatibility, security, performance, resources, cost, permissions, maintainability, rollback, and observability before use.
-
-### 9. Ecosystem expansion
-
-Progressively integrate communication, education, creation, software/tool building, media, community, opportunity/product/service discovery, analytics, distribution, and monetization behind the same boundaries.
-
-### 10. Advanced evolution
-
-Later add training/evaluation, AI/ML research, controlled self-improvement, new-domain expansion, and resource optimization. Privileged systems remain explicitly bounded and reviewable.
+### 9. Ω Unknown Frontier
+Future work is selected from verified capability gaps rather than a fixed assumption about what the ecosystem must become. Candidate work must preserve the locked constitution and be implemented, tested, integrated, verified, documented, and reversible where applicable.
 
 ## Capability acquisition policy
 
@@ -155,21 +146,19 @@ Discovery itself never installs, executes, authenticates, spends money, or grant
 
 ## Definition of done
 
-A meaningful capability needs a stable contract, runtime integration, happy/failure tests, security/permission checks, provenance where relevant, observability, resource/cost controls, safe degradation/rollback where relevant, compatibility/migration handling, successful CI, truthful state, and capability-appropriate integration evidence.
+A meaningful capability needs a stable contract, runtime integration where applicable, happy/failure tests, security/permission checks, provenance where relevant, observability, resource/cost controls, safe degradation/rollback where relevant, compatibility/migration handling, successful CI, truthful state, and capability-appropriate integration evidence.
 
-## Not yet done
+## Remaining open capability surface
 
-- post-merge verification of the synthesis merge checkpoint;
-- evidence-backed executive requirements/success-criteria integration;
-- arbitrary natural-language objective understanding/decomposition;
-- durable resource leases;
+- post-merge operational verification for capabilities whose environments require it;
 - broad trusted external capability acquisition;
 - complete model/agent/specialist routing;
-- controlled reflection/learning loop;
+- production-grade heterogeneous compute orchestration;
 - complete communication/community ecosystem;
 - full creation/distribution/awareness/monetization loop;
-- production-grade heterogeneous compute orchestration;
-- model training/evolution at ecosystem scale.
+- controlled reflection/learning expansion;
+- model training/evolution at ecosystem scale;
+- future capabilities discovered through the Ω Unknown Frontier.
 
 ## North Star
 

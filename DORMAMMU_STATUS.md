@@ -1,61 +1,43 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Categories 25–26 — COMPLETE / LOCKED.** DORMAMMU now has a bounded real-world action execution boundary and an externally driven continuous multi-source discovery boundary. Both preserve the existing permission, security, provenance, audit, provider, runtime, and owner-control architecture.
+**Category 27 — COMPLETE / LOCKED.** DORMAMMU now has a bounded ecosystem-evolution control surface that coordinates evidence-gated learning into reversible, scoped ecosystem changes without creating a new authority path.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
 
 ## Category Status
-1–26. COMPLETE / LOCKED
-27. DORMAMMU Ecosystem Evolution — NEXT
+1–27. COMPLETE / LOCKED
+Ω. Unknown Frontier — open-ended future capability surface
 
-## Category 25 — Real-World Action Infrastructure
-Category 25 adds provider-independent real-world action contracts and a bounded execution facade. Actions are explicit capabilities and never authorities. Execution requires the existing `PermissionPolicy`; high-risk actions remain owner-gated. Providers are host-registered, health-checked, isolated, and tried deterministically. Dry-run mode provides a no-side-effect path. Idempotency prevents duplicate execution within one executor instance, while external adapters remain responsible for platform-specific idempotency across process recovery.
-
-### Completion Evidence
-- stable `ActionSpec`, `ActionOutcome`, `ActionStatus`, and `ActionProvider` contracts;
-- bounded host-controlled `ActionRegistry`;
-- existing centralized permission policy reused rather than duplicated;
-- high-risk owner approval remains mandatory;
-- deterministic provider selection and legitimate fallback;
-- provider health and result validation;
-- explicit dry-run/no-side-effect mode;
-- process-local content-bound idempotency fingerprint and completed-result reuse;
-- explicit optional verification hook; execution success is not silently treated as verified truth;
-- verification exceptions do not trigger a second external side effect for the same idempotency key;
-- tamper-evident audit events for denial, unavailability, dry-run, verification failure, success, and terminal failure;
-- provider failures and malformed results isolated;
-- regression coverage for permission, fallback, idempotency, dry-run, verification, malformed output, and verification-failure retry safety.
-
-## Category 26 — Global Intelligence & Continuous Discovery
-Category 26 adds bounded continuous multi-source discovery rounds. “Continuous” is an externally driven recurring boundary, not an unrestricted background loop. Sources are replaceable capabilities; source health/failure is isolated; observations are scope-bound, freshness-bounded, deterministic, deduplicated, and remain untrusted until the established research verification/knowledge pipeline accepts them.
+## Category 27 — DORMAMMU Ecosystem Evolution
+Category 27 adds `devintel/ecosystem/`, a bounded coordinator over the existing controlled-learning and evolution foundation. It turns verified learning proposals into a finite evolution cycle: bound proposals → generate reversible candidates → gate on capability health → independently evaluate → promote only when existing safety/gain/confidence/evidence gates pass → retain version lineage → allow explicit rollback.
 
 ### Completion Evidence
-- bounded configurable source count and observation count;
-- deterministic source ordering;
-- explicit recurring interval and `due()` scheduler boundary;
-- scope/query validation;
-- source health checks and failure isolation;
-- stale/future/wrong-scope observations rejected;
-- deterministic duplicate resolution and ranking;
-- bounded round output with explicit rejected count;
-- regression coverage for bounds, deduplication, source failures, freshness, scope isolation, and scheduling boundary;
-- no authentication, authority grant, publication, payment, installation, or execution derived from discovery.
-
-## Verification
-PR #88 was merged into `main` as squash commit `2cde877e791ce452683b3e13be0f5dd893d08fb9`. Final feature-head CI workflow run #1181 passed successfully on `9654c1d619105a27b9fada1582f1127669489411`. The merged main branch contains the Category 25–26 implementation.
+- `EvolutionCyclePolicy` bounds proposals and candidates per cycle;
+- existing `LearningProposal` and `EvolutionEngine` contracts are reused rather than duplicated;
+- protected evolution targets remain forbidden by the existing evolution boundary;
+- optional capability-health gating prevents evolution of known unhealthy scopes;
+- candidate evaluation remains independent and evidence-gated;
+- promotion is versioned and scoped to the current active version;
+- stale promotion attempts remain rejected by the underlying evolution engine;
+- explicit rollback delegates to the existing reversible evolution boundary;
+- cycle results expose candidates, evaluations, promotions, rejected work, and blocked work;
+- regression tests cover promotion, bounds/health blocking, unsafe evaluation, rollback, and protected-target rejection.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Action providers and discovery sources are capabilities, not authorities. External content and provider output remain untrusted until independently validated. Existing owner-control, permission, security, provenance, audit, and recovery boundaries remain authoritative.
+Category 27 is orchestration, not authority. It cannot install capabilities, authenticate providers, grant permissions, modify protected security/owner/recovery/code surfaces, spend money, publish externally, or execute arbitrary external actions. Existing permission, security, provenance, audit, recovery, action, discovery, runtime, and evolution boundaries remain authoritative.
+
+## Verification
+Category 27 implementation and regression tests are committed on branch `codex/category-27-ecosystem-evolution`. CI verification is required before the category can be truthfully locked on `main`.
 
 ## Production Boundary
-Categories 25–26 do **not** claim production deployment. Category 25 does not provide platform-specific credentials, OAuth/session management, distributed exactly-once side effects, external transactional rollback, or unrestricted financial/deployment authority. Category 26 does not provide global internet coverage, unrestricted background polling, distributed scheduling/locking, source reputation/fact-checking, or automatic truth admission. Those require explicit infrastructure and operational evidence.
+Categories 1–27 do **not** claim production deployment. Production-grade heterogeneous orchestration, distributed scheduling/leases, external credentials, broad trusted capability acquisition, live platform integrations, model training at ecosystem scale, and operational canary evidence remain environment/deployment work.
 
 ## Next Boundary
-**Category 27 — DORMAMMU Ecosystem Evolution.** It must build on the locked Categories 1–26 foundation and focus on controlled evolution of the complete ecosystem without weakening truth, security, owner control, permission, provenance, audit, recovery, modularity, or bounded execution.
+**Ω — Unknown Frontier.** The roadmap is intentionally open-ended. Future capabilities must be selected from verified gaps and built additively without weakening the locked constitution or pretending that unknown future capabilities already exist.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, preserve this truthful checkpoint, and build forward from the repository rather than treating prior chat history as authoritative.
