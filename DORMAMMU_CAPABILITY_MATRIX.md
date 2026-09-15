@@ -6,7 +6,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Current checkpoint:** Categories 1–27 are complete and locked at their defined repository boundaries. Production readiness remains unclaimed.
+**Current checkpoint:** Categories 1–27 are complete and locked at their defined repository boundaries. Ω.1 bounded distributed mission coordination is complete and locked. Production readiness remains unclaimed.
 
 | Category | Capability | Status | Repository boundary / evidence | Key limitation |
 |---|---|---|---|---|
@@ -32,17 +32,18 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | 20 | Problem & Opportunity Discovery | COMPLETE / LOCKED | Demand/problem/opportunity identification behind evidence boundaries | Real-world market validation remains future work |
 | 21 | Domain Intelligence | COMPLETE / LOCKED | Domain modeling and verified domain signals | Broad domain coverage remains extensible work |
 | 22 | Human–DORMAMMU Collaboration | COMPLETE / LOCKED | Scoped collaboration, owner control and safe human interaction boundaries | Production multi-channel integration remains future work |
-| 23 | Long-Running Mission System | COMPLETE / LOCKED | Bounded mission lifecycle, persistence and safe stopping | Distributed production scheduling remains future work |
+| 23 | Long-Running Mission System | COMPLETE / LOCKED | Bounded mission lifecycle, persistence, recovery, and Ω.1 atomic worker coordination | Production distributed scheduling remains future work |
 | 24 | Ecosystem & Multi-Agent Coordination | COMPLETE / LOCKED | Scoped agent coordination, contracts and failure boundaries | Heterogeneous production agent fleet remains future work |
 | 25 | Real-World Action Infrastructure | COMPLETE / LOCKED | Provider-independent action contracts, permission-gated execution, deterministic fallback, dry-run, idempotency, verification and audit; PR #88 / CI #1181 | No platform credentials/OAuth, distributed exactly-once side effects, rollback of external transactions, or unrestricted financial authority |
 | 26 | Global Intelligence & Continuous Discovery | COMPLETE / LOCKED | Bounded multi-source discovery rounds, health/failure isolation, scope/freshness gates, deterministic deduplication and scheduling boundary; PR #88 / CI #1181 | No unrestricted polling, global coverage, source reputation engine, or automatic truth admission |
 | 27 | DORMAMMU Ecosystem Evolution | COMPLETE / LOCKED | Bounded orchestration of verified learning proposals into evaluated, reversible ecosystem changes with capability-health gating and rollback; Category 27 PR evidence recorded in status/state | No self-authorized code/security/authority changes, automatic installation, spending, publication, or unrestricted self-modification |
+| Ω.1 | Bounded Distributed Mission Coordination | COMPLETE / LOCKED | Atomic SQLite worker leases, expiry takeover, renewal, ownership-checked checkpoint/failure completion; PR #90 / CI #1209 / main run #1210 | Not production-grade multi-host scheduling; requires operational deployment evidence |
 
-## Category 27 completion boundary
+## Ω.1 completion boundary
 
-Category 27 adds the ecosystem-level control surface for controlled evolution. It coordinates the existing evidence-gated learning and evolution primitives rather than creating a second authority system. One cycle is bounded by proposal and candidate limits; unhealthy scoped capabilities can block evolution; candidates must remain reversible and outside protected targets; independent evaluation must pass existing evidence/gain/confidence gates; promotion creates a new scoped version; rollback can return to an existing version.
+Ω.1 extends the existing durable mission system with a coordination boundary for multiple workers/processes. A worker can atomically claim a due mission with a finite lease, renew it, and complete/fail only while it owns the active lease. An expired lease can be taken over. Existing mission databases are migrated additively without resetting mission data.
 
-The engine does **not** install capabilities, authenticate providers, grant permissions, alter protected security/owner/recovery/code surfaces, spend money, publish externally, or execute arbitrary external actions. Those remain separate capability boundaries requiring their existing controls.
+Leases are coordination only. They do not install capabilities, authenticate providers, grant permissions, alter protected security/owner/recovery/code surfaces, spend money, publish externally, or execute arbitrary external actions.
 
 ## Verification rule
 
