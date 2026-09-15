@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 17 — Real Capability & Provider Infrastructure is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has replaceable real provider adapters, bounded capability routing, provider health/status, deterministic priority fallback, and an explicit execution facade for generation and research capabilities.
+**Category 18 — Intelligence & Knowledge System is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded intelligence knowledge boundary that integrates verified research claims with durable scoped persistence, deterministic retrieval, provenance preservation, freshness filtering, explicit contradiction detection, and versioned assertion updates.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -24,29 +24,31 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 15. Production Runtime & Orchestration — COMPLETE / LOCKED
 16. Persistent Intelligence Infrastructure — COMPLETE / LOCKED
 17. Real Capability & Provider Infrastructure — COMPLETE / LOCKED
+18. Intelligence & Knowledge System — COMPLETE / LOCKED
 
-## Category 17 Completion Evidence
-- provider contracts define capability, health, and result boundaries;
-- `ProviderRegistry` provides bounded, replaceable provider registration;
-- `ProviderRouter` provides deterministic priority routing and legitimate fallback when a provider is unhealthy or fails;
-- provider output is returned as an envelope and remains unverified until the existing truth/verification boundary accepts it;
-- live adapters include keyless Wikipedia research and opt-in Gemini generation through externally supplied credentials;
-- no credentials are bundled in source and provider configuration is environment-driven;
-- providers can be explicitly disabled/enabled without changing authority boundaries;
-- `CapabilityExecutor` exposes an explicit generation/research execution contract for higher-level integrations;
-- regression coverage verifies fallback, invalid output rejection, disabled providers, capability execution, and execution configuration validation;
-- the implementation remains additive and preserves existing permission, security, owner-control, verification, audit, recovery, runtime, and persistence boundaries.
+## Category 18 Completion Evidence
+- `KnowledgeIntelligence` integrates with the existing `KnowledgeStore` rather than creating a second persistence system;
+- admission is restricted to existing `VerifiedClaim` values, preserving the established verification boundary;
+- knowledge assertions use deterministic identity for stable versioned updates;
+- verified confidence is retained and evidence provenance is merged across repeated observations;
+- retrieval is scope-isolated, bounded, deterministic, and supports explicit freshness filtering;
+- contradictions for the same normalized subject/predicate are surfaced explicitly rather than silently resolved;
+- persisted knowledge survives store close/reopen through the existing durable SQLite layer;
+- stored claim payloads have an explicit versioned encoding and malformed/unsupported records fail closed;
+- regression coverage verifies admission boundaries, provenance, scope isolation, bounded retrieval, conflict detection, versioning, and persistence;
+- no knowledge admission grants authority, permissions, credentials, or action capability;
+- implementation remains additive and preserves locked security, owner-control, verification, audit, runtime, provider, and persistence boundaries.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Providers are capabilities, not authorities. External provider output is untrusted until verified. Provider availability, health, quota errors, or configuration never grant permission. Credentials remain external to intelligence logic, and legitimate fallback never bypasses provider quotas, licensing, verification, CAPTCHAs, or platform controls.
+Knowledge is evidence-backed state, not authority. External content cannot cross into trusted knowledge without the established verification boundary. Knowledge retrieval cannot grant permission or cause an action by itself. Contradictions and uncertainty remain visible instead of being converted into false certainty.
 
 ## Production Boundary
-Category 17 is complete at the repository architecture level, not a claim that all external providers are production-configured or universally available. Production still requires provider-specific credentials/terms, quota and cost controls, secrets management and rotation, network egress policy, provider health monitoring, latency/error/load evidence, contract drift handling, and deployment-specific operational controls.
+Category 18 is complete at the repository architecture level, not a claim that DORMAMMU has production-scale knowledge infrastructure. Production still requires workload-specific database sizing/indexing, backup/restore and migration operations, retention policy, distributed storage/coordination where needed, provenance freshness policy, substantive fact-checking providers, monitoring/alerting, access controls, and deployment-specific operational evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–17 are now complete/locked at their defined repository boundaries. **Category 18 — Intelligence & Knowledge System** is the next planned capability boundary.
+Categories 1–18 are now complete/locked at their defined repository boundaries. **Category 19 — Research & Discovery Engine** is the next planned capability boundary.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
