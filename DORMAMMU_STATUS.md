@@ -31,7 +31,7 @@ Category 27 adds `devintel/ecosystem/`, a bounded coordinator over the existing 
 Category 27 is orchestration, not authority. It cannot install capabilities, authenticate providers, grant permissions, modify protected security/owner/recovery/code surfaces, spend money, publish externally, or execute arbitrary external actions. Existing permission, security, provenance, audit, recovery, action, discovery, runtime, and evolution boundaries remain authoritative.
 
 ## Verification
-Category 27 implementation and regression tests are committed on branch `codex/category-27-ecosystem-evolution`. CI verification is required before the category can be truthfully locked on `main`.
+PR #89 was merged into `main` as squash commit `4cdf319e31f51987cf1da34556426823c9d05d13`. Feature-head CI run **#1195** passed successfully, and post-merge main CI run **#1196** passed successfully with the full repository test workflow.
 
 ## Production Boundary
 Categories 1–27 do **not** claim production deployment. Production-grade heterogeneous orchestration, distributed scheduling/leases, external credentials, broad trusted capability acquisition, live platform integrations, model training at ecosystem scale, and operational canary evidence remain environment/deployment work.
