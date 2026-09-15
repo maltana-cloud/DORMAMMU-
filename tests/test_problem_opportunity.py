@@ -6,7 +6,7 @@ from devintel.modules.research.verification import VerificationResult
 
 def verified(statement_subject, predicate, object_value, confidence=0.9):
     claim = Claim(statement_subject, predicate, object_value, confidence, ("https://example.com/evidence",))
-    verification = VerificationResult(True, confidence, ("https://example.com/evidence",), "verified evidence")
+    verification = VerificationResult(True, confidence, ("https://example.com/evidence",), ("verified evidence",))
     return VerifiedClaim(claim, verification)
 
 
