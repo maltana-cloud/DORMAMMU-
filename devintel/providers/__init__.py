@@ -1,5 +1,6 @@
 """Provider adapter boundaries for replaceable external integrations."""
 from .contracts import ProviderCapability, ProviderHealth, ProviderResult
+from .execution import CapabilityExecution, CapabilityExecutor
 from .live import (
     GenerationProvider,
     GenerationRequest,
@@ -16,6 +17,8 @@ __all__ = [
     "ProviderCapability",
     "ProviderHealth",
     "ProviderResult",
+    "CapabilityExecution",
+    "CapabilityExecutor",
     "ProviderRegistry",
     "GenerationProvider",
     "GenerationRequest",
