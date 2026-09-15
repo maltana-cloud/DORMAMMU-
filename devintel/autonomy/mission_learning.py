@@ -16,13 +16,15 @@ class MissionLearningBridge:
     """Persist verified outcomes, reflect bounded learning, then select one next objective."""
     def __init__(self, store: LearningStore, *, learner: OutcomeLearner | None = None, selector: NextObjectiveSelector | None = None, max_history: int = 100) -> None:
         if max_history <= 0: raise ValueError("max_history must be positive")
-        self.store, self.learner, self.selector, self.max_history = store, learner or OutcomeLearner(), selector or NextObjectiveSelector()
+        self.store = store
+        self.learner = learner or OutcomeLearner()
+        self.selector = selector or NextObjectiveSelector()
+        self.max_history = max_history
 
     def transition(self, evidence: OutcomeEvidence, candidates: Sequence[ObjectiveCandidate] = ()) -> LearningTransition:
         if not evidence.verified: raise ValueError("mission learning requires verified outcome")
         items = tuple(candidates)
-        if any(candidate.scope_id != evidence.scope_id for candidate in items):
-            raise ValueError("objective candidates must use the outcome scope")
+        if any(candidate.scope_id != evidence.scope_id for candidate in items): raise ValueError("objective candidates must use the outcome scope")
         self.store.record_outcome(evidence)
         outcomes = self.store.outcomes(evidence.scope_id, limit=self.max_history)
         proposals = self.learner.reflect(outcomes)
