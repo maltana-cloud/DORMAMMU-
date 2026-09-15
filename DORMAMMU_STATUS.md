@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Ω — CONTINUOUS FRONTIER — ACTIVE.** Categories 1–27 and Ω.1–Ω.2 remain locked. Ω.3 persistent memory + dynamic owner authority + runtime cognition remain implemented/verified. The canonical architecture now includes the previously defined economic intelligence/wealth direction and its integrated cross-domain commerce, agent/bot factory, identity/account lifecycle, credential/secret handling, verification, pricing, currency, payment, awareness, distribution, and growth requirements as architectural targets.
+**Ω — CONTINUOUS FRONTIER — ACTIVE.** The protected foundations and Ω.1–Ω.3 boundaries remain locked. The latest unknown-frontier milestone, bounded runtime worker execution integrated with live owner authority, operational telemetry, and explicit verification, is now **IMPLEMENTED / TESTED / VERIFIED**.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence. Requirements and designs must not be represented as implemented or production verified merely because they are documented.
@@ -9,90 +9,38 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 ## Requirement Truth Ladder
 `REQUIREMENT → ARCHITECTURAL DESIGN → IMPLEMENTED → TESTED → PRODUCTION VERIFIED`
 
-This ladder is the canonical distinction between planned capability, architecture, implementation, testing, and operational proof.
+## Verified Frontier Progress
+1. **Identity migration** — `dormammu` distribution identity and compatibility facade verified by CI run 1284.
+2. **Capability discovery/admission** — bounded discovery, eligibility, acquisition/lifecycle/canary integration verified by CI runs 1288 and 1289.
+3. **Transactional capability/resource scheduling** — planning is side-effect free; explicit admission creates bounded leases; stale resource state fails closed. Verified by CI run 1300.
+4. **Runtime worker execution** — `devintel/operations/worker.py` now consumes an admitted lease, enforces exact capability identity, checks existing runtime authority, honors approval-required owner control, emits worker lifecycle events, records outcomes through `OperationalTelemetryStore`, supports explicit result verification, measures execution duration, and releases the lease on every execution path.
 
-## Category Status
-1–27. COMPLETE / LOCKED
-Ω.1. BOUNDED DISTRIBUTED MISSION COORDINATION — COMPLETE / LOCKED
-Ω.2. INTEGRATED FRONTIER CONTROL PLANE — COMPLETE / LOCKED
-Ω.3. PERSISTENT MEMORY + DYNAMIC AUTHORITY + RUNTIME COGNITION — IMPLEMENTED / VERIFIED
-Ω. Unknown Frontier — remains open
+## Runtime Worker Verification
+- PR **#98** merged as `68bc0d4a99f747ff6c0e22632dfbd0f71d94e15c`.
+- PR CI **run 1317** passed.
+- Post-merge main CI **run 1318** passed.
+- **455 tests passed** in the verified PR workflow.
+- Regression coverage includes missing admission, capability mismatch, authority denial, successful verified execution, failed verification, worker failure, telemetry recording, measured duration, and lease cleanup.
 
-## Ω.3 — Persistent Memory, Dynamic Authority, Runtime Cognition
-Implemented and integrated:
-- `devintel/memory/store.py` provides durable scoped memory with episodic, semantic, procedural, entity, mission, and reflection kinds;
-- memory preserves evidence references, confidence, timestamps, expiry, revisions, supersession, active state, deterministic identity, bounded retrieval, and scope isolation;
-- `devintel/control/authority.py` provides owner-controlled capability rules with DENIED, APPROVAL_REQUIRED, and ALLOWED modes, versioning, optional expiry, fail-closed defaults, and durable revocation;
-- runtime exposes persistent memory and authority stores and APIs;
-- runtime restores bounded natural-language goal interpretation, outcome-aware specialist routing, durable learning-store lifecycle, and owner control-center composition that had remained stranded in an obsolete pre-Ω branch;
-- runtime tests cover memory/authority persistence, expiry, revision/revocation, and cognition integration;
-- feature CI passed for the final Ω.3 integration commit;
-- PR **#92** added the memory/authority foundations and was merged as `102a0025c0487ed1dade618da06c95b86020fbf5`;
-- PR **#93** integrated them with runtime cognition and was merged as `8c3cbe914ba05fd758c77a4fb0488ad493c681ba`;
-- the superseded PR **#60** was closed after its verified runtime-cognition work was incorporated forward on current `main`.
+The worker remains provider-neutral. It does not install software, acquire credentials, create external accounts, spend money, bypass CAPTCHA/OTP/identity verification, bypass owner authority, or claim production readiness.
 
-## Canonical Future-Capability Boundary
-DORMAMMU's authority is dynamic, owner-controlled, revocable, and extensible. Owner policy can be changed, restricted, placed behind approval, expired, or revoked after deployment without rebuilding DORMAMMU.
-
-Future capabilities — including economic opportunity discovery, business/enterprise strategy, specialized agent/bot creation, pricing, multi-currency commerce, payment/settlement selection, awareness/distribution/growth for authorized ventures and communities, financial/business operations, identity/account lifecycle, credential/secret handling, external account verification, and capabilities not yet known — must use the same capability, permission, security, verification, and audit boundaries. No future capability may create a parallel authority path.
-
-The governing flow is:
-`DISCOVER NEED → DEFINE CAPABILITY → EVALUATE → REGISTER/IMPLEMENT → REQUEST AUTHORITY → LIVE PERMISSION CHECK → SECURITY CHECK → EXECUTE → VERIFY → RECORD`
-
-Discovering a need or capability does not grant authority. Historical memory is not current authority. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries.
-
-## Architecture
-Persistent memory is data, not authority. Authority is live policy, not memory. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries. Owner policy can be changed, expired, or revoked after deployment without rebuilding DORMAMMU.
-
-## Canonical Economic / Commercial Architecture
-`WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ AGENT/BOT FACTORY ↔ IDENTITY/ACCOUNT FABRIC ↔ CREDENTIAL VAULT ↔ VERIFICATION ENGINE ↔ PRICING ↔ CURRENCY ↔ COMMERCE/PAYMENTS ↔ GROWTH/DISTRIBUTION ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
-
-`DORMAMMU_ECONOMIC_INTELLIGENCE_AND_WEALTH_ENGINE.md` is the canonical design contract for this integrated direction. It extends the existing economic/value-realization requirements rather than creating parallel economic documents or authority systems.
-
-The architecture is intentionally cross-domain: DORMAMMU may eventually create specialized bots/agents or other appropriate solutions for any domain, determine appropriate commercial models, calculate exact proposed prices when evidence permits, understand local and multi-currency contexts, select appropriate payment/settlement methods including platform-native mechanisms such as Telegram Stars where eligible, create or connect authorized external identities and accounts where providers legitimately support it, verify account state through provider-backed evidence, and build legitimate awareness/distribution for DORMAMMU, user ventures, products, services, channels, accounts, communities, and other authorized ecosystems.
-
-Economic value is not synonymous with currency. Pricing, currency, payment method, settlement, revenue, profit, and broader value are distinct concepts and must remain separately represented and auditable.
-
-User comfort, affordability, transparency, convenience, security, trust, legitimate platform rules, and user authority are explicit commercial/growth constraints. Growth must optimize genuine value and legitimate awareness, not fake engagement or manipulation.
-
-## Identity, Credential & Verification Boundary
-External identities and accounts are capabilities, not authority. DORMAMMU must distinguish account existence, authentication, session state, credentials/secrets, permissions, and owner authority.
-
-Credentials and secrets must use a dedicated protected vault boundary rather than ordinary persistent memory. Possession or storage of a credential never grants unrestricted authority. Sensitive secret values must be protected from ordinary model context and logs, with least-privilege access, rotation/revocation, auditability, and owner-controlled recovery/view/export where legitimately supported.
-
-Account verification must follow:
-`CLAIM → EVIDENCE → VALIDATION → VERIFIED STATE`
-
-A verified state must be based on evidence from the actual provider or another authoritative source, retain provenance/timestamp/scope, and remain re-verifiable because credentials, permissions, provider state, and account status can change. Human-required verification such as CAPTCHA, OTP, identity documents, biometrics, or similar controls must be completed through legitimate owner intervention rather than bypassed.
-
-## Security Boundary
+## Authority / Identity / Credential Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Also:
 `CREDENTIAL ≠ PERMISSION`
 `VERIFICATION ≠ AUTHORITY`
 `MEMORY ≠ CURRENT AUTHORITY`
 
-Memory entries, learning records, leases, resource budgets, queue items, provider references, credentials, verification records, and authority rules do not by themselves grant unrestricted execution.
+External identities/accounts are capabilities, not authority. Secrets belong in protected credential boundaries rather than ordinary memory. Provider-backed verification must retain evidence/provenance and remain re-verifiable. Human-required verification remains an owner action.
+
+## Economic / Commercial Direction
+The canonical economic architecture remains `DORMAMMU_ECONOMIC_INTELLIGENCE_AND_WEALTH_ENGINE.md`, integrating world model, knowledge, finance, opportunity discovery, enterprise strategy, agent/bot creation, identity/account lifecycle, credential handling, verification, pricing, currency, commerce/payments, growth/distribution, authorized actions, outcomes, and learning. These are architectural targets unless individually backed by implementation and CI evidence.
 
 ## Production Boundary
-**Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, payment settlement, live financial execution, external growth operations, and rollback evidence require authorized operational environments.
-
-## Ω Frontier Audit — 2026-09-15
-The repository was re-audited from `main` at `3b41fa08da328c24d31f3e7a6ba52ab48e6072d5`. The current `main` tests workflow run **1266** completed successfully. The detailed audit is recorded in `DORMAMMU_AUDIT_MATRIX.md`.
-
-This audit found that the protected foundation is genuinely present, while the broad future capability surface remains mixed: some capabilities have repository implementations and tests, while platform identity/account management, dedicated opinion intelligence, crypto/blockchain operations, and dedicated music/audio remain architectural targets rather than implemented production systems.
-
-### Current frontier implementation
-1. **Identity migration:** distribution metadata now identifies the project as `dormammu`; a canonical `dormammu` Python facade exists while `devintel` remains as the explicitly documented compatibility namespace.
-2. **Capability discovery:** discovery now has bounded scout/candidate limits, failure isolation, deterministic evaluation ordering, explicit eligibility thresholds, and a non-authoritative `best` selection view. It still does not install or execute newly discovered capabilities automatically.
-3. **Verification state:** current branch changes are **IMPLEMENTED** but not yet **TESTED/VERIFIED** by CI. No production readiness is claimed.
-
-## Documentation Checkpoint
-The canonical economic architecture was consolidated into the existing `DORMAMMU_ECONOMIC_INTELLIGENCE_AND_WEALTH_ENGINE.md` rather than creating duplicate documents. This update extends that canonical architecture with universal identity/account lifecycle, protected credential/secret handling, and provider-backed verification requirements. It establishes architectural requirements and boundaries; it does not falsely claim that these future capabilities are implemented.
+**Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, payment settlement, live financial execution, external growth operations, and rollback evidence require authorized operational environments.
 
 ## Next Boundary
-**Ω — Unknown Frontier remains open.** Continue from the current repository state. After CI verifies the current branch, select the next highest-leverage repository-solvable dependency gap. The immediate likely dependency chain is deeper capability/resource acquisition and integration, followed by stronger cross-domain cognition and persistent autonomous mission progression. Do not restart locked foundations or fabricate external operational proof.
+**Ω — Unknown Frontier remains open.** The next repository-solvable milestone is **persistent mission progression**: durable mission/objective/task state, resumable progress, verified outcomes, and continuation across unfinished work using the existing executive/autonomy boundaries. It must not create a parallel authority system and must not require a manual “continue” prompt between safe, bounded steps.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, distinguish requirement/design/implementation/test/production evidence, and build forward from the repository rather than treating prior chat history as authoritative.
