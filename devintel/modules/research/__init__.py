@@ -13,6 +13,7 @@ from .synthesis import Contradiction, KnowledgeSynthesisEngine, SynthesisResult,
 from .verification import ProvenanceVerifier, ResearchVerifier, VerificationResult
 from .domain_expansion import DomainAssessment, DomainEvidence, DomainExpander, DomainProposal
 from .domain_registry import DomainRecord, DomainRegistry
+from .discovery import DiscoveryProvider, DiscoveryResult, ResearchDiscoveryEngine
 
 __all__ = [
     "ResearchCandidate", "ResearchDocument", "ResearchObservation", "canonicalize_url", "content_digest",
@@ -23,4 +24,5 @@ __all__ = [
     "ResearchVerifier", "ProvenanceVerifier", "VerificationResult",
     "VerifiedClaim", "Contradiction", "SynthesisSignal", "SynthesisResult", "KnowledgeSynthesisEngine",
     "DomainAssessment", "DomainEvidence", "DomainExpander", "DomainProposal", "DomainRecord", "DomainRegistry",
+    "DiscoveryProvider", "DiscoveryResult", "ResearchDiscoveryEngine",
 ]
