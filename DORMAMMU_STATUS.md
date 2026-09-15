@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Ω — CONTINUOUS FRONTIER — ACTIVE.** Categories 1–27 and Ω.1–Ω.2 remain locked. Ω.3 persistent memory + dynamic owner authority + runtime cognition remain implemented/verified. The canonical architecture has now been explicitly extended to preserve continuous memory, dynamic owner authority, and a reusable authority boundary for future capabilities.
+**Ω — CONTINUOUS FRONTIER — ACTIVE.** Categories 1–27 and Ω.1–Ω.2 remain locked. Ω.3 persistent memory + dynamic owner authority + runtime cognition remain implemented/verified. The canonical architecture now includes the previously defined economic intelligence/wealth direction and its integrated cross-domain commerce, agent/bot factory, pricing, currency, payment, awareness, distribution, and growth requirements as architectural targets.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence. Requirements and designs must not be represented as implemented or production verified merely because they are documented.
@@ -34,29 +34,32 @@ Implemented and integrated:
 ## Canonical Future-Capability Boundary
 DORMAMMU's authority is dynamic, owner-controlled, revocable, and extensible. Owner policy can be changed, restricted, placed behind approval, expired, or revoked after deployment without rebuilding DORMAMMU.
 
-Future capabilities — including, where later authorized and safely implemented, email/account creation and management, email sending, public publishing, external communication, website management, deployments, service registration, financial/business operations, and capabilities not yet known — must use the same capability, permission, security, verification, and audit boundaries. No future capability may create a parallel authority path.
+Future capabilities — including economic opportunity discovery, business/enterprise strategy, specialized agent/bot creation, pricing, multi-currency commerce, payment/settlement selection, awareness/distribution/growth for authorized ventures and communities, financial/business operations, and capabilities not yet known — must use the same capability, permission, security, verification, and audit boundaries. No future capability may create a parallel authority path.
 
 The governing flow is:
 `DISCOVER NEED → DEFINE CAPABILITY → EVALUATE → REGISTER/IMPLEMENT → REQUEST AUTHORITY → LIVE PERMISSION CHECK → SECURITY CHECK → EXECUTE → VERIFY → RECORD`
 
 Discovering a need or capability does not grant authority. Historical memory is not current authority. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries.
 
-## Architecture
-Persistent memory is data, not authority. Authority is live policy, not memory. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries. Owner policy can be changed, expired, or revoked after deployment without rebuilding DORMAMMU.
+## Canonical Economic / Commercial Architecture
+`WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ AGENT/BOT FACTORY ↔ PRICING ↔ CURRENCY ↔ COMMERCE/PAYMENTS ↔ GROWTH/DISTRIBUTION ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
 
-## Security Boundary
-`IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
+`DORMAMMU_ECONOMIC_INTELLIGENCE_AND_WEALTH_ENGINE.md` is the canonical design contract for this integrated direction. It extends the existing economic/value-realization requirements rather than creating parallel economic documents or authority systems.
 
-Memory entries, learning records, leases, resource budgets, queue items, provider references, and authority rules do not by themselves grant credentials or unrestricted execution.
+The architecture is intentionally cross-domain: DORMAMMU may eventually create specialized bots/agents or other appropriate solutions for any domain, determine appropriate commercial models, calculate exact proposed prices when evidence permits, understand local and multi-currency contexts, select appropriate payment/settlement methods including platform-native mechanisms such as Telegram Stars where eligible, and build legitimate awareness/distribution for DORMAMMU, user ventures, products, services, channels, accounts, communities, and other authorized ecosystems.
+
+Economic value is not synonymous with currency. Pricing, currency, payment method, settlement, revenue, profit, and broader value are distinct concepts and must remain separately represented and auditable.
+
+User comfort, affordability, transparency, convenience, security, trust, legitimate platform rules, and user authority are explicit commercial/growth constraints. Growth must optimize genuine value and legitimate awareness, not fake engagement or manipulation.
 
 ## Production Boundary
-**Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, and rollback evidence require authorized operational environments.
+**Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, payment settlement, live financial execution, external growth operations, and rollback evidence require authorized operational environments.
 
 ## Documentation Checkpoint
-The canonical architecture was updated to make the future-capability and dynamic-authority requirements explicit in `DORMAMMU_CHARTER.md` and `DORMAMMU_PROJECT_CHARTER.md`. These documentation changes establish requirements and architectural constraints; they do not falsely claim the future external capabilities are implemented.
+The canonical economic architecture was consolidated into the existing `DORMAMMU_ECONOMIC_INTELLIGENCE_AND_WEALTH_ENGINE.md` rather than creating duplicate documents. This update establishes architectural requirements and boundaries; it does not falsely claim that the described future capabilities are implemented.
 
 ## Next Boundary
-**Ω — Unknown Frontier remains open.** Continue from the merged repository state. Re-audit actual implementation and select the next highest-leverage repository-solvable gap. Do not restart locked foundations or fabricate external operational proof.
+**Ω — Unknown Frontier remains open.** Continue from the current repository state. Re-audit actual implementation and select the next highest-leverage repository-solvable gap. Do not restart locked foundations or fabricate external operational proof.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, distinguish requirement/design/implementation/test/production evidence, and build forward from the repository rather than treating prior chat history as authoritative.
