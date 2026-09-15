@@ -2,7 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
-from .contracts import CapabilityDescriptor, CapabilityGap, CapabilityRequirement, CandidateEvaluator, CapabilityScout, DiscoveryResult, Evaluation
+from .contracts import CapabilityDescriptor, CapabilityGap, CapabilityRequirement, CapabilityStatus, CandidateEvaluator, CapabilityScout, DiscoveryResult, Evaluation
 from .registry import CapabilityRegistry, GapRegistry
 
 
