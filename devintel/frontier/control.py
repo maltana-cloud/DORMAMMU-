@@ -142,7 +142,7 @@ class FrontierJobStore:
     def enqueue(self, *, scope_id: str, kind: str, payload: Mapping[str, Any],
                 priority: int = 0, max_attempts: int = 3,
                 next_run_at: float = 0.0, job_id: str | None = None) -> FrontierJob:
-        if not scope_id.strip() or not kind.strip():
+        if not isinstance(scope_id, str) or not scope_id.strip() or not isinstance(kind, str) or not kind.strip():
             raise ValueError("scope_id and kind are required")
         if not isinstance(payload, Mapping) or len(payload) > 128:
             raise ValueError("payload is invalid or too large")
@@ -163,7 +163,7 @@ class FrontierJobStore:
 
     def claim(self, *, worker_id: str, now: float, lease_ttl: float,
               scope_id: str | None = None) -> FrontierJob | None:
-        if not worker_id.strip() or now < 0 or lease_ttl <= 0:
+        if not isinstance(worker_id, str) or not worker_id.strip() or now < 0 or lease_ttl <= 0:
             raise ValueError("invalid worker lease")
         query = ("SELECT job_id FROM frontier_jobs WHERE state IN ('queued','running') "
                  "AND next_run_at<=? AND (lease_expires_at IS NULL OR lease_expires_at<=?)")
@@ -183,7 +183,7 @@ class FrontierJobStore:
         return self.get(row["job_id"]) if result.rowcount == 1 else None
 
     def renew(self, job_id: str, *, worker_id: str, now: float, lease_ttl: float) -> FrontierJob:
-        if not worker_id.strip() or now < 0 or lease_ttl <= 0:
+        if not isinstance(worker_id, str) or not worker_id.strip() or now < 0 or lease_ttl <= 0:
             raise ValueError("invalid worker lease")
         result = self._db.execute(
             "UPDATE frontier_jobs SET lease_expires_at=? WHERE job_id=? AND state='running' "
@@ -196,12 +196,13 @@ class FrontierJobStore:
 
     def complete(self, job_id: str, *, worker_id: str, now: float, success: bool,
                  error: str = "", retry_delay: float = 0.0) -> FrontierJob:
-        if not worker_id.strip() or now < 0 or retry_delay < 0:
+        if not isinstance(worker_id, str) or not worker_id.strip() or now < 0 or retry_delay < 0:
             raise ValueError("invalid completion inputs")
         current = self.get(job_id)
         if current is None:
             raise KeyError(job_id)
-        if current.state is not JobState.RUNNING or current.worker_id != worker_id:
+        if (current.state is not JobState.RUNNING or current.worker_id != worker_id
+                or current.lease_expires_at is None or current.lease_expires_at <= now):
             raise ValueError("active lease is not owned by worker")
         if success:
             state, next_run, last_error = JobState.SUCCEEDED, now, ""
@@ -209,11 +210,13 @@ class FrontierJobStore:
             state, next_run, last_error = JobState.DEAD_LETTER, now, error[:2000]
         else:
             state, next_run, last_error = JobState.QUEUED, now + retry_delay, error[:2000]
-        self._db.execute(
+        result = self._db.execute(
             "UPDATE frontier_jobs SET state=?, next_run_at=?, worker_id=NULL, lease_expires_at=NULL, last_error=? "
-            "WHERE job_id=? AND state='running' AND worker_id=?",
-            (state, next_run, last_error, job_id, worker_id.strip()),
+            "WHERE job_id=? AND state='running' AND worker_id=? AND lease_expires_at>?",
+            (state, next_run, last_error, job_id, worker_id.strip(), now),
         )
+        if result.rowcount != 1:
+            raise ValueError("active lease is not owned by worker")
         return self.get(job_id)  # type: ignore[return-value]
 
     def recover_expired(self, *, now: float) -> int:
@@ -235,7 +238,7 @@ class FrontierJobStore:
         )
 
     def reserve(self, *, resource_id: str, quantity: float, scope_id: str) -> bool:
-        if quantity <= 0 or not scope_id.strip():
+        if quantity <= 0 or not isinstance(scope_id, str) or not scope_id.strip():
             raise ValueError("invalid reservation")
         result = self._db.execute(
             "UPDATE frontier_budgets SET used=used+? WHERE resource_id=? AND scope_id=? AND used+?<=capacity",
@@ -244,7 +247,7 @@ class FrontierJobStore:
         return result.rowcount == 1
 
     def release(self, *, resource_id: str, quantity: float, scope_id: str) -> bool:
-        if quantity <= 0 or not scope_id.strip():
+        if quantity <= 0 or not isinstance(scope_id, str) or not scope_id.strip():
             raise ValueError("invalid release")
         result = self._db.execute(
             "UPDATE frontier_budgets SET used=MAX(0, used-?) WHERE resource_id=? AND scope_id=?",
