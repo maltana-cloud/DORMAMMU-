@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable
 
 from devintel.modules.research import Claim, VerifiedClaim
 from devintel.persistence import KnowledgeRecord, KnowledgeStore
+
+_SCHEMA_VERSION = 1
 
 
 @dataclass(frozen=True)
@@ -60,9 +63,17 @@ class KnowledgeIntelligence:
             if not isinstance(verified, VerifiedClaim):
                 raise TypeError("only VerifiedClaim values may be admitted")
             claim = verified.claim
+            record_id = self._record_id(claim)
+            previous = self.store.get_knowledge(record_id, scope_id=scope_id)
+            provenance = verified.evidence_urls
+            if previous is not None:
+                provenance = tuple(dict.fromkeys(previous.provenance + provenance))
             record = self.store.save_knowledge(KnowledgeRecord(
-                record_id=self._record_id(claim), scope_id=scope_id, kind="claim",
-                content=self._encode(claim), provenance=verified.evidence_urls,
+                record_id=record_id,
+                scope_id=scope_id,
+                kind="claim",
+                content=self._encode(claim, verified.confidence),
+                provenance=provenance,
             ))
             admitted.append(self._decode(record))
         return tuple(admitted)
@@ -94,7 +105,7 @@ class KnowledgeIntelligence:
     def conflicts(self, scope_id: str) -> tuple[KnowledgeConflict, ...]:
         groups = {}
         for item in self.query(KnowledgeQuery(scope_id=scope_id, limit=self.max_results)):
-            groups.setdefault((item.subject, item.predicate), []).append(item)
+            groups.setdefault((item.subject.strip().lower(), item.predicate.strip().lower()), []).append(item)
         result = []
         for (subject, predicate), items in sorted(groups.items()):
             objects = tuple(sorted({item.object for item in items}))
@@ -109,13 +120,30 @@ class KnowledgeIntelligence:
         return "claim-" + hashlib.sha256(raw.encode()).hexdigest()
 
     @staticmethod
-    def _encode(claim: Claim) -> str:
-        return "\n".join((claim.subject.strip(), claim.predicate.strip(), claim.object.strip(), f"{claim.confidence:.6f}"))
+    def _encode(claim: Claim, confidence: float) -> str:
+        return json.dumps({
+            "schema_version": _SCHEMA_VERSION,
+            "subject": claim.subject.strip(),
+            "predicate": claim.predicate.strip(),
+            "object": claim.object.strip(),
+            "confidence": confidence,
+        }, sort_keys=True, separators=(",", ":"))
 
     @staticmethod
     def _decode(record: KnowledgeRecord) -> KnowledgeItem:
-        parts = record.content.split("\n")
-        if len(parts) != 4:
-            raise ValueError("stored claim record is malformed")
-        return KnowledgeItem(record.record_id, record.scope_id, parts[0], parts[1], parts[2],
-                             float(parts[3]), record.provenance, record.version, record.updated_at)
+        try:
+            payload = json.loads(record.content)
+            if payload.get("schema_version") != _SCHEMA_VERSION:
+                raise ValueError("unsupported knowledge record schema")
+            subject = payload["subject"]
+            predicate = payload["predicate"]
+            object_value = payload["object"]
+            confidence = float(payload["confidence"])
+            if not all(isinstance(value, str) and value.strip() for value in (subject, predicate, object_value)):
+                raise ValueError("stored claim fields are invalid")
+            if not 0.0 <= confidence <= 1.0:
+                raise ValueError("stored claim confidence is invalid")
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as exc:
+            raise ValueError("stored claim record is malformed") from exc
+        return KnowledgeItem(record.record_id, record.scope_id, subject, predicate, object_value,
+                             confidence, record.provenance, record.version, record.updated_at)
