@@ -1,6 +1,6 @@
 # DORMAMMU — ECONOMIC INTELLIGENCE, VALUE, COMMERCE & GROWTH ENGINE
 
-> Canonical architectural specification for DORMAMMU's cross-domain financial, economic, opportunity-discovery, enterprise-strategy, value-realization, autonomous agent/bot creation, pricing, currency, payments, commerce, awareness, distribution, and growth capabilities. This document is a design contract, not evidence that these capabilities are implemented.
+> Canonical architectural specification for DORMAMMU's cross-domain financial, economic, opportunity-discovery, enterprise-strategy, value-realization, autonomous agent/bot creation, pricing, currency, payments, commerce, awareness, distribution, growth, identity, account, credential, and verification capabilities. This document is a design contract, not evidence that these capabilities are implemented.
 
 ## Purpose
 
@@ -93,9 +93,72 @@ Property acquisition, binding contracts, financial commitments, payments, or oth
 
 The same architecture should extend to other operational domains without creating separate authority paths.
 
+## Identity, Accounts, Credentials & Verification
+
+### 8. Universal Identity & Account Lifecycle Intelligence
+
+DORMAMMU should eventually be able to recognize when an authorized project, venture, service, communication channel, or operational workflow needs an external identity or account and manage that lifecycle through legitimate provider capabilities.
+
+The lifecycle should distinguish:
+
+`NEED IDENTIFIED → PROVIDER EVALUATED → ACCOUNT/IDENTITY REQUESTED → CREATION IN PROGRESS → VERIFICATION REQUIRED → VERIFYING → VERIFIED → ACTIVE → MONITORED → ROTATION/REAUTH → SUSPENDED/REVOKED/RETIRED`
+
+Potential account classes include email identities, social accounts/pages, developer accounts, communication channels, cloud/service accounts, API identities, OAuth connections, and other legitimate external accounts. DORMAMMU must not assume that every provider supports automated creation or that every account can be operated without owner intervention.
+
+Where provider rules legitimately require a human phone number, CAPTCHA, identity document, biometric check, payment confirmation, or other owner-controlled verification, DORMAMMU must stop at that boundary and request the required owner action rather than bypassing it.
+
+### 9. Credential & Secret Vault
+
+External account credentials must not be treated as ordinary persistent memory. DORMAMMU should eventually provide a dedicated encrypted secret/credential boundary for passwords, API keys, OAuth refresh tokens, session credentials where storage is legitimately required, recovery information, provider identifiers, and related sensitive account metadata.
+
+The vault should provide, as appropriate:
+
+- encryption at rest and protected key handling;
+- strict capability- and owner-controlled access;
+- least-privilege retrieval;
+- secret redaction from logs and ordinary model context;
+- credential rotation and revocation;
+- expiry and lifecycle state;
+- audit records for access and changes;
+- secure owner-controlled viewing/export/recovery;
+- separation between stored secrets and authority to use them;
+- recovery procedures that do not create a parallel authority path.
+
+Possession of a credential must never itself grant DORMAMMU unlimited authority. `CREDENTIAL ≠ PERMISSION`, and memory/vault storage does not override live owner policy, provider rules, or security controls.
+
+### 10. Universal Account Verification Engine
+
+DORMAMMU should eventually verify external identities and accounts through evidence from the actual provider or another authoritative verification source rather than trusting a model claim or an unverified creation result.
+
+The verification contract should distinguish:
+
+`CLAIM → EVIDENCE → VALIDATION → VERIFIED STATE`
+
+For an account, evidence may include legitimate provider responses, authenticated access tests, confirmed account identifiers, email/phone verification state, valid OAuth/API credentials, current permissions, account status, and other provider-supported signals. Each verification record should retain provenance, timestamp, verification method, scope, uncertainty, and relevant evidence references.
+
+A generic state model should include:
+
+`UNKNOWN → CLAIMED → PENDING → VERIFICATION_REQUIRED → VERIFYING → VERIFIED → ACTIVE`
+
+with failure/degradation states such as:
+
+`FAILED_VERIFICATION`, `EXPIRED`, `REAUTH_REQUIRED`, `SUSPENDED`, `REVOKED`, and `CURRENTLY_INACCESSIBLE`.
+
+Verification must be repeatable. A previously verified account is not permanently trusted: credentials can expire, permissions can change, accounts can be suspended, providers can change state, and ownership can be revoked. DORMAMMU should therefore perform bounded re-verification and health checks appropriate to risk and account type.
+
+Verification evidence is not the same thing as authority. A verified account proves a state or identity claim within its scope; it does not authorize an action that live policy does not permit.
+
+### 11. Social, Communication & Distribution Account Operations
+
+Where authorized and legitimately supported, DORMAMMU should eventually be able to create or configure social and communication identities, manage profiles, maintain credentials/tokens, publish approved content, monitor account health, and connect accounts to authorized ventures and distribution workflows.
+
+DORMAMMU may autonomously perform account operations only when the provider permits the operation and the relevant live capability is authorized. It must not create unlimited or deceptive identities, impersonate people, manufacture fake engagement, evade account limits, bypass CAPTCHA/verification, defeat anti-abuse controls, or circumvent platform authentication, licensing, regional, KYC, or other restrictions.
+
+Owner-facing controls should make account inventory and state understandable, including the account identity, provider, verification state, credential/connection health, permissions, last verification time, and available owner actions. Sensitive secret values should be hidden by default and exposed only through explicit owner authorization.
+
 ## Pricing, Currency, Commerce & Payments
 
-### 8. Universal Pricing & Monetization Intelligence
+### 12. Universal Pricing & Monetization Intelligence
 
 DORMAMMU should be capable of determining an **exact proposed commercial amount** for a product, service, agent, bot, subscription, transaction, license, commission, or other legitimate offer when sufficient evidence exists.
 
@@ -109,7 +172,7 @@ Pricing outputs must preserve assumptions, evidence, confidence, sensitivity, ef
 
 The engine should optimize sustainable value exchange, not maximum extraction. User comfort, affordability, transparency, convenience, trust, security, cancellation, fees, and welfare are legitimate pricing constraints.
 
-### 9. Universal Currency Intelligence
+### 13. Universal Currency Intelligence
 
 Currency is a measurement, pricing, accounting, conversion, and settlement dimension — not the source of value or income.
 
@@ -130,7 +193,7 @@ DORMAMMU should infer or obtain the relevant customer/market context through aut
 
 Local pricing must not be treated as a mere exchange-rate conversion when market conditions justify a different commercial price.
 
-### 10. Universal Commerce & Payment Intelligence
+### 14. Universal Commerce & Payment Intelligence
 
 DORMAMMU should select appropriate payment and settlement mechanisms for the product, platform, customer, jurisdiction, currency, fees, reliability, security, convenience, and applicable rules.
 
@@ -158,7 +221,7 @@ Payment selection should prioritize user comfort, transparency, security, reliab
 
 The system must never bypass payment-platform controls, KYC/AML requirements, authentication, licensing, regional restrictions, or other security/compliance boundaries.
 
-### 11. Commercial Accounting & Revenue Attribution
+### 15. Commercial Accounting & Revenue Attribution
 
 DORMAMMU should track, where applicable:
 
@@ -170,7 +233,7 @@ The system must distinguish projected revenue from realized revenue and value at
 
 ## Universal Awareness, Distribution & Growth
 
-### 12. Universal Growth & Awareness Engine
+### 16. Universal Growth & Awareness Engine
 
 DORMAMMU should eventually be able to create and optimize legitimate awareness and distribution for **DORMAMMU itself, user-owned products, services, businesses, bots, agents, channels, accounts, communities, brands, media projects, educational projects, marketplaces, events, and other authorized ventures**.
 
@@ -182,7 +245,7 @@ The growth loop is:
 
 The engine should reason about platform-specific capabilities, audience behavior, content formats, discovery mechanisms, community dynamics, posting constraints, permitted automation, analytics, conversion paths, and platform policies.
 
-### 13. Channels, Accounts & Communities
+### 17. Channels, Accounts & Communities
 
 Growth intelligence should support authorized management or assistance for different distribution surfaces without assuming that every surface behaves the same way.
 
@@ -203,7 +266,7 @@ DORMAMMU may help create, operate, moderate, analyze, and grow such ecosystems o
 
 Community growth must be based on genuine value. No fake members, fake followers, fake votes, fake reviews, fake engagement, impersonation, spam, harassment, deceptive popularity, or platform-control circumvention.
 
-### 14. Growth Optimization
+### 18. Growth Optimization
 
 Do not optimize only for impressions, followers, views, or likes. Depending on the objective, measure:
 
@@ -219,7 +282,7 @@ The growth engine should optimize for **maximum legitimate awareness and distrib
 
 The combined economic/commercial loop is:
 
-`OBSERVE → ACQUIRE EVIDENCE → NORMALIZE → PROVENANCE → MODEL → DETECT NEEDS/PROBLEMS/GAPS → GENERATE OPPORTUNITIES → QUALIFY → SCORE → DESIGN SOLUTION/BUSINESS/AGENT → MODEL UNIT ECONOMICS → VALIDATE → PRICE → SELECT CURRENCY → SELECT PAYMENT/SETTLEMENT → LAUNCH IF AUTHORIZED → DISTRIBUTE → CREATE AWARENESS → MEASURE → VERIFY → LEARN → UPDATE → IMPROVE → SCALE WHEN EVIDENCE SUPPORTS IT`
+`OBSERVE → ACQUIRE EVIDENCE → NORMALIZE → PROVENANCE → MODEL → DETECT NEEDS/PROBLEMS/GAPS → GENERATE OPPORTUNITIES → QUALIFY → SCORE → DESIGN SOLUTION/BUSINESS/AGENT → MODEL UNIT ECONOMICS → VALIDATE → ESTABLISH IDENTITY/ACCOUNT REQUIREMENTS → CREATE/CONNECT IF AUTHORIZED → VERIFY → PRICE → SELECT CURRENCY → SELECT PAYMENT/SETTLEMENT → LAUNCH IF AUTHORIZED → DISTRIBUTE → CREATE AWARENESS → MEASURE → VERIFY → LEARN → UPDATE → IMPROVE → SCALE WHEN EVIDENCE SUPPORTS IT`
 
 The growth and monetization layers must never override truth, security, owner authority, user welfare, platform rules, or required permissions.
 
@@ -255,23 +318,23 @@ Scaling is evidence-gated. Capacity, acquisition, delivery, economics, competiti
 
 ## Autonomy and authority boundary
 
-Economic, commercial, growth, agent, payment, and financial capabilities use the same existing DORMAMMU authority boundary. They do not create parallel permission paths.
+Economic, commercial, growth, agent, account, credential, verification, payment, and financial capabilities use the same existing DORMAMMU authority boundary. They do not create parallel permission paths.
 
 `DISCOVER NEED → DEFINE CAPABILITY → EVALUATE → REGISTER/IMPLEMENT → REQUEST AUTHORITY → LIVE PERMISSION CHECK → SECURITY CHECK → EXECUTE → VERIFY → RECORD`
 
-Routine low-risk analysis and planning may be automated within policy. External communications, account actions, publication, spending, payment collection, binding contracts, financial execution, sensitive data access, and other consequential actions require appropriate live authorization and applicable controls.
+Routine low-risk analysis and planning may be automated within policy. External communications, account creation/connection, publication, spending, payment collection, binding contracts, financial execution, sensitive data access, and other consequential actions require appropriate live authorization and applicable controls.
 
-## Financial and commercial safety boundary
+## Financial, account and commercial safety boundary
 
-This specification does not authorize automatic spending, unrestricted trading or investing, borrowing or financial commitments without authorization, bypassing KYC/AML/exchange/payment/licensing/authentication controls, manipulation, fraud, deception, market abuse, unauthorized access, spam, fake engagement, guaranteed-return claims, or external transactions without required permission.
+This specification does not authorize automatic spending, unrestricted trading or investing, borrowing or financial commitments without authorization, bypassing KYC/AML/exchange/payment/licensing/authentication/CAPTCHA or platform controls, manipulation, fraud, deception, market abuse, unauthorized access, deceptive identity creation, spam, fake engagement, guaranteed-return claims, or external transactions without required permission.
 
-Financial models remain analytical. External financial and commercial actions require DORMAMMU's existing permission, security, action, verification, and audit boundaries.
+Financial models remain analytical. External financial, account, identity, communication, and commercial actions require DORMAMMU's existing permission, security, action, verification, and audit boundaries.
 
 ## Relationship to universal intelligence
 
-`WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ AGENT/BOT FACTORY ↔ PRICING ↔ CURRENCY ↔ COMMERCE/PAYMENTS ↔ GROWTH/DISTRIBUTION ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
+`WORLD MODEL ↔ KNOWLEDGE FABRIC ↔ FINANCE MODEL ↔ OPPORTUNITY ENGINE ↔ ENTERPRISE MODEL ↔ AGENT/BOT FACTORY ↔ IDENTITY/ACCOUNT FABRIC ↔ CREDENTIAL VAULT ↔ VERIFICATION ENGINE ↔ PRICING ↔ CURRENCY ↔ COMMERCE/PAYMENTS ↔ GROWTH/DISTRIBUTION ↔ AUTHORIZED ACTIONS ↔ MEASURED OUTCOMES ↔ LEARNING`
 
-Economic, commercial, and growth intelligence must consume and contribute verified cross-domain knowledge rather than becoming isolated silos.
+Economic, commercial, growth, identity, and account intelligence must consume and contribute verified cross-domain knowledge rather than becoming isolated silos.
 
 ## Implementation status rule
 
