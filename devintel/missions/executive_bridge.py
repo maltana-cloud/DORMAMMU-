@@ -33,8 +33,6 @@ class MissionExecutionPolicy:
             raise ValueError("retry_backoff_seconds cannot be negative")
         if self.lease_ttl_seconds is not None and self.lease_ttl_seconds <= 0:
             raise ValueError("lease_ttl_seconds must be positive when set")
-        if worker_set_requires_approval(self.capability_approved) and not self.owner_approved:
-            pass
 
 
 class MissionExecutiveBridge:
@@ -99,8 +97,3 @@ class MissionExecutiveBridge:
         if not isinstance(intent, str) or not intent.strip() or not isinstance(desired, str) or not desired.strip():
             raise ValueError("mission step objective fields are invalid")
         return Objective(intent.strip(), desired.strip(), mission.scope_id, objective_id=f"{mission.mission_id}:{step.step_id}")
-
-
-def worker_set_requires_approval(value: bool | set[str]) -> bool:
-    """Keep policy validation explicit without interpreting capability authority."""
-    return isinstance(value, set) and any(not isinstance(item, str) for item in value)
