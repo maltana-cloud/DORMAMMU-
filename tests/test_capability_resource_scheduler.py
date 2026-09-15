@@ -56,7 +56,7 @@ def _scout(engine, ids):
     return Scout()
 
 
-def test_scheduler_selects_eligible_capability_and_reserves_resource():
+def test_scheduler_selects_eligible_capability_and_confirms_resource_without_reserving():
     engine = _engine()
     engine.discovery.add_scout(_scout(engine, ("model-a", "model-b")))
     scheduler = CapabilityResourceScheduler(engine)
@@ -67,14 +67,19 @@ def test_scheduler_selects_eligible_capability_and_reserves_resource():
     assert plan.granted
     assert plan.selected_capability_id == "model-a"
     assert plan.selected_resource_id == "gpu-a"
-    scheduler.release(plan)
+    assert plan.reservation_id is None
+    assert engine.resource_manager.active_reservations() == ()
+    admitted = scheduler.admit(plan)
+    assert admitted.reservation_id
+    scheduler.release(admitted)
     engine.close()
 
 
 def test_scheduler_fails_closed_when_resource_capacity_is_unavailable():
     engine = _engine()
     engine.discovery.add_scout(_scout(engine, ("model-a",)))
-    engine.reserve_resource(ResourceKind.GPU)
+    existing = engine.reserve_resource(ResourceKind.GPU)
+    assert existing.granted
     scheduler = CapabilityResourceScheduler(engine)
     plan = scheduler.plan(
         CapabilityRequirement("inference", "run inference", ("inference",)),
@@ -82,6 +87,7 @@ def test_scheduler_fails_closed_when_resource_capacity_is_unavailable():
     )
     assert not plan.granted
     assert plan.selected_capability_id is None
+    engine.release_resource(existing.reservation_id)
     engine.close()
 
 
