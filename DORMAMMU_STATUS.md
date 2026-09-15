@@ -32,6 +32,8 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 - rollback can return a scope to an earlier known version but cannot silently roll forward or mutate protected authority;
 - `EvolutionStore` durably records candidates, evaluations, and promotions;
 - regression coverage verifies evidence gates, measured-gain promotion, unsafe/weak rejection, stale-version rejection, protected-target rejection, and rollback;
+- PR #75 merged to `main` as `e584a6a17bf7231390002f34d56f1b72f18e2f2b`;
+- main CI run #1048 completed successfully after the merge.
 - this completes the repository-level Category 14 capability without introducing unrestricted self-modification.
 
 ## Security Boundary
