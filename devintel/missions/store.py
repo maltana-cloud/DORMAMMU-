@@ -81,7 +81,7 @@ class MissionStore:
             raise ValueError("now must be non-negative")
         created = _now()
         mission = Mission(mission_id or uuid4().hex, scope_id.strip(), objective.strip(), total_steps, 0, MissionStatus.QUEUED, 0, max_attempts, now, created, created, "")
-        self._db.execute("INSERT INTO missions VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (mission.mission_id, mission.scope_id, mission.objective, mission.total_steps, mission.current_step, mission.status, mission.attempts, mission.max_attempts, mission.next_run_at, mission.created_at, mission.updated_at, mission.last_error, None))
+        self._db.execute("INSERT INTO missions VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (mission.mission_id, mission.scope_id, mission.objective, mission.total_steps, mission.current_step, mission.status, mission.attempts, mission.max_attempts, mission.next_run_at, mission.created_at, mission.updated_at, mission.last_error, None, None))
         return mission
 
     def get(self, mission_id: str) -> Mission | None:
