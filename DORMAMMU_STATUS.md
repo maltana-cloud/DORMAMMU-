@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 16 — Persistent Intelligence Infrastructure is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a durable, scoped persistence boundary for intelligence knowledge and operational state, with explicit schema versioning and restart persistence.
+**Category 17 — Real Capability & Provider Infrastructure is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has replaceable real provider adapters, bounded capability routing, provider health/status, deterministic priority fallback, and an explicit execution facade for generation and research capabilities.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -23,28 +23,30 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 14. Evolution & Self-Improvement — COMPLETE / LOCKED
 15. Production Runtime & Orchestration — COMPLETE / LOCKED
 16. Persistent Intelligence Infrastructure — COMPLETE / LOCKED
+17. Real Capability & Provider Infrastructure — COMPLETE / LOCKED
 
-## Category 16 Completion Evidence
-- `KnowledgeStore` provides durable SQLite-backed scoped knowledge records and operational state;
-- knowledge records retain provenance, version, creation time, and update time;
-- state records are JSON-serializable, scoped by scope ID and key, and versioned on update;
-- persistence uses an explicit schema version with fail-closed rejection of unsupported versions;
-- SQLite foreign-key enforcement and WAL journaling are enabled;
-- scope-aware retrieval prevents accidental cross-scope knowledge reads;
-- runtime exports expose the persistence primitives without replacing existing contracts;
-- regression coverage verifies persistence across close/reopen, version advancement, scope isolation, state updates, and missing-state behavior;
-- the implementation remains additive and compatible with the existing runtime/job persistence boundary.
+## Category 17 Completion Evidence
+- provider contracts define capability, health, and result boundaries;
+- `ProviderRegistry` provides bounded, replaceable provider registration;
+- `ProviderRouter` provides deterministic priority routing and legitimate fallback when a provider is unhealthy or fails;
+- provider output is returned as an envelope and remains unverified until the existing truth/verification boundary accepts it;
+- live adapters include keyless Wikipedia research and opt-in Gemini generation through externally supplied credentials;
+- no credentials are bundled in source and provider configuration is environment-driven;
+- providers can be explicitly disabled/enabled without changing authority boundaries;
+- `CapabilityExecutor` exposes an explicit generation/research execution contract for higher-level integrations;
+- regression coverage verifies fallback, invalid output rejection, disabled providers, capability execution, and execution configuration validation;
+- the implementation remains additive and preserves existing permission, security, owner-control, verification, audit, recovery, runtime, and persistence boundaries.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Persistence stores state; it does not grant authority. Stored content is data, not executable instruction or permission. Existing permission, security, owner-control, verification, audit, and recovery boundaries remain authoritative.
+Providers are capabilities, not authorities. External provider output is untrusted until verified. Provider availability, health, quota errors, or configuration never grant permission. Credentials remain external to intelligence logic, and legitimate fallback never bypasses provider quotas, licensing, verification, CAPTCHAs, or platform controls.
 
 ## Production Boundary
-Category 16 is complete at the repository architecture level, not a claim of production database readiness. Production still requires environment-specific database operations, backup/restore, encryption and access controls appropriate to deployment, migrations, retention/data lifecycle policy, concurrency/load evidence, monitoring/alerting, and distributed storage/coordination where required.
+Category 17 is complete at the repository architecture level, not a claim that all external providers are production-configured or universally available. Production still requires provider-specific credentials/terms, quota and cost controls, secrets management and rotation, network egress policy, provider health monitoring, latency/error/load evidence, contract drift handling, and deployment-specific operational controls.
 
 ## Post-Roadmap Engineering
-Categories 1–16 are now complete/locked at their defined repository boundaries. **Category 17 — Real Capability & Provider Infrastructure** is the next planned capability boundary.
+Categories 1–17 are now complete/locked at their defined repository boundaries. **Category 18 — Intelligence & Knowledge System** is the next planned capability boundary.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
