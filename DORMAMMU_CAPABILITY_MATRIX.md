@@ -6,7 +6,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Current checkpoint:** Categories 1–11 are complete and locked at the repository architecture level. Production readiness remains unclaimed.
+**Current checkpoint:** Categories 1–12 are complete and locked at the repository architecture level. Production readiness remains unclaimed.
 
 | Capability | Status | Implementation / evidence | Security boundary | Known limitation |
 |---|---|---|---|---|
@@ -21,13 +21,13 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | Simulation & Interactive Worlds | COMPLETE / LOCKED | deterministic worlds/entities/actions/ticks; planning; replay integrity; persistence/recovery; resource/telemetry runtime integration; PR #70; CI #969; main CI #970 | explicit world action allowlist; no external execution authority | no production physics/rendering/multiplayer authority |
 | Social & Community Intelligence | COMPLETE / LOCKED | bounded community observation; demand/question/opportunity/risk signals; deterministic response planning; provenance; fail-closed publication policy; durable plan persistence; runtime telemetry; PR #71; CI #988 | no fake engagement/identity; external publication requires platform authorization and owner approval | real platform adapters, production moderation, live polling and long-running distribution remain future work |
 | Economic & Business Intelligence | COMPLETE / LOCKED | bounded opportunity/evidence analysis; deterministic business planning/comparison; durable advisory-plan persistence; runtime telemetry; fail-closed financial action policy | intelligence never grants spending/investment/payment/credential authority | real financial feeds, commerce adapters and production financial controls remain future work |
-| Owner & Platform Security | PARTIAL | owner-control, recovery, security foundations | zero-trust boundaries, recovery protections | deeper platform security work remains |
+| Owner & Platform Security | COMPLETE / LOCKED | cryptographically authenticated owner approvals; fail-closed migration boundary; bounded single-use approvals; tamper-evident audit chain; scoped containment/recovery; recovery authorization; security regression coverage; PR #73; CI #1029 (352 passed) | owner proof is scoped/time-bound; intelligence, external content, models, capabilities, and runtime state do not grant authority; recovery remains independently protected | production identity/session integration, secret rotation, secure deployment, and operational security evidence remain external/deployment work |
 | Autonomous Operations | PARTIAL | bounded autonomy cycle, telemetry, recovery, learning | finite, permission-preflighted, proposal-oriented | continuous distributed operations not built |
 | Evolution & Self-Improvement | EARLY | controlled reflection/learning foundations | no unrestricted self-modification | training/evaluation/model factory not built |
 
-## Category 11 completion boundary
+## Category 12 completion boundary
 
-Category 11 is complete at the repository architecture level: economic opportunity/evidence contracts, bounded valuation inputs, deterministic evidence/value analysis, business-plan generation and comparison, content-addressed advisory persistence, runtime telemetry integration, and fail-closed financial authority policy are implemented and tested. Intelligence does not execute spending, investment, payment, or external commerce.
+Category 12 is complete at the repository architecture level: owner-control authorization is cryptographically authenticated and scoped; the legacy boolean approval input cannot authorize protected commands; approval freshness and replay are bounded; audit history is tamper-evident across bounded retention; containment and emergency recovery remain scoped and independently protected. Production identity providers, session infrastructure, secret rotation, deployment hardening, and live operational security evidence remain explicit external/deployment dependencies.
 
 ## Verification rule
 
