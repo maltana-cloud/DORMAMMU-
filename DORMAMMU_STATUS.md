@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 13 — Autonomous Operations is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has a bounded autonomous cycle plus a bounded operational supervisor for repeated cycles, with explicit cycle/duration limits, fail-closed stop behavior, scoped observations/plans, permission preflight, verification, durable cycle history, operational telemetry, capability/resource integration, and learning proposals that cannot self-modify authority or code.
+**Category 14 — Evolution & Self-Improvement is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU can now turn verified learning proposals into bounded, evaluated, versioned, reversible behavioral improvements without granting evolution authority over security, owner control, recovery, credentials, secrets, or code.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -20,33 +20,30 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 11. Economic & Business Intelligence — COMPLETE / LOCKED
 12. Owner & Platform Security — COMPLETE / LOCKED
 13. Autonomous Operations — COMPLETE / LOCKED
-14. Evolution & Self-Improvement — EARLY
+14. Evolution & Self-Improvement — COMPLETE / LOCKED
 
-## Category 13 Completion Evidence
-- bounded `AutonomousEngine` implements scoped OBSERVE → UNDERSTAND → PLAN → PERMISSION → SECURITY CHECK → ACT → VERIFY → RECORD → IMPROVE;
-- cross-scope observations and plans are rejected before execution;
-- action count is explicitly bounded and execution remains behind the core permission path;
-- failures, invalid observations/plans, permission denial, verification failure, and improvement errors fail closed without granting authority;
-- autonomous cycles persist durably through `AutonomousCycleStore`;
-- operation telemetry records success, verification, duration, capability, and resource observations;
-- capability/resource inventory and bounded operation paths are already integrated through the runtime composition root;
-- `AutonomousSupervisor` adds finite repeated operation with explicit maximum-cycle and optional maximum-duration limits;
-- supervisor stops on failed/unverified cycles by default and never creates an unrestricted background loop;
-- improvement remains proposal-only and cannot self-modify code, authority, secrets, or security policy;
-- regression coverage added for repeated cycles, failure stop behavior, and invalid unbounded policy values;
-- PR #74 merged to `main` as `495acc3a28d4377fffe5c8ccf79c71fa6f54158e`;
-- PR #74 CI run #1042 passed successfully on commit `386b89a5ccb4f68b6a8edf6a221007c8a194a0cb`.
+## Category 14 Completion Evidence
+- verified outcome learning already accepts only verified, bounded metrics and same-scope evidence;
+- `EvolutionPolicy` establishes minimum evidence, gain, confidence, and candidate-count gates;
+- `ImprovementCandidate` converts learning proposals into explicit, reversible, versioned behavioral/routing changes;
+- evolution rejects targets covering authority, security, secrets, credentials, owner control, recovery, and code;
+- `EvolutionEngine` independently evaluates candidates before promotion and rejects insufficient evidence, unsafe results, weak gains, low confidence, and stale versions;
+- successful promotion advances a per-scope version and records its parent version for rollback;
+- rollback can return a scope to an earlier known version but cannot silently roll forward or mutate protected authority;
+- `EvolutionStore` durably records candidates, evaluations, and promotions;
+- regression coverage verifies evidence gates, measured-gain promotion, unsafe/weak rejection, stale-version rejection, protected-target rejection, and rollback;
+- this completes the repository-level Category 14 capability without introducing unrestricted self-modification.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Autonomous operation never becomes authority. Every action is still permission-checked through the core, scope is explicit, limits are finite, verification is required, and failures stop safely. Owner-controlled, recovery, containment, and security boundaries remain authoritative.
+Evolution changes bounded behavior only. It never becomes authority. Security, owner control, recovery, secrets, credentials, and code remain outside the evolution target surface and continue to be governed by their existing protected boundaries.
 
-## Known Limitations
-Production deployment still requires a real scheduler/worker deployment, distributed coordination, durable production databases, provider/resource health infrastructure, monitoring/alerting, and environment-specific operational testing. Category 13 does not claim unrestricted autonomous background execution, distributed multi-worker consensus, or production deployment.
+## Production Boundary
+Categories 1–14 are now complete/locked at the repository architecture level. This does **not** claim production deployment. Real deployment still requires environment-specific scheduler/workers, distributed coordination, durable production infrastructure, provider/resource health, monitoring/alerting, secret management/rotation, identity/session integration, and operational security/performance evidence.
 
-## Next Execution Target
-**Category 14 — Evolution & Self-Improvement.** Do not restart Categories 1–13.
+## Post-Roadmap Engineering
+The category roadmap is complete. Future work is now **productionization and capability expansion**, not reopening Categories 1–14. New capabilities must preserve the locked foundation and use the established discovery, permission, security, testing, verification, versioning, canary, monitoring, and rollback rules.
 
 ## Handoff Rule
-Every AI working on DORMAMMU must verify the repository itself, leave a truthful test-backed checkpoint, finish the active category before moving to the next, and continue from the repository rather than treating prior chat history as authoritative.
+Every AI working on DORMAMMU must verify the repository itself, preserve this truthful checkpoint, and build forward from the repository rather than treating prior chat history as authoritative.
