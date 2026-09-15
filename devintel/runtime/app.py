@@ -150,3 +150,12 @@ class DORMAMMURuntime:
     def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None, *, improver=None, max_actions: int = 32) -> AutonomousEngine: return self.autonomous_engine(self.education_feedback_observer, planner, verifier, recorder, improver=improver, max_actions=max_actions)
     def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None, *, improver=None, max_actions: int = 32) -> AutonomousEngine: return self.autonomous_engine(self.capability_observations, planner, verifier, recorder, improver=improver, max_actions=max_actions)
     def education_integration(self, **adapters: object) -> EducationSubsystemIntegration: return EducationSubsystemIntegration(**adapters)
+    def education_signals(self, scope_id: str, domain: str, *, learner_id: str = "", **adapters: object) -> EducationIntegrationResult: return self.education_integration(**adapters).collect(scope_id, domain, learner_id=learner_id)
+    def register_teaching_profile(self, profile: TeachingProfile) -> TeachingProfile: return self.teaching.register_profile(profile)
+    def teaching_profile(self, channel_id: str) -> TeachingProfile | None: return self.teaching.profile(channel_id)
+    def teach(self, scope_id: str, learner_id: str, profile: TeachingProfile, lesson: Any, *, mode: EducationMode = EducationMode.COURSE, progress: Any = None) -> TeachingResponse: return self.teaching.teach(scope_id, learner_id, profile, lesson, mode=mode, progress=progress)
+    def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
+    def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
+    def research(self, request: ResearchRequest): return self.live_providers.research(request)
+
+DEVINTELRuntime = DORMAMMURuntime
