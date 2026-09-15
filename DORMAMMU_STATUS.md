@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 21 — Domain Intelligence is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU can now build bounded domain profiles from established verified research synthesis while preserving provenance, uncertainty, deterministic ranking, and the existing authority/security boundary.
+**Category 22 — Human–DORMAMMU Collaboration is IMPLEMENTED / PENDING FINAL CI + MERGE.** DORMAMMU now has a bounded collaboration contract for human review, explicit response status, deterministic request identity, and scoped context/evidence limits without treating human input as implicit authority.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -28,33 +28,33 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 19. Research & Discovery Engine — COMPLETE / LOCKED
 20. Problem & Opportunity Discovery — COMPLETE / LOCKED
 21. Domain Intelligence — COMPLETE / LOCKED
+22. Human–DORMAMMU Collaboration — IMPLEMENTED / PENDING FINAL CI + MERGE
 
-## Category 21 Completion Evidence
-- `DomainIntelligenceEngine` consumes only the established `SynthesisResult` contract;
-- raw/unverified inputs are rejected at the intelligence boundary;
-- synthesis uncertainty is propagated from `SynthesisResult`/`SynthesisSignal`;
-- contradictory synthesis remains high uncertainty and its signals remain capped at 0.49 confidence;
-- malformed synthesis statements are skipped fail-closed rather than converted into invented triples;
-- evidence URLs remain attached to domain signals;
-- signal counts are bounded by caller and engine limits;
-- deterministic ordering makes profiles reproducible;
-- entities and topics are derived only from bounded synthesized signals;
-- regression coverage verifies normal synthesis, raw-input rejection, contradictions, bounds, deterministic ordering, malformed signals, provenance, and validation;
-- first Category 21 CI exposed a real contract mismatch: `VerifiedClaim` has no `uncertain` attribute; implementation was corrected to use the established synthesis uncertainty contract;
-- final Category 21 CI run #1124 passed after the repair;
-- PR #83 is merged into `main` as `412afeee25cfdc006c5d26a6ffea68dc7431a70d`;
-- the repair and tests are additive and do not weaken the locked verification/security boundary.
+## Category 22 Scope
+Category 22 provides bounded human-in-the-loop collaboration: DORMAMMU can create reviewable requests, receive explicit human responses, and transition request status only when the response matches the exact request. Human input remains data and review state; it does not become authority by existing.
+
+## Category 22 Completion Evidence
+- collaboration requests require explicit scope and objective;
+- request identity is deterministic and content-bound;
+- context and evidence counts are bounded;
+- responses require request ID, responder identity, explicit acceptance, and message;
+- mismatched responses fail closed;
+- acceptance/rejection is explicit and auditable at the contract level;
+- no credential creation, policy mutation, owner-authority grant, or consequential execution is exposed;
+- regression tests cover deterministic identity, accepted/rejected flows, mismatched responses, and bounds;
+- canonical project state was repaired because its older checkpoint was stale at Category 11 despite main having advanced through Category 21;
+- final CI and merge are required before Category 22 becomes COMPLETE / LOCKED.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Domain intelligence is analysis, not authority. A domain profile cannot install capabilities, grant permissions, create credentials, execute external actions, or alter owner/security policy.
+Human collaboration is not an authorization bypass. Explicit human responses can record review state, but consequential actions still require the existing permission/security/owner-control path.
 
 ## Production Boundary
-Category 21 does not claim comprehensive production-grade expertise in arbitrary domains. Production requires domain-specific ontologies, richer entity resolution, temporal modeling, source diversity, substantive verification, calibrated confidence, freshness policy, domain expert evaluation where appropriate, monitoring, and deployment-specific operational evidence.
+Category 22 does not claim production-grade human messaging, identity/session integration, notification delivery, durable collaboration history, conflict resolution, or external communication platform integration. Those require explicit provider contracts, authentication/session controls, persistence, audit integration, delivery guarantees, abuse controls, observability, and deployment evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–21 are complete/locked at their defined repository boundaries. **Category 22 — Human–DORMAMMU Collaboration** is the next capability boundary.
+Categories 1–21 are complete/locked at their defined repository boundaries. Category 22 is active until final CI and merge. **Category 23 — Long-Running Mission System** follows after Category 22 is verified and merged.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
