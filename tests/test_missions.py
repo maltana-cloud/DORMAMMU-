@@ -66,10 +66,56 @@ def test_run_is_bounded_by_max_steps():
     store.close()
 
 
+def test_multi_worker_lease_prevents_concurrent_claim_and_allows_expiry_takeover(tmp_path):
+    path = tmp_path / "shared.db"
+    first = MissionStore(str(path))
+    second = MissionStore(str(path))
+    mission = first.create("scope", "distributed work", total_steps=2, now=0)
+
+    claimed = first.claim_due(now=0, worker_id="worker-a", lease_ttl_seconds=10)
+    assert claimed is not None
+    assert second.claim_due(now=0, worker_id="worker-b", lease_ttl_seconds=10) is None
+
+    renewed = first.renew_lease(mission.mission_id, worker_id="worker-a", now=5, lease_ttl_seconds=10)
+    assert renewed.worker_id == "worker-a"
+    assert renewed.expires_at == 15
+    assert second.claim_due(now=14, worker_id="worker-b", lease_ttl_seconds=10) is None
+    assert second.claim_due(now=15, worker_id="worker-b", lease_ttl_seconds=10) is not None
+    first.close(); second.close()
+
+
+def test_stale_worker_cannot_checkpoint_after_lease_takeover(tmp_path):
+    path = tmp_path / "shared.db"
+    first = MissionStore(str(path))
+    second = MissionStore(str(path))
+    mission = first.create("scope", "lease ownership", total_steps=1, now=0)
+    assert first.claim_due(now=0, worker_id="worker-a", lease_ttl_seconds=2) is not None
+    assert second.claim_due(now=2, worker_id="worker-b", lease_ttl_seconds=2) is not None
+    with pytest.raises(ValueError):
+        first.checkpoint(mission.mission_id, current_step=1, now=2, worker_id="worker-a")
+    assert second.checkpoint(mission.mission_id, current_step=1, now=2, worker_id="worker-b").status is MissionStatus.SUCCEEDED
+    first.close(); second.close()
+
+
+def test_lease_runner_requires_worker_and_ttl_together():
+    store = MissionStore()
+    store.create("scope", "bounded leased work", total_steps=1, now=0)
+    runner = MissionRunner(store)
+    with pytest.raises(ValueError):
+        runner.run_once(now=0, step=lambda _: None, worker_id="worker-a")
+    with pytest.raises(ValueError):
+        runner.run_once(now=0, step=lambda _: None, policy=MissionRunPolicy(lease_ttl_seconds=5))
+    result = runner.run_once(now=0, step=lambda _: None, worker_id="worker-a", policy=MissionRunPolicy(lease_ttl_seconds=5))
+    assert result[0].status is MissionStatus.SUCCEEDED
+    store.close()
+
+
 def test_invalid_bounds_and_inputs_fail_closed():
     with pytest.raises(ValueError):
         MissionStore().create("scope", "objective", 0)
     with pytest.raises(ValueError):
         MissionRunPolicy(max_steps=0)
+    with pytest.raises(ValueError):
+        MissionRunPolicy(lease_ttl_seconds=0)
     with pytest.raises(TypeError):
         MissionRunner(MissionStore()).run_once(now=0, step="not-callable")
