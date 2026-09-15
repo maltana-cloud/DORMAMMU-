@@ -1,10 +1,10 @@
 {
-  "schema_version": "4.2",
+  "schema_version": "4.3",
   "project": "DORMAMMU",
   "repository": "maltana-cloud/DORMAMMU-",
   "branch": "main",
-  "checkpoint_commit": "6e4a0556cd10573b882b8311ee9696201d4a9e88",
-  "documentation_head": "973215c9b90a455eb19691080e1c7942a59008f4",
+  "checkpoint_commit": "756a47ebcf9ac17c71dce05421391eca7a26049b",
+  "documentation_head": "e77b80607362c9e78b3c5634e95048e34e2b21c0",
   "verification": {
     "repository_state_checked": true,
     "persistent_mission_pr": 99,
@@ -13,8 +13,14 @@
     "mission_continuation_gap_pr": 100,
     "mission_continuation_gap_pr_ci_run": 1356,
     "mission_continuation_gap_post_merge_ci_run": 1359,
-    "mission_continuation_gap_ci_conclusion": "success",
-    "docs_alignment": "status, project state, and audit matrix updated after verified PR #100",
+    "verified_outcome_learning_pr": 101,
+    "verified_outcome_learning_pr_ci_run": 1376,
+    "verified_outcome_learning_post_merge_ci_run": 1377,
+    "closed_frontier_loop_pr": 102,
+    "closed_frontier_loop_pr_ci_run": 1383,
+    "closed_frontier_loop_post_merge_ci_run": 1384,
+    "closed_frontier_loop_test_count": 473,
+    "docs_alignment": "status and audit matrix record the verified closed frontier loop; project state records implementation checkpoint and documentation head",
     "truth_rule": "Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
     "requirement_truth_ladder": ["REQUIREMENT", "ARCHITECTURAL DESIGN", "IMPLEMENTED", "TESTED", "PRODUCTION VERIFIED"],
     "engineering_control_plane": "DORMAMMU_ENGINEERING_MAP.md",
@@ -28,7 +34,10 @@
     "runtime_resource_worker": {"status": "VERIFIED", "ci": "PR run 1317 success; post-merge run 1318 success; 455 tests"},
     "persistent_mission_progression": {"status": "VERIFIED", "ci": "PR run 1332 success; post-merge run 1334 success"},
     "mission_continuation_orchestration": {"status": "VERIFIED", "ci": "PR #100 run 1356 success; merged-main run 1359 success", "implementation": "devintel/missions/executive_bridge.py", "boundary": "persisted steps continue through ExecutiveEngine using existing authority/capability/resource/verification/telemetry/owner-control boundaries"},
-    "gap_to_mission_proposals": {"status": "VERIFIED", "ci": "PR #100 run 1356 success; merged-main run 1359 success", "implementation": "devintel/intelligence/gap_missions.py", "boundary": "only sufficiently confident, non-uncertain evidence-backed candidates become bounded deterministic proposals; materialization is idempotent and grants no authority"}
+    "gap_to_mission_proposals": {"status": "VERIFIED", "ci": "PR #100 run 1356 success; merged-main run 1359 success", "implementation": "devintel/intelligence/gap_missions.py", "boundary": "only sufficiently confident, non-uncertain evidence-backed candidates become bounded deterministic proposals; materialization is idempotent and grants no authority"},
+    "verified_outcome_learning": {"status": "VERIFIED", "ci": "PR #101 run 1376 success; merged-main run 1377 success", "implementation": "devintel/autonomy/mission_learning.py + learning_store.py", "boundary": "only verified outcomes enter learning; learning proposals are reversible, bounded, scope-checked, and idempotently persisted"},
+    "deterministic_next_objective": {"status": "VERIFIED", "ci": "PR #101 run 1376 success; merged-main run 1377 success", "implementation": "devintel/autonomy/next_objective.py", "boundary": "selection is deterministic, bounded, evidence-gated, and authority-free"},
+    "closed_mission_verification_learning_loop": {"status": "VERIFIED", "ci": "PR #102 run 1383 success; merged-main run 1384 success; 473 tests", "implementation": "devintel/missions/frontier_loop.py", "boundary": "terminal verified mission → durable learning evidence → deterministic next objective → at most one idempotent next mission; no parallel authority path"}
   },
   "category_status": {
     "1_foundation_governance": "COMPLETE_LOCKED", "2_core_intelligence": "COMPLETE_LOCKED", "3_capability_resource_intelligence": "COMPLETE_LOCKED", "4_ecosystem_awareness": "COMPLETE_LOCKED", "5_engineering_intelligence": "COMPLETE_LOCKED", "6_language_communication": "COMPLETE_LOCKED", "7_research_domain_expansion": "COMPLETE_LOCKED", "8_creative_intelligence": "COMPLETE_LOCKED", "9_simulation_interactive_worlds": "COMPLETE_LOCKED", "10_social_community_intelligence": "COMPLETE_LOCKED", "11_economic_business_intelligence": "COMPLETE_LOCKED", "12_owner_platform_security": "COMPLETE_LOCKED", "13_autonomous_operations": "COMPLETE_LOCKED", "14_evolution_self_improvement": "COMPLETE_LOCKED", "15_production_runtime_orchestration": "COMPLETE_LOCKED", "16_persistent_intelligence_infrastructure": "COMPLETE_LOCKED", "17_real_capability_provider_infrastructure": "COMPLETE_LOCKED", "18_intelligence_knowledge_system": "COMPLETE_LOCKED", "19_research_discovery_engine": "COMPLETE_LOCKED", "20_problem_opportunity_discovery": "COMPLETE_LOCKED", "21_domain_intelligence": "COMPLETE_LOCKED", "22_human_dormammu_collaboration": "COMPLETE_LOCKED", "23_long_running_mission_system": "COMPLETE_LOCKED", "24_ecosystem_multi_agent_coordination": "COMPLETE_LOCKED", "25_real_world_action_infrastructure": "COMPLETE_LOCKED", "26_global_intelligence_continuous_discovery": "COMPLETE_LOCKED", "27_dormammu_ecosystem_evolution": "COMPLETE_LOCKED"
@@ -37,10 +46,10 @@
     "omega_1_bounded_distributed_mission_coordination": {"status": "COMPLETE_LOCKED", "pull_request": 90, "merge_commit": "5ca981b8fc0cab0b008d6459308883430f807648"},
     "omega_2_integrated_frontier_control_plane": {"status": "COMPLETE_LOCKED", "pull_request": 91, "merge_commit": "22b03ec885361eb2a8cecf87d70fa52426ddb483"},
     "omega_3_persistent_memory_dynamic_authority_runtime_cognition": {"status": "COMPLETE_LOCKED", "pull_requests": [92, 93], "merge_commits": ["102a0025c0487ed1dade618da06c95b86020fbf5", "8c3cbe914ba05fd758c77a4fb0488ad493c681ba"]},
-    "omega_unknown_frontier": {"status": "OPEN", "completed_targets": ["persistent mission progression", "mission continuation orchestration", "evidence-backed gap-to-mission proposals"], "next_target": "close the gap-detection → mission → execution → verification → learning loop and add deterministic next-objective selection"}
+    "omega_unknown_frontier": {"status": "OPEN", "completed_targets": ["persistent mission progression", "mission continuation orchestration", "evidence-backed gap-to-mission proposals", "verified outcome learning", "deterministic next-objective selection", "closed mission verification→learning→next-mission loop"], "next_target": "deepen objective candidate generation from verified knowledge/evidence and connect additional safe capability/provider adapters without weakening existing authority boundaries"}
   },
   "future_capability_authority": {"status": "REQUIREMENT_AND_ARCHITECTURAL_DESIGN", "rule": "Every future capability must use existing capability, permission, security, verification, audit, and owner-control boundaries. Discovering a need or possessing credentials never grants authority."},
   "production_readiness": "NOT_CLAIMED",
-  "next_execution_target": {"name": "Ω Unknown Frontier — verified outcome to learning and deterministic next-objective selection", "status": "OPEN", "selection_rule": "Use verified mission outcomes and existing learning/knowledge infrastructure to select the next bounded objective deterministically, without creating a parallel authority path or allowing discovery to self-authorize action."},
-  "resume_instruction": "Pull and inspect current main before further changes. PR #100 mission continuation orchestration and evidence-backed gap-to-mission proposals are VERIFIED by PR run 1356 and merged-main run 1359. Continue forward into verified-outcome learning and deterministic next-objective selection without reopening locked foundations or claiming production readiness."
+  "next_execution_target": {"name": "Ω Unknown Frontier — evidence-backed objective generation and safe capability/provider integration", "status": "OPEN", "selection_rule": "Use verified knowledge, evidence, capability availability, and bounded discovery to produce deterministic advisory objectives; execution remains behind existing permission, resource, verification, owner-control, and audit boundaries."},
+  "resume_instruction": "Pull and inspect current main before further changes. The verified closed mission verification→learning→next-mission loop is implemented at 756a47ebcf9ac17c71dce05421391eca7a26049b, PR #102 run 1383 passed, merged-main run 1384 passed with 473 tests. Continue into richer evidence-backed objective generation and safe capability/provider integration without reopening locked foundations or claiming production readiness."
 }
