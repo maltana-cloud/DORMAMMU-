@@ -104,3 +104,11 @@ def test_audit_log_is_bounded():
     audit.record(AuditRecord(event="one"))
     audit.record(AuditRecord(event="two"))
     assert [record.event for record in audit.history()] == ["two"]
+    assert audit.verify_integrity() is True
+
+
+def test_audit_integrity_detects_record_tampering():
+    audit = AuditLog()
+    audit.record(AuditRecord(event="one", action="test"))
+    audit._records[0] = AuditRecord(event="tampered", action="test")
+    assert audit.verify_integrity() is False
