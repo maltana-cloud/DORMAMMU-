@@ -11,10 +11,7 @@ def verified(subject, predicate, object_value, confidence=0.9):
 
 
 def test_builds_bounded_domain_profile_from_synthesis():
-    synthesis = KnowledgeSynthesisEngine().synthesize(
-        "developer tooling",
-        [verified("Developers", "need", "faster feedback", 0.9), verified("Teams", "use", "automated testing", 0.8)],
-    )
+    synthesis = KnowledgeSynthesisEngine().synthesize("developer tooling", [verified("Developers", "need", "faster feedback", 0.9), verified("Teams", "use", "automated testing", 0.8)])
     result = DomainIntelligenceEngine().build("developer tooling", synthesis)
     assert result.domain == "developer tooling"
     assert len(result.signals) == 2
@@ -35,10 +32,7 @@ def test_rejects_unverified_raw_claims_and_non_synthesis_input():
 
 
 def test_contradictions_remain_uncertain():
-    synthesis = KnowledgeSynthesisEngine().synthesize(
-        "market",
-        [verified("Users", "need", "automation", 0.9), verified("Users", "need", "manual workflows", 0.9)],
-    )
+    synthesis = KnowledgeSynthesisEngine().synthesize("market", [verified("Users", "need", "automation", 0.9), verified("Users", "need", "manual workflows", 0.9)])
     result = DomainIntelligenceEngine().build("market", synthesis)
     assert result.uncertainty.startswith("high:")
     assert all(signal.uncertain for signal in result.signals)
@@ -46,10 +40,7 @@ def test_contradictions_remain_uncertain():
 
 
 def test_bounds_and_deterministically_orders_signals():
-    synthesis = KnowledgeSynthesisEngine().synthesize(
-        "tools",
-        [verified("Zed", "uses", "B", 0.7), verified("Ada", "uses", "C", 0.9), verified("Ada", "needs", "A", 0.9)],
-    )
+    synthesis = KnowledgeSynthesisEngine().synthesize("tools", [verified("Zed", "uses", "B", 0.7), verified("Ada", "uses", "C", 0.9), verified("Ada", "needs", "A", 0.9)])
     result = DomainIntelligenceEngine(max_signals=2).build("tools", synthesis, limit=2)
     assert len(result.signals) == 2
     assert [(x.subject, x.predicate, x.object) for x in result.signals] == [("Ada", "needs", "A"), ("Ada", "uses", "C")]
