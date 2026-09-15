@@ -78,11 +78,21 @@ Memory entries, learning records, leases, resource budgets, queue items, provide
 ## Production Boundary
 **Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, payment settlement, live financial execution, external growth operations, and rollback evidence require authorized operational environments.
 
+## Ω Frontier Audit — 2026-09-15
+The repository was re-audited from `main` at `3b41fa08da328c24d31f3e7a6ba52ab48e6072d5`. The current `main` tests workflow run **1266** completed successfully. The detailed audit is recorded in `DORMAMMU_AUDIT_MATRIX.md`.
+
+This audit found that the protected foundation is genuinely present, while the broad future capability surface remains mixed: some capabilities have repository implementations and tests, while platform identity/account management, dedicated opinion intelligence, crypto/blockchain operations, and dedicated music/audio remain architectural targets rather than implemented production systems.
+
+### Current frontier implementation
+1. **Identity migration:** distribution metadata now identifies the project as `dormammu`; a canonical `dormammu` Python facade exists while `devintel` remains as the explicitly documented compatibility namespace.
+2. **Capability discovery:** discovery now has bounded scout/candidate limits, failure isolation, deterministic evaluation ordering, explicit eligibility thresholds, and a non-authoritative `best` selection view. It still does not install or execute newly discovered capabilities automatically.
+3. **Verification state:** current branch changes are **IMPLEMENTED** but not yet **TESTED/VERIFIED** by CI. No production readiness is claimed.
+
 ## Documentation Checkpoint
 The canonical economic architecture was consolidated into the existing `DORMAMMU_ECONOMIC_INTELLIGENCE_AND_WEALTH_ENGINE.md` rather than creating duplicate documents. This update extends that canonical architecture with universal identity/account lifecycle, protected credential/secret handling, and provider-backed verification requirements. It establishes architectural requirements and boundaries; it does not falsely claim that these future capabilities are implemented.
 
 ## Next Boundary
-**Ω — Unknown Frontier remains open.** Continue from the current repository state. Re-audit actual implementation and select the next highest-leverage repository-solvable gap. Do not restart locked foundations or fabricate external operational proof.
+**Ω — Unknown Frontier remains open.** Continue from the current repository state. After CI verifies the current branch, select the next highest-leverage repository-solvable dependency gap. The immediate likely dependency chain is deeper capability/resource acquisition and integration, followed by stronger cross-domain cognition and persistent autonomous mission progression. Do not restart locked foundations or fabricate external operational proof.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, distinguish requirement/design/implementation/test/production evidence, and build forward from the repository rather than treating prior chat history as authoritative.
