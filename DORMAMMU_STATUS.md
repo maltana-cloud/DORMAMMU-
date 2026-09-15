@@ -26,30 +26,36 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 17. Real Capability & Provider Infrastructure — COMPLETE / LOCKED
 18. Intelligence & Knowledge System — COMPLETE / LOCKED
 19. Research & Discovery Engine — COMPLETE / LOCKED
+20. Problem & Opportunity Discovery — IMPLEMENTED / PENDING FINAL CI + MERGE
 
-## Category 19 Completion Evidence
-- `ResearchDiscoveryEngine` adds a dedicated provider-isolated discovery boundary without replacing the established research pipeline;
-- discovery accepts the existing `ResearchCandidate` contract and reuses canonical HTTP(S) URL normalization;
-- candidate retrieval is explicitly bounded by caller limit and engine maximums;
-- provider failures are isolated so later providers can continue to contribute candidates;
-- malformed or wrong-type provider output is rejected at the untrusted discovery boundary;
-- canonical URL duplicates are removed across providers before final results are returned;
-- results are deterministic, sorted by canonical URL and title, and remain bounded;
-- discovery output is explicitly untrusted and cannot grant authority, permissions, credentials, or execution capability;
-- regression coverage verifies fallback after deduplication, canonicalization, bounds, malformed output rejection, and provider-failure isolation;
-- CI run #1095 passed for the final Category 19 implementation commit;
-- implementation remains additive and preserves locked verification, knowledge, security, owner-control, runtime, provider, persistence, audit, and truth boundaries.
+## Category 20 Scope
+Category 20 converts verified research synthesis into bounded, advisory problem and opportunity candidates. It does not independently treat discovered material as truth; upstream verification and synthesis remain authoritative gates.
+
+## Category 20 Completion Evidence
+- `ProblemOpportunityEngine` consumes only the established `SynthesisResult` contract;
+- candidates are explicitly classified as `problem` or `opportunity` and remain advisory;
+- evidence URLs are preserved on every candidate;
+- candidate confidence and ranking are bounded to `[0, 1]`;
+- contradictory synthesis remains explicitly uncertain and confidence is capped conservatively;
+- candidate counts are bounded by caller and engine limits;
+- deterministic ranking is used for reproducibility;
+- detection terms are normalized and validated;
+- no money-based value assumption is introduced by the discovery layer;
+- unrelated verified statements are excluded rather than converted into invented opportunities;
+- regression tests cover problem detection, opportunity detection, contradiction handling, irrelevant evidence, bounds, and validation;
+- an existing upstream `VerificationResult` test-fixture type mismatch exposed by Category 20 integration tests was corrected without weakening production validation;
+- final CI and merge are required before this category becomes COMPLETE / LOCKED.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Discovery produces candidates, not trusted knowledge. External source content cannot become verified truth merely because it was discovered. Discovery cannot execute discovered content, alter policy, bypass provider controls, or grant permissions.
+Problem/opportunity discovery produces advisory intelligence only. It cannot execute discovered opportunities, grant permissions, create credentials, alter policy, or bypass owner/security controls.
 
 ## Production Boundary
-Category 19 is complete at the repository architecture level, not a claim that DORMAMMU has production-scale web discovery. Production still requires workload-specific source/provider selection, network timeout/retry policy, rate-limit handling, source reputation and freshness policy, content extraction hardening, substantive fact-checking, monitoring/alerting, distributed coordination where needed, and deployment-specific operational evidence.
+Category 20 does not claim autonomous real-world opportunity detection at production scale. Production requires domain-specific signal definitions, source diversity, substantive verification/fact-checking, freshness and reputation policies, longitudinal evidence, calibrated scoring, monitoring/alerting, workload/resource controls, and deployment-specific operational evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–19 are now complete/locked at their defined repository boundaries. **Category 20 — Problem & Opportunity Discovery** is the next planned capability boundary.
+Categories 1–19 are complete/locked at their defined repository boundaries. **Category 20 — Problem & Opportunity Discovery** is the active capability boundary; **Category 21 — Domain Intelligence** follows only after Category 20 passes final verification and is merged.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
