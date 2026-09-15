@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 20 — Problem & Opportunity Discovery is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU can now convert verified research synthesis into bounded, evidence-backed, advisory problem and opportunity candidates while preserving provenance, uncertainty, deterministic ranking, and the existing authority/security boundary.
+**Category 21 — Domain Intelligence is IMPLEMENTED / PENDING FINAL CI + MERGE.** The implementation has been corrected to consume the established `SynthesisResult` contract rather than inventing uncertainty fields on `VerifiedClaim`.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -30,19 +30,21 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 21. Domain Intelligence — IMPLEMENTED / PENDING FINAL CI + MERGE
 
 ## Category 21 Scope
-Category 21 builds bounded domain profiles from verified research claims. It normalizes domain signals, preserves provenance and uncertainty, deterministically ranks signals, extracts domain entities/topics, and enforces input/result bounds without granting authority or executing actions.
+Category 21 builds bounded domain profiles from established verified research synthesis. It normalizes domain signals, preserves evidence provenance and uncertainty, deterministically ranks signals, extracts bounded entities/topics, and never grants authority or executes actions.
 
 ## Category 21 Completion Evidence
-- `DomainIntelligenceEngine` accepts only established `VerifiedClaim` values;
-- raw/unverified claims are rejected at the intelligence boundary;
-- domain names and signal fields are normalized and validated;
+- `DomainIntelligenceEngine` consumes only `SynthesisResult`, preserving the existing verified-claim and contradiction boundary;
+- raw/unverified inputs are rejected rather than silently admitted;
+- synthesis uncertainty is propagated from `SynthesisResult`/`SynthesisSignal`;
+- contradictory synthesis remains high uncertainty and its signals remain capped at 0.49 confidence;
+- malformed synthesis statements are skipped fail-closed rather than converted into invented triples;
 - evidence URLs remain attached to each domain signal;
-- uncertain signals cannot be represented with high confidence;
 - signal counts are bounded by caller and engine limits;
-- deterministic ordering makes domain profiles reproducible;
-- entities and topics are derived only from bounded verified signals;
-- regression coverage verifies verified-only admission, bounds, deterministic ordering, provenance preservation, and input validation;
-- final CI and merge are required before Category 21 becomes COMPLETE / LOCKED.
+- deterministic ordering is used for reproducibility;
+- entities and topics are derived only from bounded synthesized signals;
+- regression tests cover normal synthesis, raw-input rejection, contradictions, bounds, deterministic ordering, malformed signals, provenance, and input validation;
+- the first Category 21 CI run exposed a real contract mismatch: `VerifiedClaim` has no `uncertain` attribute; the implementation was repaired to use the established synthesis uncertainty contract;
+- the repair was additive and did not alter the locked verification boundary.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
@@ -53,7 +55,7 @@ Domain intelligence is analysis, not authority. A domain profile cannot install 
 Category 21 does not claim comprehensive production-grade expertise in arbitrary domains. Production requires domain-specific ontologies, richer entity resolution, temporal modeling, source diversity, substantive verification, calibrated confidence, freshness policy, domain expert evaluation where appropriate, monitoring, and deployment-specific operational evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–20 are complete/locked at their defined repository boundaries. **Category 21 — Domain Intelligence** is the active capability boundary; **Category 22 — Human–DORMAMMU Collaboration** follows only after Category 21 passes final verification and is merged.
+Categories 1–20 are complete/locked at their defined repository boundaries. Category 21 remains active until final CI and merge. **Category 22 — Human–DORMAMMU Collaboration** follows only after Category 21 is verified and merged.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
