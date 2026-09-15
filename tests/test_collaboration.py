@@ -15,7 +15,7 @@ def test_creates_deterministic_reviewable_request():
 def test_request_identity_uses_normalized_bounded_content():
     engine = HumanCollaborationEngine()
     request = engine.create_request(
-        " Research ",
+        " research ",
         " validate this hypothesis ",
         context="  Need human judgment.  ",
         evidence=(" https://example.com/source ", ""),
@@ -27,6 +27,7 @@ def test_request_identity_uses_normalized_bounded_content():
         evidence=("https://example.com/source",),
     )
     assert request == equivalent
+    assert request.scope_id == "research"
 
 
 def test_invalid_evidence_is_rejected_before_identity_is_created():
