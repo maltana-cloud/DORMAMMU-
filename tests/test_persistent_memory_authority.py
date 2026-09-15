@@ -26,7 +26,10 @@ def test_memory_revision_deactivates_previous_version():
     second = MemoryEntry("m2", "scope-a", MemoryKind.SEMANTIC, "provider", "unreliable", (), 0.95, now, revision=2)
     store.remember(first)
     store.revise("m1", second)
-    assert store.recall("scope-a", query="provider") == (second,)
+    recalled = store.recall("scope-a", query="provider")
+    assert len(recalled) == 1
+    assert recalled[0].memory_id == second.memory_id
+    assert recalled[0].supersedes == first.memory_id
     assert store.get("m1").active is False
     store.close()
 
