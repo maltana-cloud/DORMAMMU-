@@ -114,7 +114,7 @@ class Evaluation:
     reasons: tuple[str, ...] = ()
     @property
     def eligible(self) -> bool:
-        return all((self.trust_ok, self.security_ok, self.compatibility_ok, self.performance_ok, self.license_ok, self.cost_ok, self.permission_ok))
+        return self.score >= 0.75 and all((self.trust_ok, self.security_ok, self.compatibility_ok, self.performance_ok, self.license_ok, self.cost_ok, self.permission_ok))
 
 
 @dataclass(frozen=True)
@@ -122,6 +122,15 @@ class DiscoveryResult:
     gap: CapabilityGap
     candidates: tuple[CapabilityDescriptor, ...]
     evaluations: tuple[Evaluation, ...]
+    scout_failures: tuple[str, ...] = ()
+
+    @property
+    def eligible(self) -> tuple[Evaluation, ...]:
+        return tuple(item for item in self.evaluations if item.eligible)
+
+    @property
+    def best(self) -> Evaluation | None:
+        return self.eligible[0] if self.eligible else None
 
 
 class CapabilityScout(Protocol):
