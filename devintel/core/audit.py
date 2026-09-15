@@ -27,6 +27,7 @@ class AuditLog:
             raise ValueError("history_limit must be positive")
         self._records: list[AuditRecord] = []
         self._digests: list[str] = []
+        self._anchor_digest = "GENESIS"
         self._limit = history_limit
         self._lock = RLock()
 
@@ -44,12 +45,13 @@ class AuditLog:
 
     def record(self, entry: AuditRecord) -> AuditRecord:
         with self._lock:
-            previous = self._digests[-1] if self._digests else "GENESIS"
+            previous = self._digests[-1] if self._digests else self._anchor_digest
             digest = hashlib.sha256(self._canonical(entry, previous)).hexdigest()
             self._records.append(entry)
             self._digests.append(digest)
             if len(self._records) > self._limit:
                 removed = len(self._records) - self._limit
+                self._anchor_digest = self._digests[removed - 1]
                 del self._records[:removed]
                 del self._digests[:removed]
         return entry
@@ -59,9 +61,9 @@ class AuditLog:
             return tuple(self._records)
 
     def verify_integrity(self) -> bool:
-        """Verify the current retained history without exposing internal digests."""
+        """Verify the retained history without exposing internal digests."""
         with self._lock:
-            previous = "GENESIS"
+            previous = self._anchor_digest
             for entry, stored in zip(self._records, self._digests):
                 expected = hashlib.sha256(self._canonical(entry, previous)).hexdigest()
                 if expected != stored:
