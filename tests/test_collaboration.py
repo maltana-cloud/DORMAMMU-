@@ -12,7 +12,32 @@ def test_creates_deterministic_reviewable_request():
     assert first.evidence == ("https://example.com/source",)
 
 
-def test_human_response_updates_only_request_status():
+def test_request_identity_uses_normalized_bounded_content():
+    engine = HumanCollaborationEngine()
+    request = engine.create_request(
+        " Research ",
+        " validate this hypothesis ",
+        context="  Need human judgment.  ",
+        evidence=(" https://example.com/source ", ""),
+    )
+    equivalent = engine.create_request(
+        "research",
+        "validate this hypothesis",
+        context="Need human judgment.",
+        evidence=("https://example.com/source",),
+    )
+    assert request == equivalent
+
+
+def test_invalid_evidence_is_rejected_before_identity_is_created():
+    engine = HumanCollaborationEngine()
+    with pytest.raises(TypeError):
+        engine.create_request("scope", "objective", evidence=("valid", 123))
+    with pytest.raises(TypeError):
+        engine.create_request("scope", "objective", evidence="not-a-sequence")
+
+
+def test_human_response_updates_only_pending_request_status():
     engine = HumanCollaborationEngine()
     request = engine.create_request("research", "review finding")
     response = engine.respond(request, "human-1", "Reviewed; proceed to analysis.", accepted=True)
@@ -20,6 +45,9 @@ def test_human_response_updates_only_request_status():
     assert updated.status is CollaborationStatus.ACCEPTED
     assert updated.request_id == request.request_id
     assert updated.objective == request.objective
+
+    with pytest.raises(ValueError):
+        engine.apply_response(updated, response)
 
 
 def test_rejection_is_explicit_and_mismatched_response_fails():
