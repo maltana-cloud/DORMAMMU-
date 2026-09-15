@@ -64,23 +64,25 @@ class OwnerControlCenter:
         owner_approved: bool = False,
         approval: OwnerApproval | None = None,
     ) -> ControlDecision:
+        """Decide a pending command; protected commands require authenticated proof.
+
+        ``owner_approved`` remains accepted in the call signature for source
+        compatibility, but it is no longer an authorization mechanism for
+        protected commands. This creates the migration boundary for callers to
+        move from an untrusted boolean claim to ``OwnerApproval``.
+        """
         with self._lock:
             if command.command_id not in self._pending:
                 return ControlDecision.DENY
         if command.requires_owner_approval:
-            if approval is not None:
-                if self.approval_authority is None:
-                    return ControlDecision.DENY
-                try:
-                    self.approval_authority.verify(command, approval)
-                except Exception:
-                    return ControlDecision.DENY
-                return self.policy.decide(command, owner_approved=True)
-            if owner_approved:
-                # Legacy boolean approval is retained only for compatibility;
-                # protected commands should use authenticated OwnerApproval.
-                return self.policy.decide(command, owner_approved=True)
-        return self.policy.decide(command, owner_approved=owner_approved)
+            if approval is None or self.approval_authority is None:
+                return ControlDecision.DENY
+            try:
+                self.approval_authority.verify(command, approval)
+            except Exception:
+                return ControlDecision.DENY
+            return self.policy.decide(command, owner_approved=True)
+        return self.policy.decide(command, owner_approved=False)
 
     def consume(
         self,
