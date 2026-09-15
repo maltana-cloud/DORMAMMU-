@@ -2,6 +2,7 @@
 
 from .bounded import BoundedOperation, BoundedOperationEngine, OperationResult
 from .telemetry import OperationObservation, OperationalTelemetryStore
+from .worker import BoundedResourceWorker, WorkerOutcome, WorkerRequest
 
 __all__ = [
     "BoundedOperation",
@@ -9,4 +10,7 @@ __all__ = [
     "OperationResult",
     "OperationObservation",
     "OperationalTelemetryStore",
+    "BoundedResourceWorker",
+    "WorkerOutcome",
+    "WorkerRequest",
 ]
