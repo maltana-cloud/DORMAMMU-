@@ -31,6 +31,7 @@ from ..providers.contracts import ProviderCapability
 from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
 from ..providers.live_adapters import configured_live_providers
 from ..providers.registry import ProviderRegistry
+from ..frontier import FrontierControlPlane, FrontierJobStore, FrontierReflection
 
 @dataclass(frozen=True)
 class RuntimeSnapshot:
@@ -43,7 +44,7 @@ class RuntimeSnapshot:
 
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
         if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
@@ -55,7 +56,7 @@ class DORMAMMURuntime:
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
         self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter(); self.creative_creation = CreativeCreationAdapter()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
-        self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
+        self.frontier = FrontierControlPlane(FrontierJobStore(frontier_store_path)); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
 
     def _configure_live_providers(self) -> None:
         gemini, wikipedia = configured_live_providers(); self.register_research_provider(wikipedia.provider_id, wikipedia, priority=1000)
@@ -111,8 +112,10 @@ class DORMAMMURuntime:
     def begin_recovery(self, scope: str, authorization: RecoveryRequest): return self.security.begin_recovery(scope, authorization)
     def restore(self, scope: str, checks: tuple[str, ...]): return self.security.restore(scope, checks)
     def autonomous_cycle_history(self, scope_id: str | None = None, *, limit: int = 100): return self.autonomy_store.history(scope_id, limit=limit)
+    def frontier_submit(self, **kwargs: Any): return self.frontier.submit(**kwargs)
+    def frontier_reflect(self, reflection: FrontierReflection): return self.frontier.reflect(reflection)
     def close(self) -> None:
-        self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close()
+        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")
