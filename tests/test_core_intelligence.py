@@ -99,7 +99,7 @@ def test_runtime_rejects_duplicate_handlers_and_invalid_metrics():
         raise AssertionError("blank metric name was accepted")
 
 
-def test_audit_log_is_bounded():
+def test_audit_log_is_bounded_and_integrity_preserved():
     audit = AuditLog(history_limit=1)
     audit.record(AuditRecord(event="one"))
     audit.record(AuditRecord(event="two"))
@@ -112,3 +112,11 @@ def test_audit_integrity_detects_record_tampering():
     audit.record(AuditRecord(event="one", action="test"))
     audit._records[0] = AuditRecord(event="tampered", action="test")
     assert audit.verify_integrity() is False
+
+
+def test_bounded_audit_integrity_survives_multiple_evictions():
+    audit = AuditLog(history_limit=2)
+    for index in range(10):
+        audit.record(AuditRecord(event=f"event-{index}"))
+    assert [record.event for record in audit.history()] == ["event-8", "event-9"]
+    assert audit.verify_integrity() is True
