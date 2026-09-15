@@ -3,14 +3,13 @@ from __future__ import annotations
 
 from hashlib import sha256
 from threading import RLock
-from typing import Callable, Iterable
+from typing import Callable
 
 from devintel.core.audit import AuditLog, AuditRecord
 from devintel.core.contracts import ActionRequest
 from devintel.core.permissions import PermissionDenied, PermissionPolicy
 
 from .contracts import ActionOutcome, ActionSpec, ActionProvider, ActionStatus
-
 
 Verifier = Callable[[ActionSpec, ActionOutcome], bool]
 
@@ -52,8 +51,7 @@ class ActionExecutor:
     """Execute explicit actions only after permission and provider checks.
 
     Idempotency is process-local and scoped to the executor instance. Providers
-    must still make their external side effects idempotent when the platform
-    supports retries or process recovery.
+    must still make external side effects idempotent across process recovery.
     """
 
     def __init__(self, registry: ActionRegistry, *, permissions: PermissionPolicy | None = None,
@@ -87,7 +85,9 @@ class ActionExecutor:
 
         providers = self.registry.providers(spec.capability)
         if not providers:
-            return ActionOutcome(spec.action_id, spec.capability, ActionStatus.UNAVAILABLE, message="no provider available")
+            outcome = ActionOutcome(spec.action_id, spec.capability, ActionStatus.UNAVAILABLE, message="no provider available")
+            self.audit.record(AuditRecord("action.unavailable", action=spec.action_id, success=False, details={"scope": spec.scope_id}))
+            return outcome
 
         if spec.dry_run:
             outcome = ActionOutcome(spec.action_id, spec.capability, ActionStatus.DRY_RUN, message="dry-run: no external side effect")
@@ -105,16 +105,24 @@ class ActionExecutor:
                     raise TypeError("provider returned invalid ActionOutcome")
                 if outcome.action_id != spec.action_id or outcome.capability != spec.capability:
                     raise ValueError("provider returned mismatched action")
-                if outcome.status is ActionStatus.SUCCEEDED:
+                if outcome.status is not ActionStatus.SUCCEEDED:
+                    last_error = outcome.message or "provider reported failure"
+                    continue
+
+                try:
                     verified = bool(self.verifier(spec, outcome)) if self.verifier else False
-                    outcome = ActionOutcome(outcome.action_id, outcome.capability, outcome.status, outcome.provider_id,
-                                            outcome.message, outcome.data, verified, outcome.observed_at)
-                    with self._lock:
-                        self._completed[key] = outcome
-                    self.audit.record(AuditRecord("action.completed", action=spec.action_id, success=True,
-                                                   details={"scope": spec.scope_id, "provider": outcome.provider_id, "verified": verified}))
-                    return outcome
-                last_error = outcome.message or "provider reported failure"
+                except Exception as exc:
+                    verified = False
+                    self.audit.record(AuditRecord("action.verification_failed", action=spec.action_id, success=False,
+                                                   details={"scope": spec.scope_id, "provider": outcome.provider_id,
+                                                            "reason": str(exc) or exc.__class__.__name__}))
+                outcome = ActionOutcome(outcome.action_id, outcome.capability, outcome.status, outcome.provider_id,
+                                        outcome.message, outcome.data, verified, outcome.observed_at)
+                with self._lock:
+                    self._completed[key] = outcome
+                self.audit.record(AuditRecord("action.completed", action=spec.action_id, success=True,
+                                               details={"scope": spec.scope_id, "provider": outcome.provider_id, "verified": verified}))
+                return outcome
             except Exception as exc:
                 last_error = str(exc) or exc.__class__.__name__
                 continue
