@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Ω.1 — BOUNDED DISTRIBUTED MISSION COORDINATION — COMPLETE / LOCKED.** DORMAMMU now has an atomic worker-ownership boundary for its durable mission system, allowing multiple workers/processes to coordinate mission claims without creating a new authority path.
+**Ω.2 — INTEGRATED FRONTIER CONTROL PLANE — IMPLEMENTED / TESTING.** The first connected repository-level implementation for the five frontier areas is now on the engineering branch: durable work queueing, finite worker leases, bounded retry/dead-letter handling, scope-bound resource budgets, opaque credential references, and evidence-backed reflection storage. These primitives extend existing mission, provider, capability, action, telemetry, knowledge, and evolution boundaries without creating a new authority path.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -9,35 +9,40 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 ## Category Status
 1–27. COMPLETE / LOCKED
 Ω.1. BOUNDED DISTRIBUTED MISSION COORDINATION — COMPLETE / LOCKED
-Ω. Unknown Frontier — remains open-ended
+Ω.2. INTEGRATED FRONTIER CONTROL PLANE — IMPLEMENTED / TESTING
+Ω. Unknown Frontier — remains open
 
-## Ω.1 — Bounded Distributed Mission Coordination
-The durable mission runner previously persisted checkpoints and bounded external execution, but did not provide atomic worker ownership. Ω.1 adds SQLite-backed leases directly to the existing mission boundary: a worker can atomically claim a due mission with a finite TTL, renew an owned lease, and complete/fail only while holding the lease. Expired leases can be taken over by another worker. Existing databases are migrated additively.
+## Ω.2 — Integrated Frontier Control Plane
+The repository already contained bounded capability acquisition, provider routing/fallback, real-world action execution, durable mission coordination, operational telemetry, knowledge synthesis, and controlled evolution. The verified remaining cross-cutting gap was a durable control-plane layer connecting those boundaries to stronger worker scheduling, retry isolation, resource budgeting, credential indirection, and outcome reflection.
 
-### Completion Evidence
-- atomic worker-aware mission claims use conditional SQLite updates;
-- lease expiry permits bounded takeover of abandoned work;
-- lease renewal requires active ownership;
-- checkpoint and failure completion require the owning worker when leased;
-- completion/failure clears the lease so the next mission state is unowned;
-- existing non-worker `MissionRunner` behavior remains backward compatible;
-- `MissionRunPolicy` adds an optional positive lease TTL without creating implicit background execution;
-- migration adds lease columns to existing mission databases without resetting mission data;
-- regression tests cover multi-worker exclusion, expiry takeover, stale-worker rejection, worker/TTL validation, and existing mission behavior;
-- PR #90 was merged as squash commit `5ca981b8fc0cab0b008d6459308883430f807648`;
-- feature-head CI run **#1209** passed successfully;
-- post-merge main CI run **#1210** reached the full `Run tests` step successfully; the workflow was still completing its runner cleanup when checked.
+### Implemented
+- `devintel/frontier/control.py` provides a durable SQLite queue with deterministic priority ordering;
+- atomic worker claims with finite leases and expiry takeover;
+- live-lease enforcement on completion so expired/stale workers cannot finalize work;
+- bounded retry counts with explicit terminal dead-letter state;
+- scope-bound resource budgets with atomic reserve/release operations;
+- opaque provider credential references and a host-owned resolver protocol; secret material is not stored by this layer;
+- deterministic, deduplicated reflection records carrying outcome, evidence references, lessons, and uncertainty;
+- `FrontierControlPlane` provides a small facade for queue submission, credential-reference creation, and reflection recording;
+- regression coverage covers credential validation, worker exclusion/takeover, stale-worker rejection, bounded retries, resource budgets, deterministic reflections, and facade behavior.
+
+### Architectural relationship to the five frontier areas
+1. **Real external-world capability:** credential references create the missing secret-indirection boundary while existing action/provider permission and verification systems remain authoritative. Actual OAuth/token/session acquisition remains host/provider infrastructure and requires real credentials.
+2. **Distributed production infrastructure:** the queue, atomic leases, expiry recovery, retries, and dead-letter boundary provide the repository-level scheduling primitive. Multi-host production proof still requires deployment evidence and an appropriate database/queue topology.
+3. **Capability/provider ecosystem:** the existing capability acquisition lifecycle remains authoritative; the new layer supplies durable work/resource coordination rather than automatic installation or authorization.
+4. **Long-term autonomous intelligence:** reflection persistence creates a durable outcome/lesson boundary with evidence and uncertainty; it does not autonomously rewrite protected code, security, or authority surfaces.
+5. **Production proof:** the new tests exercise failure boundaries locally. Real external providers, credentials, multi-host operation, load/failure injection, monitoring, backup/restore, canary deployment, and rollback still require authorized environments.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Ω.1 is coordination, not authority. A lease does not grant permissions, credentials, capabilities, spending, external access, or security authority. Existing permission, security, provenance, audit, recovery, action, discovery, runtime, and evolution boundaries remain authoritative.
+Ω.2 adds coordination and evidence storage only. A worker lease, resource budget, credential reference, queue item, or reflection record does not grant permissions, credentials, capability activation, spending, external access, or owner/security authority. Credential values are deliberately outside this layer.
 
 ## Production Boundary
-Ω.1 does **not** claim production-grade distributed scheduling. It establishes the repository-level atomic ownership contract needed by future workers. Production deployment still requires real multi-process/multi-host operational evidence, failure-injection testing, database topology validation, monitoring, and authorized deployment conditions.
+**Production readiness remains NOT_CLAIMED.** Repository-level engineering is being advanced, but external credentials, OAuth/session providers, production multi-host scheduling, heterogeneous compute, live communication/distribution, operational monitoring, backup/restore, and real-world failure/load evidence cannot be fabricated by repository code or unit tests.
+
+## Verification
+The feature branch must pass the complete repository CI suite before Ω.2 can be marked COMPLETE / LOCKED. Any CI failure is a blocker to the checkpoint and must be repaired before merge.
 
 ## Next Boundary
-**Ω — Unknown Frontier remains open.** Ω.1 is the first selected frontier capability, not a declaration that DORMAMMU has reached a final form. The next frontier must again be selected from verified repository gaps, user value, dependencies, security, resources, and architectural leverage.
-
-## Handoff Rule
-Every AI working on DORMAMMU must verify the repository itself, preserve this truthful checkpoint, and build forward from the repository rather than treating prior chat history as authoritative.
+After CI, inspect the integrated repository again and continue the Ω frontier rather than assuming the five areas are exhausted. The next capability must be selected from verified remaining gaps and external operational blockers.
