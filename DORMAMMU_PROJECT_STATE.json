@@ -3,12 +3,13 @@
   "project":"DORMAMMU",
   "repository":"maltana-cloud/DORMAMMU-",
   "branch":"main",
-  "checkpoint_commit":"8c3cbe914ba05fd758c77a4fb0488ad493c681ba",
+  "checkpoint_commit":"4823411060d0e10075dd68f81bc04ea80ae5488a",
   "verification":{
     "repository_state_checked":true,
-    "active_work":"Ω frontier active; persistent memory, dynamic authority, and runtime cognition integrated and verified",
-    "ci_status":"Ω.3 feature CI passed; production readiness remains unclaimed",
+    "active_work":"Ω frontier active; persistent memory, dynamic authority, runtime cognition integrated and verified; canonical future-capability authority boundary documented",
+    "ci_status":"Ω.3 feature CI passed; latest documentation-only checkpoint requires CI verification; production readiness remains unclaimed",
     "truth_rule":"Implementation claims require code, meaningful tests, integration evidence, and successful CI; production readiness requires capability-appropriate operational evidence.",
+    "requirement_truth_ladder":["REQUIREMENT","ARCHITECTURAL DESIGN","IMPLEMENTED","TESTED","PRODUCTION VERIFIED"],
     "engineering_control_plane":"DORMAMMU_ENGINEERING_MAP.md",
     "capability_matrix":"DORMAMMU_CAPABILITY_MATRIX.md"
   },
@@ -20,7 +21,13 @@
     "omega_2_integrated_frontier_control_plane":{"status":"COMPLETE_LOCKED","pull_request":91,"merge_commit":"22b03ec885361eb2a8cecf87d70fa52426ddb483"},
     "omega_3_persistent_memory_dynamic_authority_runtime_cognition":{"status":"COMPLETE_LOCKED","pull_requests":[92,93],"merge_commits":["102a0025c0487ed1dade618da06c95b86020fbf5","8c3cbe914ba05fd758c77a4fb0488ad493c681ba"],"scope":["durable evidence-aware persistent memory","dynamic owner-controlled revocable authority","runtime cognition and learning integration","runtime persistence APIs"],"boundary":"Memory is data, not authority. Authority is live policy and can be changed or revoked without rebuilding the system. External credentials, accounts, OAuth sessions, and production deployment remain external operational concerns."}
   },
+  "future_capability_authority":{
+    "status":"REQUIREMENT_AND_ARCHITECTURAL_DESIGN",
+    "principles":["persistent memory is core continuity","owner authority is dynamic and revocable","live permission is checked at execution time","discovering a need does not grant authority","historical memory is not current authority","future capabilities use the existing capability/permission/security/verification/audit boundary","no parallel authority paths"],
+    "examples":["email/account creation and management","email sending","public publishing","external communication","website management","deployments","service registration","financial/business operations","unknown future capabilities"],
+    "note":"These future capabilities are not claimed as implemented merely because their architectural boundary is documented. Each capability must progress through the requirement truth ladder independently."
+  },
   "production_readiness":"NOT_CLAIMED",
   "next_execution_target":{"name":"Ω Unknown Frontier","status":"OPEN","selection_rule":"Re-audit the merged repository and select the next capability from verified gaps, user value, dependencies, security, resources, and architectural leverage. Preserve all locked boundaries."},
-  "resume_instruction":"Continue from actual main repository state. Categories 1-27 and Ω.1-Ω.3 are locked. Ω remains open-ended. Never claim external integration or production readiness without evidence."
+  "resume_instruction":"Continue from actual main repository state. Categories 1-27 and Ω.1-Ω.3 are locked. Ω remains open-ended. Never claim external integration or production readiness without evidence. Treat future-capability authority requirements as architectural constraints, not implemented external integrations."
 }
