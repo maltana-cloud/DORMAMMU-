@@ -26,6 +26,7 @@ def test_discovery_evaluates_free_and_paid_policy():
     assert len(result.candidates) == 2
     assert result.evaluations[0].eligible
     assert not result.evaluations[1].eligible
+    assert result.best is result.evaluations[0]
 
 
 def test_unprovenanced_candidate_fails_closed():
@@ -37,6 +38,30 @@ def test_unprovenanced_candidate_fails_closed():
     result = engine.discover(CapabilityRequirement("research.search", "find sources", ("research",)))
     assert not result.evaluations[0].eligible
     assert "trust check failed" in result.evaluations[0].reasons
+
+
+def test_scout_failure_is_isolated():
+    class BrokenScout:
+        def discover(self, requirement):
+            raise RuntimeError("provider unavailable")
+    engine = CapabilityDiscovery(evaluator=DefaultEvaluator(policy()))
+    engine.add_scout(BrokenScout())
+    engine.add_scout(Scout())
+    result = engine.discover(CapabilityRequirement("research.search", "find sources", ("research",)))
+    assert len(result.candidates) == 2
+    assert result.scout_failures == ("scout:0:RuntimeError",)
+
+
+def test_discovery_uses_configured_minimum_score():
+    class PartiallyValidScout:
+        def discover(self, requirement):
+            evidence = (CapabilityEvidence("catalog", "2026-09-14T00:00:00+00:00", "trusted-catalog", "https://catalog.example/capabilities/search", "0123456789abcdef"),)
+            return [CapabilityDescriptor("partial", "Partial", "1", ("research",), "trusted", "MIT", permissions=("approved",), metadata={"performance": "poor"}, evidence=evidence)]
+    engine = CapabilityDiscovery(evaluator=DefaultEvaluator(DiscoveryPolicy(minimum_score=0.9, trusted_evidence_sources=("catalog",))))
+    engine.add_scout(PartiallyValidScout())
+    result = engine.discover(CapabilityRequirement("research.search", "find sources", ("research",)))
+    assert result.best is None
+    assert "minimum score check failed" in result.evaluations[0].reasons
 
 
 def test_registration_requires_all_gates():
