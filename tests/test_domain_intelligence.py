@@ -1,6 +1,6 @@
 from devintel.intelligence.domain import DomainIntelligenceEngine
 from devintel.modules.research.knowledge import Claim
-from devintel.modules.research.synthesis import KnowledgeSynthesisEngine, VerifiedClaim
+from devintel.modules.research.synthesis import KnowledgeSynthesisEngine, SynthesisResult, SynthesisSignal, VerifiedClaim
 from devintel.modules.research.verification import VerificationResult
 
 
@@ -13,10 +13,7 @@ def verified(subject, predicate, object_value, confidence=0.9):
 def test_builds_bounded_domain_profile_from_synthesis():
     synthesis = KnowledgeSynthesisEngine().synthesize(
         "developer tooling",
-        [
-            verified("Developers", "need", "faster feedback", 0.9),
-            verified("Teams", "use", "automated testing", 0.8),
-        ],
+        [verified("Developers", "need", "faster feedback", 0.9), verified("Teams", "use", "automated testing", 0.8)],
     )
     result = DomainIntelligenceEngine().build("developer tooling", synthesis)
     assert result.domain == "developer tooling"
@@ -40,10 +37,7 @@ def test_rejects_unverified_raw_claims_and_non_synthesis_input():
 def test_contradictions_remain_uncertain():
     synthesis = KnowledgeSynthesisEngine().synthesize(
         "market",
-        [
-            verified("Users", "need", "automation", 0.9),
-            verified("Users", "need", "manual workflows", 0.9),
-        ],
+        [verified("Users", "need", "automation", 0.9), verified("Users", "need", "manual workflows", 0.9)],
     )
     result = DomainIntelligenceEngine().build("market", synthesis)
     assert result.uncertainty.startswith("high:")
@@ -54,18 +48,18 @@ def test_contradictions_remain_uncertain():
 def test_bounds_and_deterministically_orders_signals():
     synthesis = KnowledgeSynthesisEngine().synthesize(
         "tools",
-        [
-            verified("Zed", "uses", "B", 0.7),
-            verified("Ada", "uses", "C", 0.9),
-            verified("Ada", "needs", "A", 0.9),
-        ],
+        [verified("Zed", "uses", "B", 0.7), verified("Ada", "uses", "C", 0.9), verified("Ada", "needs", "A", 0.9)],
     )
     result = DomainIntelligenceEngine(max_signals=2).build("tools", synthesis, limit=2)
     assert len(result.signals) == 2
-    assert [(x.subject, x.predicate, x.object) for x in result.signals] == [
-        ("Ada", "needs", "A"),
-        ("Ada", "uses", "C"),
-    ]
+    assert [(x.subject, x.predicate, x.object) for x in result.signals] == [("Ada", "needs", "A"), ("Ada", "uses", "C")]
+
+
+def test_skips_malformed_synthesis_signals_fail_closed():
+    synthesis = SynthesisResult("tools", (SynthesisSignal("malformed", 0.9, (), False),), (), 0, "bounded")
+    result = DomainIntelligenceEngine().build("tools", synthesis)
+    assert result.signals == ()
+    assert result.uncertainty.startswith("high:")
 
 
 def test_validates_domain_and_limit():
