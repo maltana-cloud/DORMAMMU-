@@ -55,15 +55,15 @@ class BoundedResourceWorker:
             raise PermissionError("worker capability does not match admitted plan")
         if not scope_id.strip():
             raise ValueError("scope_id is required")
-        if self.runtime is not None:
-            authority = self.runtime.authority(scope_id, request.capability_id)
-            if authority is AuthorityMode.DENIED:
-                raise PermissionError("worker capability is denied by runtime authority")
-            if authority is AuthorityMode.APPROVAL_REQUIRED and not owner_approved:
-                raise PermissionError("worker capability requires explicit owner approval")
-            self.runtime.context.events.publish(Event("worker.requested", {"operation_id": request.operation_id, "capability_id": request.capability_id, "scope_id": scope_id}))
         started = perf_counter()
         try:
+            if self.runtime is not None:
+                authority = self.runtime.authority(scope_id, request.capability_id)
+                if authority is AuthorityMode.DENIED:
+                    raise PermissionError("worker capability is denied by runtime authority")
+                if authority is AuthorityMode.APPROVAL_REQUIRED and not owner_approved:
+                    raise PermissionError("worker capability requires explicit owner approval")
+                self.runtime.context.events.publish(Event("worker.requested", {"operation_id": request.operation_id, "capability_id": request.capability_id, "scope_id": scope_id}))
             outcome = worker(request)
             if not isinstance(outcome, WorkerOutcome):
                 raise TypeError("worker returned invalid WorkerOutcome")
