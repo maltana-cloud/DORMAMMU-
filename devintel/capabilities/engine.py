@@ -1,19 +1,24 @@
-"""Unified, read-only capability and resource discovery orchestration.
+"""Unified, bounded capability/resource discovery and safe admission orchestration.
 
 This module connects local inventory, explicitly trusted external capability
-sources, capability evaluation, and resource registration without granting
-authority, installing software, acquiring credentials, or spending money.
+sources, capability evaluation, resource registration, approval, lifecycle,
+and canary controls without granting authority, installing software, acquiring
+credentials, or spending money.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .contracts import CapabilityRequirement, DiscoveryResult, ResourceKind
+from .acquisition import AcquisitionPlan, CapabilityAcquisition
+from .canary import CanaryDecision, CanaryHealth, CanaryPolicy
+from .contracts import CapabilityDescriptor, CapabilityRequirement, ResourceKind
 from .discovery import CapabilityDiscovery, DefaultEvaluator, DiscoveryPolicy
 from .inventory import local_capabilities, local_resources
+from .lifecycle import CapabilityLifecycle
 from .registry import CapabilityRegistry, ResourceRegistry
 from .resources import ResourceDecision, ResourceManager, ResourceRequest
 from .sources import CapabilitySourceConfig, ConfiguredCapabilitySource
+from .store import LifecycleStore
 
 
 @dataclass(frozen=True)
@@ -35,6 +40,8 @@ class CapabilityResourceDiscoveryEngine:
         resource_registry: ResourceRegistry | None = None,
         discovery_policy: DiscoveryPolicy | None = None,
         max_resources: int = 512,
+        lifecycle_store: LifecycleStore | None = None,
+        canary_policy: CanaryPolicy | None = None,
     ) -> None:
         self.capability_registry = capability_registry or CapabilityRegistry()
         self.resource_registry = resource_registry or ResourceRegistry(max_resources)
@@ -44,6 +51,13 @@ class CapabilityResourceDiscoveryEngine:
             evaluator=DefaultEvaluator(self.discovery_policy),
         )
         self.resource_manager = ResourceManager(self.resource_registry)
+        self.lifecycle_store = lifecycle_store
+        self.lifecycle = CapabilityLifecycle(
+            self.capability_registry,
+            recorder=self.lifecycle_store.record if self.lifecycle_store else None,
+        )
+        self.acquisition = CapabilityAcquisition(self.discovery, self.lifecycle)
+        self.canary_policy = canary_policy or CanaryPolicy()
         self._source_ids: list[str] = []
 
     def refresh_local_inventory(self) -> DiscoverySnapshot:
@@ -60,9 +74,28 @@ class CapabilityResourceDiscoveryEngine:
         if config.source_id not in self._source_ids:
             self._source_ids.append(config.source_id)
 
-    def discover(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> DiscoveryResult:
+    def discover(self, requirement: CapabilityRequirement, gap_id: str | None = None):
         """Discover candidates through all configured scouts; no candidate is auto-activated."""
         return self.discovery.discover(requirement, gap_id)
+
+    def plan_acquisition(self, requirement: CapabilityRequirement, gap_id: str | None = None) -> AcquisitionPlan:
+        """Build an auditable admission plan; this has no side effects beyond gap recording."""
+        return self.acquisition.plan(requirement, gap_id=gap_id)
+
+    def approve_and_register(self, plan: AcquisitionPlan, *, owner_approved: bool = False) -> CapabilityDescriptor:
+        """Admit a selected capability only after explicit owner approval."""
+        return self.acquisition.approve_and_register(plan, owner_approved=owner_approved)
+
+    def enter_canary(self, capability_id: str) -> CapabilityDescriptor:
+        return self.acquisition.enter_canary(capability_id)
+
+    def evaluate_canary(self, capability_id: str, health: CanaryHealth) -> CanaryDecision:
+        from .canary import CanaryMonitor
+        return CanaryMonitor(self.lifecycle, self.canary_policy).evaluate(capability_id, health)
+
+    def fallback(self, plan: AcquisitionPlan, failed_capability_id: str):
+        """Return the next already-evaluated eligible candidate without activating it."""
+        return self.acquisition.fallback_plan(plan, failed_capability_id)
 
     def snapshot(self) -> DiscoverySnapshot:
         return DiscoverySnapshot(
@@ -82,3 +115,5 @@ class CapabilityResourceDiscoveryEngine:
 
     def close(self) -> None:
         self.resource_manager.close()
+        if self.lifecycle_store:
+            self.lifecycle_store.close()
