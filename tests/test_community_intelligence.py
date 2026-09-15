@@ -1,4 +1,4 @@
-from devintel.modules.community import CommunityContent, CommunityIntelligence, CommunityMember, CommunityPolicy, CommunityRuntimeAdapter, CommunitySubsystemIntegration, ContentKind, MemberKind, SignalKind
+from devintel.modules.community import CommunityContent, CommunityIntelligence, CommunityMember, CommunityPolicy, CommunityRuntimeAdapter, CommunitySignal, CommunitySubsystemIntegration, ContentKind, MemberKind, SignalKind
 
 def sample():
     members = (CommunityMember("u1", MemberKind.PERSON, "A", True), CommunityMember("u2", MemberKind.PERSON, "B"))
@@ -17,14 +17,13 @@ def test_unknown_author_fails_closed():
     except ValueError as exc: assert "author" in str(exc)
     else: raise AssertionError("unknown author must fail")
 
-def test_policy_requires_authorized_owner_for_publication():
-    members, content = sample(); engine = CommunityIntelligence(); signal = engine.analyze(engine.observe("c", members, content))[0]; policy = CommunityPolicy()
+def test_policy_requires_authorized_owner_and_platform_for_publication():
+    signal = CommunitySignal("c", "x", SignalKind.QUESTION, "question", 0.9, 0.9, ("source:x",)); policy = CommunityPolicy()
     assert not policy.evaluate(signal, publish=True).allowed
     assert not policy.evaluate(signal, publish=True, platform_authorized=True).allowed
     assert policy.evaluate(signal, publish=True, platform_authorized=True, owner_approved=True).allowed
 
 def test_risk_without_evidence_is_rejected():
-    from devintel.modules.community import CommunitySignal
     assert not CommunityPolicy().evaluate(CommunitySignal("c", "x", SignalKind.RISK, "risk", 1.0, 1.0, ())).allowed
 
 def test_store_persists_content_addressed_plan():
