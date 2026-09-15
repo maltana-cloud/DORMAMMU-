@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Ω.2 — INTEGRATED FRONTIER CONTROL PLANE — COMPLETE / LOCKED.** The repository now has a connected, bounded control-plane layer for durable frontier work, worker leases, retry/dead-letter isolation, scope-bound resource budgets, opaque credential references, and evidence-backed reflection. The control plane is integrated into the DORMAMMU composition root and preserves existing mission, provider, capability, action, telemetry, knowledge, and evolution boundaries.
+**Ω — CONTINUOUS FRONTIER — ACTIVE.** Categories 1–27 and Ω.1–Ω.2 remain locked. The latest frontier work adds durable persistent memory, dynamic owner authority, and runtime cognition integration on top of the existing execution, mission, provider, capability, action, telemetry, knowledge, discovery, and evolution foundations.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -10,42 +10,35 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 1–27. COMPLETE / LOCKED
 Ω.1. BOUNDED DISTRIBUTED MISSION COORDINATION — COMPLETE / LOCKED
 Ω.2. INTEGRATED FRONTIER CONTROL PLANE — COMPLETE / LOCKED
+Ω.3. PERSISTENT MEMORY + DYNAMIC AUTHORITY + RUNTIME COGNITION — IMPLEMENTED / VERIFIED
 Ω. Unknown Frontier — remains open
 
-## Ω.2 — Integrated Frontier Control Plane
-Implemented in `devintel/frontier/control.py` and composed by `devintel/runtime/app.py`.
+## Ω.3 — Persistent Memory, Dynamic Authority, Runtime Cognition
+Implemented and integrated:
+- `devintel/memory/store.py` provides durable scoped memory with episodic, semantic, procedural, entity, mission, and reflection kinds;
+- memory preserves evidence references, confidence, timestamps, expiry, revisions, supersession, active state, deterministic identity, bounded retrieval, and scope isolation;
+- `devintel/control/authority.py` provides owner-controlled capability rules with DENIED, APPROVAL_REQUIRED, and ALLOWED modes, versioning, optional expiry, fail-closed defaults, and durable revocation;
+- runtime exposes persistent memory and authority stores and APIs;
+- runtime restores bounded natural-language goal interpretation, outcome-aware specialist routing, durable learning-store lifecycle, and owner control-center composition that had remained stranded in an obsolete pre-Ω branch;
+- runtime tests cover memory/authority persistence, expiry, revision/revocation, and cognition integration;
+- feature CI passed for the final Ω.3 integration commit;
+- PR **#92** added the memory/authority foundations and was merged as `102a0025c0487ed1dade618da06c95b86020fbf5`;
+- PR **#93** integrated them with runtime cognition and was merged as `8c3cbe914ba05fd758c77a4fb0488ad493c681ba`;
+- the superseded PR **#60** was closed after its verified runtime-cognition work was incorporated forward on current `main`.
 
-### Completion Evidence
-- durable SQLite frontier queue with deterministic priority ordering;
-- atomic worker claims with finite leases and expiry takeover;
-- live-lease enforcement prevents expired/stale workers from finalizing work;
-- bounded retries terminate in explicit dead-letter state;
-- expired work at its attempt limit is dead-lettered during recovery;
-- scope-bound resource budgets use atomic reservation/release operations;
-- opaque provider credential references define a host-owned resolution boundary without storing secret values;
-- deterministic, deduplicated evidence-backed reflection records persist outcomes, lessons, and uncertainty;
-- runtime composition root exposes the frontier control plane and supports a configurable durable store path while retaining memory-only defaults;
-- integration coverage verifies runtime composition, persistence across runtime instances, job completion, and reflection persistence;
-- feature CI run **#1228** passed completely, including the full repository `Run tests` step and job cleanup;
-- PR **#91** was merged as squash commit `22b03ec885361eb2a8cecf87d70fa52426ddb483`.
-
-## Architectural Relationship to the Five Frontier Areas
-1. **Real external-world capability:** credential references provide secret indirection while existing action/provider permission and verification remain authoritative. Actual OAuth/token/session acquisition still requires host/provider infrastructure and real credentials.
-2. **Distributed production infrastructure:** queueing, leases, retry isolation, dead-lettering, and resource budgets provide repository-level primitives. Multi-host production requires an appropriate database/queue topology and operational evidence.
-3. **Capability/provider ecosystem:** existing capability discovery/acquisition/lifecycle remains authoritative; this layer coordinates durable work without automatic installation or authorization.
-4. **Long-term autonomous intelligence:** reflection persistence provides a durable outcome/lesson boundary with evidence and uncertainty; it does not autonomously rewrite protected code, security, or authority surfaces.
-5. **Production proof:** local CI proves repository behavior only. Real providers/credentials, multi-host operation, heterogeneous compute, live communication/distribution, monitoring, backup/restore, load/failure testing, canary deployment, and rollback evidence require authorized operational environments.
+## Architecture
+Persistent memory is data, not authority. Authority is live policy, not memory. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries. Owner policy can be changed, expired, or revoked after deployment without rebuilding DORMAMMU.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
 
-Ω.2 adds coordination and evidence storage only. A worker lease, resource budget, credential reference, queue item, or reflection record does not grant permissions, credentials, capability activation, spending, external access, or owner/security authority.
+Memory entries, learning records, leases, resource budgets, queue items, provider references, and authority rules do not by themselves grant credentials or unrestricted execution.
 
 ## Production Boundary
-**Production readiness remains NOT_CLAIMED.** Repository-side engineering is implemented and verified, but external operational evidence has not been fabricated or implied.
+**Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, and rollback evidence require authorized operational environments.
 
 ## Next Boundary
-**Ω — Unknown Frontier remains open.** Re-audit the merged repository and select the next capability from verified remaining gaps, user value, dependencies, security, resources, and architectural leverage. Do not treat Ω.2 as the end of DORMAMMU's development.
+**Ω — Unknown Frontier remains open.** Continue from the merged repository state. Re-audit actual implementation and select the next highest-leverage repository-solvable gap. Do not restart locked foundations or fabricate external operational proof.
 
 ## Handoff Rule
-Every AI working on DORMAMMU must verify the repository itself, preserve this truthful checkpoint, and build forward from the repository rather than treating prior chat history as authoritative.
+Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, and build forward from the repository rather than treating prior chat history as authoritative.
