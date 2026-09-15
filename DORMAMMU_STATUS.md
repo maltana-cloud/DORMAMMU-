@@ -1,10 +1,15 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Ω — CONTINUOUS FRONTIER — ACTIVE.** Categories 1–27 and Ω.1–Ω.2 remain locked. The latest frontier work adds durable persistent memory, dynamic owner authority, and runtime cognition integration on top of the existing execution, mission, provider, capability, action, telemetry, knowledge, discovery, and evolution foundations.
+**Ω — CONTINUOUS FRONTIER — ACTIVE.** Categories 1–27 and Ω.1–Ω.2 remain locked. Ω.3 persistent memory + dynamic owner authority + runtime cognition remain implemented/verified. The canonical architecture has now been explicitly extended to preserve continuous memory, dynamic owner authority, and a reusable authority boundary for future capabilities.
 
 ## Truth Rule
-Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
+Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence. Requirements and designs must not be represented as implemented or production verified merely because they are documented.
+
+## Requirement Truth Ladder
+`REQUIREMENT → ARCHITECTURAL DESIGN → IMPLEMENTED → TESTED → PRODUCTION VERIFIED`
+
+This ladder is the canonical distinction between planned capability, architecture, implementation, testing, and operational proof.
 
 ## Category Status
 1–27. COMPLETE / LOCKED
@@ -26,6 +31,16 @@ Implemented and integrated:
 - PR **#93** integrated them with runtime cognition and was merged as `8c3cbe914ba05fd758c77a4fb0488ad493c681ba`;
 - the superseded PR **#60** was closed after its verified runtime-cognition work was incorporated forward on current `main`.
 
+## Canonical Future-Capability Boundary
+DORMAMMU's authority is dynamic, owner-controlled, revocable, and extensible. Owner policy can be changed, restricted, placed behind approval, expired, or revoked after deployment without rebuilding DORMAMMU.
+
+Future capabilities — including, where later authorized and safely implemented, email/account creation and management, email sending, public publishing, external communication, website management, deployments, service registration, financial/business operations, and capabilities not yet known — must use the same capability, permission, security, verification, and audit boundaries. No future capability may create a parallel authority path.
+
+The governing flow is:
+`DISCOVER NEED → DEFINE CAPABILITY → EVALUATE → REGISTER/IMPLEMENT → REQUEST AUTHORITY → LIVE PERMISSION CHECK → SECURITY CHECK → EXECUTE → VERIFY → RECORD`
+
+Discovering a need or capability does not grant authority. Historical memory is not current authority. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries.
+
 ## Architecture
 Persistent memory is data, not authority. Authority is live policy, not memory. Capability discovery, provider identity, credentials, permissions, action execution, and owner authority remain separate boundaries. Owner policy can be changed, expired, or revoked after deployment without rebuilding DORMAMMU.
 
@@ -37,8 +52,11 @@ Memory entries, learning records, leases, resource budgets, queue items, provide
 ## Production Boundary
 **Production readiness remains NOT_CLAIMED.** Repository CI proves repository behavior only. Real external accounts/credentials/OAuth sessions, third-party integrations, multi-host deployment, live communication, monitoring, backup/restore, load/failure evidence, heterogeneous compute, canary deployment, and rollback evidence require authorized operational environments.
 
+## Documentation Checkpoint
+The canonical architecture was updated to make the future-capability and dynamic-authority requirements explicit in `DORMAMMU_CHARTER.md` and `DORMAMMU_PROJECT_CHARTER.md`. These documentation changes establish requirements and architectural constraints; they do not falsely claim the future external capabilities are implemented.
+
 ## Next Boundary
 **Ω — Unknown Frontier remains open.** Continue from the merged repository state. Re-audit actual implementation and select the next highest-leverage repository-solvable gap. Do not restart locked foundations or fabricate external operational proof.
 
 ## Handoff Rule
-Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, and build forward from the repository rather than treating prior chat history as authoritative.
+Every AI working on DORMAMMU must verify the repository itself, preserve truthful checkpoints, distinguish requirement/design/implementation/test/production evidence, and build forward from the repository rather than treating prior chat history as authoritative.
