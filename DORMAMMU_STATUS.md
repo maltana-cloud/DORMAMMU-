@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 11 — Economic & Business Intelligence is COMPLETE / LOCKED at the repository architecture level.** It provides bounded opportunity analysis, evidence-aware business planning, deterministic plan comparison, durable advisory-plan persistence, runtime telemetry integration, and fail-closed financial authority policy.
+**Category 12 — Owner & Platform Security is COMPLETE / LOCKED at the repository architecture level.** Owner-control authorization now has a cryptographic proof boundary, the legacy boolean path is fail-closed for protected commands, emergency recovery remains independently cryptographically authorized, containment remains scoped, and the audit trail is tamper-evident within bounded retention.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -18,28 +18,33 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 9. Simulation & Interactive Worlds — COMPLETE / LOCKED
 10. Social & Community Intelligence — COMPLETE / LOCKED
 11. Economic & Business Intelligence — COMPLETE / LOCKED
-12. Owner & Platform Security — DEEPER WORK REMAINS
+12. Owner & Platform Security — COMPLETE / LOCKED
 13. Autonomous Operations — PARTIAL
 14. Evolution & Self-Improvement — EARLY
 
-## Category 11 Completion Evidence
-- bounded opportunity/evidence contracts and amount limits;
-- deterministic evidence-quality/value analysis and business-plan comparison;
-- durable content-addressed advisory-plan persistence;
-- runtime operational telemetry integration;
-- fail-closed financial action policy;
-- feature-head CI #1006 passed after correcting two test defects (full suite: 345 passed);
-- merged to main as merge commit `a381b8eff70c634b2987cca99ce1c06d05c892d5`;
-- post-merge main CI #1007 passed.
+## Category 12 Completion Evidence
+- scoped HMAC-SHA256 owner-approval tokens bound to command and scope;
+- short-lived approvals with configurable freshness window;
+- single-use nonce protection and external secret provisioning;
+- fail-closed OwnerControlCenter integration for authenticated approval;
+- legacy `owner_approved=True` retained only as a compatibility parameter and explicitly rejected as authorization for protected owner-control commands;
+- tamper-evident chained AuditLog with bounded-retention integrity verification;
+- emergency recovery remains independently cryptographically authorized and scope-bound;
+- scoped containment/recovery/safe-degraded controls remain isolated from unrelated scopes;
+- security regression coverage for approval success, replay, scope mismatch, tampering, expiry, weak secrets, migration boundary, audit tampering, bounded retention, containment, and recovery;
+- PR #73 feature-head CI #1029 passed: **352 tests passed**;
+- branch is based directly on main `7e349b9d228200ceebc32da7a0cf32461a9560ba` with no divergence behind main.
 
-## Safety Boundaries
-No autonomous spending, investment execution, payment, credential handling, market manipulation, fraud, unrestricted commerce, or external financial authority is introduced. Financial actions remain explicitly owner-authorized and externally governed.
+## Security Boundary
+`IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
+
+This category establishes and hardens the repository-level authorization and recovery boundaries. The approval token proves possession of the configured owner-approval secret for a specific pending command/scope and time window; it is not a claim that arbitrary model output, external content, or a runtime component is the owner.
 
 ## Known Limitations
-Real accounting/market feeds, payment/commerce adapters, and production financial controls remain external dependencies. This repository-level capability does not claim live financial execution or production readiness.
+Production deployment still requires secure external secret management, real owner identity/authentication/session integration, operational key rotation, deployment hardening, monitoring, and environment-specific security testing. These are deployment concerns and are not falsely claimed as implemented by the repository-level category.
 
 ## Next Execution Target
-**Category 12 — Owner & Platform Security.** Do not restart Categories 1–11.
+**Category 13 — Autonomous Operations.** Do not restart Categories 1–12.
 
 ## Handoff Rule
 Every AI working on DORMAMMU must verify the repository itself, leave a truthful test-backed checkpoint, finish the active category before moving to the next category, and continue from the repository rather than treating prior chat history as authoritative.
