@@ -1,7 +1,7 @@
 # DORMAMMU STATUS
 
 ## Current Milestone
-**Category 23 — Long-Running Mission System is IMPLEMENTED / PENDING FINAL CI + MERGE.** DORMAMMU now has durable, scoped mission state with finite step bounds, checkpoint/resume behavior, explicit pause/resume/cancel lifecycle, bounded retries/backoff, restart recovery, and externally driven execution without an unrestricted background loop.
+**Category 23 — Long-Running Mission System is COMPLETE / LOCKED at the repository architecture level.** DORMAMMU now has durable, scoped mission state with finite step bounds, checkpoint/resume behavior, explicit pause/resume/cancel lifecycle, bounded retries/backoff, restart recovery, and externally driven execution without an unrestricted background loop.
 
 ## Truth Rule
 Implementation claims require code, meaningful tests, integration evidence, and successful CI. Production readiness requires capability-appropriate operational evidence.
@@ -29,7 +29,7 @@ Implementation claims require code, meaningful tests, integration evidence, and 
 20. Problem & Opportunity Discovery — COMPLETE / LOCKED
 21. Domain Intelligence — COMPLETE / LOCKED
 22. Human–DORMAMMU Collaboration — COMPLETE / LOCKED
-23. Long-Running Mission System — IMPLEMENTED / PENDING FINAL CI + MERGE
+23. Long-Running Mission System — COMPLETE / LOCKED
 
 ## Category 23 Scope
 Category 23 extends the bounded autonomy/runtime foundation into durable missions that can span multiple externally driven invocations. A mission has an explicit finite step count and durable checkpoint state. Execution remains caller-driven; there is no implicit background loop or self-authorized indefinite execution.
@@ -45,7 +45,8 @@ Category 23 extends the bounded autonomy/runtime foundation into durable mission
 - deterministic due-work ordering and scope filtering prevent uncontrolled selection;
 - regression tests cover durability, resume, retry exhaustion, lifecycle controls, bounds, and invalid inputs;
 - no authority grant, credential creation, policy mutation, or consequential action is introduced by the mission layer;
-- the mission runner delegates the actual step to a caller-supplied function and never creates a background worker itself.
+- the mission runner delegates the actual step to a caller-supplied function and never creates a background worker itself;
+- PR #86 was merged as `1db7907115516c2cb77aa155de4bfbd1ae05441b` after CI run #1156 passed.
 
 ## Security Boundary
 `IDENTITY ≠ AUTHENTICATION ≠ SESSION ≠ CAPABILITY ≠ AUTHORITY`
@@ -56,7 +57,7 @@ Long-running mission state is operational state, not authority. A mission cannot
 Category 23 does not claim production-grade distributed locking, queue infrastructure, multi-host coordination, scheduler persistence, mission DAG/dependency planning, exactly-once side effects, deployment orchestration, or full operational observability. Those require explicit infrastructure and deployment evidence.
 
 ## Post-Roadmap Engineering
-Categories 1–22 are complete/locked at their defined repository boundaries. Category 23 is active until final CI and merge. **Category 24 — Ecosystem & Multi-Agent Coordination** follows after Category 23 is verified and merged.
+Categories 1–23 are complete/locked at their defined repository boundaries. **Category 24 — Ecosystem & Multi-Agent Coordination** is the next capability boundary.
 
 New capabilities must preserve the locked foundation and use established discovery, permission, security, testing, verification, versioning, canary, monitoring, fallback, and rollback rules.
 
