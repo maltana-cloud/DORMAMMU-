@@ -50,16 +50,36 @@ class KnowledgeObjectiveSource:
             limit=self.knowledge.max_results,
             max_age_seconds=self.policy.max_age_seconds,
         ))
-        conflict_ids = {
-            record_id
-            for conflict in self.knowledge.conflicts(scope)
-            for record_id in conflict.record_ids
-        }
-        result: list[ObjectiveCandidate] = []
+        grouped: dict[tuple[str, str], list] = {}
         for item in items:
             if item.stale or item.confidence < self.policy.min_confidence:
                 continue
-            if item.record_id in conflict_ids:
+            grouped.setdefault((item.subject.strip().lower(), item.predicate.strip().lower()), []).append(item)
+
+        result: list[ObjectiveCandidate] = []
+        conflict_ids: set[str] = set()
+        for key, records in sorted(grouped.items()):
+            objects = {record.object.strip() for record in records}
+            if len(objects) > 1:
+                conflict_ids.update(record.record_id for record in records)
+                if self.policy.include_conflicts:
+                    object_values = tuple(sorted(objects))
+                    digest = hashlib.sha256(
+                        (scope + "\x1f" + key[0] + "\x1f" + key[1] + "\x1f" + "\x1e".join(object_values)).encode("utf-8")
+                    ).hexdigest()[:32]
+                    objective_id = f"knowledge-conflict:{digest}"
+                    objective = f"resolve conflicting verified knowledge about {key[0]} {key[1]}"
+                    result.append(ObjectiveCandidate(
+                        objective_id=objective_id,
+                        objective=objective,
+                        scope_id=scope,
+                        source="verified-knowledge-conflict",
+                        priority=self.policy.conflict_priority,
+                        evidence_cycle_ids=tuple(sorted(record.record_id for record in records)),
+                    ))
+
+        for item in items:
+            if item.stale or item.confidence < self.policy.min_confidence or item.record_id in conflict_ids:
                 continue
             objective_id = f"knowledge:{item.record_id}"
             objective = f"verify implications of {item.subject} {item.predicate} {item.object}"
@@ -71,24 +91,6 @@ class KnowledgeObjectiveSource:
                 priority=item.confidence,
                 evidence_cycle_ids=(item.record_id,),
             ))
-
-        if self.policy.include_conflicts:
-            for conflict in self.knowledge.conflicts(scope):
-                if text.strip() and text.strip().lower() not in f"{conflict.subject} {conflict.predicate} {' '.join(conflict.objects)}".lower():
-                    continue
-                digest = hashlib.sha256(
-                    (scope + "\x1f" + conflict.subject + "\x1f" + conflict.predicate + "\x1f" + "\x1e".join(conflict.objects)).encode("utf-8")
-                ).hexdigest()[:32]
-                objective_id = f"knowledge-conflict:{digest}"
-                objective = f"resolve conflicting verified knowledge about {conflict.subject} {conflict.predicate}"
-                result.append(ObjectiveCandidate(
-                    objective_id=objective_id,
-                    objective=objective,
-                    scope_id=scope,
-                    source="verified-knowledge-conflict",
-                    priority=self.policy.conflict_priority,
-                    evidence_cycle_ids=conflict.record_ids,
-                ))
 
         result.sort(key=lambda c: (-c.priority, c.objective_id, c.objective, c.source))
         return tuple(result[: self.policy.max_candidates])
