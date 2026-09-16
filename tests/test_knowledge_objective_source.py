@@ -6,7 +6,10 @@ from devintel.persistence import KnowledgeStore
 
 
 def verified(subject, predicate, object_value, confidence=0.9):
-    return VerifiedClaim(Claim(subject, predicate, object_value), VerificationResult(True, confidence, ("source:test",)))
+    return VerifiedClaim(
+        Claim(subject, predicate, object_value, confidence=confidence),
+        VerificationResult(True, confidence, ("source:test",)),
+    )
 
 
 def test_source_derives_bounded_deterministic_candidates():
