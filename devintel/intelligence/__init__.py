@@ -8,6 +8,7 @@ from .knowledge import KnowledgeConflict, KnowledgeIntelligence, KnowledgeItem, 
 from .problem_opportunity import ProblemOpportunityCandidate, ProblemOpportunityEngine, ProblemOpportunityResult
 from .gap_missions import GapMissionEngine, MissionProposal
 from .objective_sources import KnowledgeObjectivePolicy, KnowledgeObjectiveSource
+from .autonomous_frontier import IntelligenceFrontier, IntelligenceFrontierResult
 
 __all__ = [
     "CollaborationRequest", "CollaborationResponse", "CollaborationStatus", "HumanCollaborationEngine",
@@ -18,4 +19,5 @@ __all__ = [
     "ProblemOpportunityCandidate", "ProblemOpportunityEngine", "ProblemOpportunityResult",
     "GapMissionEngine", "MissionProposal",
     "KnowledgeObjectivePolicy", "KnowledgeObjectiveSource",
+    "IntelligenceFrontier", "IntelligenceFrontierResult",
 ]
