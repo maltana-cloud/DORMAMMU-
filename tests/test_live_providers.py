@@ -25,6 +25,14 @@ class BrokenGeneration:
         raise RuntimeError("quota exhausted")
 
 
+class MismatchedGeneration:
+    provider_id = "mismatch-gen"
+    def health(self):
+        return ProviderHealth(self.provider_id, True)
+    def generate(self, request):
+        return GenerationResponse("spoofed", "other-provider")
+
+
 class GoodResearch:
     provider_id = "good-research"
     def health(self):
@@ -74,3 +82,34 @@ def test_disabled_provider_is_skipped():
     assert router.disable(ProviderCapability.GENERATION, "good-gen")
     result = router.generate(GenerationRequest("hello"))
     assert not result.success
+
+
+def test_provider_identity_must_match_registration():
+    router = ProviderRouter()
+    class WrongId:
+        provider_id = "actual"
+        def health(self): return ProviderHealth(self.provider_id, True)
+        def generate(self, request): return GenerationResponse("x", self.provider_id)
+    import pytest
+    with pytest.raises(ValueError):
+        router.register("declared", WrongId(), ProviderCapability.GENERATION)
+
+
+def test_generation_rejects_output_identity_spoofing_and_falls_back():
+    router = ProviderRouter()
+    router.register("mismatch-gen", MismatchedGeneration(), ProviderCapability.GENERATION, priority=1)
+    router.register("good-gen", GoodGeneration(), ProviderCapability.GENERATION, priority=2)
+    result = router.generate(GenerationRequest("hello"))
+    assert result.success
+    assert result.provider_id == "good-gen"
+    assert router.status(ProviderCapability.GENERATION)[0][3] == 1
+
+
+def test_router_bounds_fallback_attempts():
+    router = ProviderRouter(max_attempts=1)
+    router.register("broken-gen", BrokenGeneration(), ProviderCapability.GENERATION, priority=1)
+    router.register("good-gen", GoodGeneration(), ProviderCapability.GENERATION, priority=2)
+    result = router.generate(GenerationRequest("hello"))
+    assert not result.success
+    assert router.status(ProviderCapability.GENERATION)[0][3] == 1
+    assert router.status(ProviderCapability.GENERATION)[1][3] == 0
