@@ -35,7 +35,6 @@ from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
 from ..providers.live_adapters import configured_live_providers
 from ..providers.registry import ProviderRegistry
 from ..frontier import FrontierControlPlane, FrontierJobStore, FrontierReflection
-
 @dataclass(frozen=True)
 class RuntimeSnapshot:
     scope_id: str
@@ -44,7 +43,6 @@ class RuntimeSnapshot:
     plugin_status: tuple[tuple[str, str, int], ...]
     monitoring_state: str
     audit_events: int
-
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
     def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", memory_store_path: str = ":memory:", authority_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
@@ -63,7 +61,6 @@ class DORMAMMURuntime:
         self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter(); self.creative_creation = CreativeCreationAdapter()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.frontier = FrontierControlPlane(FrontierJobStore(frontier_store_path)); self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
-
     def _configure_live_providers(self) -> None:
         gemini, wikipedia = configured_live_providers(); self.register_research_provider(wikipedia.provider_id, wikipedia, priority=1000)
         if gemini is not None: self.register_generation_provider(gemini.provider_id, gemini, priority=1000)
@@ -71,6 +68,7 @@ class DORMAMMURuntime:
         resources = local_resources(); [self.resource_registry.register(r) for r in resources]; [self.capability_registry.register(c) for c in local_capabilities()]; return resources
     def register_capability(self, capability: CapabilityDescriptor) -> None: self.capability_registry.register(capability)
     def register_resource(self, resource: ResourceDescriptor) -> None: self.resource_registry.register(resource)
+    def resource_intelligence(self): return self.resource_manager.snapshots()
     def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
     def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
     def register_creative_provider(self, provider: CreativeProvider) -> None: self.creative_providers.register(provider)
@@ -159,5 +157,4 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
-
 DEVINTELRuntime = DORMAMMURuntime
