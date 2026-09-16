@@ -25,7 +25,7 @@ from ..modules.education.outcomes import EducationFeedbackBridge, OutcomeEngine,
 from ..modules.education.teaching import TeachingEngine, TeachingProfile, TeachingResponse
 from ..modules.monitoring.engine import MonitoringEngine
 from ..modules.plugins.service import PluginService
-from ..modules.research import KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim
+from ..modules.research import KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim, EvidenceAcquisitionGateway, EvidenceAcquisition, SQLiteResearchStore, ResearchPipeline, ResearchDocument, ResearchObservation, VerificationResult, Claim
 from ..modules.security.orchestrator import SecurityOrchestrator
 from ..modules.security.recovery import CryptographicRecovery, RecoveryRequest
 from ..modules.specialists.education import EducationSpecialist
@@ -34,6 +34,7 @@ from ..providers.contracts import ProviderCapability
 from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
 from ..providers.live_adapters import configured_live_providers
 from ..providers.registry import ProviderRegistry
+from ..providers.resource_execution import ResourceAwareProviderExecutor, ResourceExecutionResult
 from ..frontier import FrontierControlPlane, FrontierJobStore, FrontierReflection
 @dataclass(frozen=True)
 class RuntimeSnapshot:
@@ -45,7 +46,7 @@ class RuntimeSnapshot:
     audit_events: int
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", memory_store_path: str = ":memory:", authority_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", memory_store_path: str = ":memory:", authority_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", research_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
         if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
@@ -58,6 +59,7 @@ class DORMAMMURuntime:
         self.specialist_router = SpecialistRouter(); self.outcome_routing = OutcomeAwareRoutingService(self.specialist_router, self.learning_store)
         self.nl_goal_interpreter = ProviderSemanticNaturalLanguageInterpreter(self.live_providers); self.nl_goal_boundary = BoundedNaturalLanguageGoalBoundary(self.nl_goal_interpreter)
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
+        self.research_store = SQLiteResearchStore(research_store_path); self.research_pipeline = ResearchPipeline(store=self.research_store); self.evidence_acquisition = EvidenceAcquisitionGateway(self.live_providers, self.research_store); self.resource_provider_execution = ResourceAwareProviderExecutor(self.live_providers, self.resource_manager)
         self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter(); self.creative_creation = CreativeCreationAdapter()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.frontier = FrontierControlPlane(FrontierJobStore(frontier_store_path)); self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
@@ -71,6 +73,30 @@ class DORMAMMURuntime:
     def resource_intelligence(self): return self.resource_manager.snapshots()
     def register_research_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.RESEARCH, priority=priority)
     def register_generation_provider(self, provider_id: str, provider: Any, *, priority: int = 100) -> None: self.live_providers.register(provider_id, provider, ProviderCapability.GENERATION, priority=priority)
+    def acquire_evidence(self, query: str, *, max_results: int | None = None) -> EvidenceAcquisition: return self.evidence_acquisition.acquire(query, max_results=max_results)
+    def research_documents(self) -> tuple[ResearchDocument, ...]: return self.research_store.documents()
+    def research_observations(self) -> tuple[ResearchObservation, ...]: return self.research_store.observations()
+    def verify_research_observation(self, document_url: str, *, kind: str, value: str, confidence: float, evidence: tuple[str, ...] = ()) -> VerificationResult:
+        document = self.research_store.get(document_url)
+        if document is None: raise KeyError(document_url)
+        observation = self.research_pipeline.extract_observation(document, kind=kind, value=value, confidence=confidence, evidence=evidence)
+        return self.research_pipeline.verify_observation(document, observation)
+    def verified_claim(self, document_url: str, *, subject: str, predicate: str, object_value: str, confidence: float, evidence: tuple[str, ...] = ()) -> VerifiedClaim:
+        document = self.research_store.get(document_url)
+        if document is None: raise KeyError(document_url)
+        observation = self.research_pipeline.extract_observation(document, kind="claim", value=f"{subject} {predicate} {object_value}", confidence=confidence, evidence=evidence)
+        verification = self.research_pipeline.verify_observation(document, observation)
+        if not verification.verified: raise ValueError("claim evidence did not pass verification")
+        claim = Claim(subject, predicate, object_value, confidence=confidence, evidence_urls=verification.evidence_urls, metadata={"source_document": document.url, "evidence_provider_id": document.metadata.get("evidence_provider_id", "")})
+        return VerifiedClaim(claim, verification)
+    def execute_generation_with_resource(self, request: GenerationRequest, *, resource_kind=None, quantity: float = 1.0, max_cost: float | None = None, currency: str = "USD", required_permission: str = "approved") -> ResourceExecutionResult:
+        kwargs = {"quantity": quantity, "max_cost": max_cost, "currency": currency, "required_permission": required_permission}
+        if resource_kind is not None: kwargs["resource_kind"] = resource_kind
+        return self.resource_provider_execution.generate(request, **kwargs)
+    def execute_research_with_resource(self, request: ResearchRequest, *, resource_kind=None, quantity: float = 1.0, max_cost: float | None = None, currency: str = "USD", required_permission: str = "approved") -> ResourceExecutionResult:
+        kwargs = {"quantity": quantity, "max_cost": max_cost, "currency": currency, "required_permission": required_permission}
+        if resource_kind is not None: kwargs["resource_kind"] = resource_kind
+        return self.resource_provider_execution.research(request, **kwargs)
     def register_creative_provider(self, provider: CreativeProvider) -> None: self.creative_providers.register(provider)
     def creative_plan(self, brief: CreativeBrief) -> CreativeResult:
         result = self.creative.run(brief); self.record_operation_observation_from_result("creative:" + result.artifact.artifact_digest[:16], "creative.intelligence", "verify", result.verification.passed, result.verification.passed, 0.0, "creative specification verified" if result.verification.passed else "creative specification requires review"); return result
@@ -126,7 +152,7 @@ class DORMAMMURuntime:
     def frontier_submit(self, **kwargs: Any): return self.frontier.submit(**kwargs)
     def frontier_reflect(self, reflection: FrontierReflection): return self.frontier.reflect(reflection)
     def close(self) -> None:
-        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close(); self.learning_store.close(); self.memory_store.close(); self.authority_store.close()
+        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close(); self.learning_store.close(); self.memory_store.close(); self.authority_store.close(); self.research_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")
@@ -157,4 +183,6 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
+
+
 DEVINTELRuntime = DORMAMMURuntime
