@@ -12,22 +12,11 @@ from .live import (
 )
 from .live_adapters import GeminiGenerationProvider, WikipediaResearchProvider, configured_live_providers
 from .registry import ProviderRegistry
+from .resource_execution import ResourceAwareProviderExecutor, ResourceExecutionResult
 
 __all__ = [
-    "ProviderCapability",
-    "ProviderHealth",
-    "ProviderResult",
-    "CapabilityExecution",
-    "CapabilityExecutor",
-    "ProviderRegistry",
-    "GenerationProvider",
-    "GenerationRequest",
-    "GenerationResponse",
-    "ResearchProvider",
-    "ResearchRequest",
-    "ResearchResult",
-    "ProviderRouter",
-    "GeminiGenerationProvider",
-    "WikipediaResearchProvider",
-    "configured_live_providers",
+    "ProviderCapability", "ProviderHealth", "ProviderResult", "CapabilityExecution", "CapabilityExecutor", "ProviderRegistry",
+    "GenerationProvider", "GenerationRequest", "GenerationResponse", "ResearchProvider", "ResearchRequest", "ResearchResult",
+    "ProviderRouter", "GeminiGenerationProvider", "WikipediaResearchProvider", "configured_live_providers",
+    "ResourceAwareProviderExecutor", "ResourceExecutionResult",
 ]
