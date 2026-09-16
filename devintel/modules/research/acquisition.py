@@ -27,7 +27,7 @@ class EvidenceAcquisition:
 
 
 class EvidenceAcquisitionGateway:
-    """Acquire a bounded set of provider results without treating them as truth."""
+    """Acquire bounded provider evidence without treating it as verified truth."""
 
     def __init__(self, router: ProviderRouter, store: ResearchStore | None = None, limits: ResearchLimits | None = None) -> None:
         if not isinstance(router, ProviderRouter):
@@ -53,13 +53,16 @@ class EvidenceAcquisitionGateway:
                 rejected += 1
                 continue
             try:
+                metadata = dict(item.metadata)
+                metadata["evidence_provider_id"] = result.provider_id
+                metadata["evidence_unverified"] = "true"
                 document = ResearchDocument(
                     item.url,
                     item.title.strip() or item.url,
                     item.content,
                     publisher=item.source,
                     retrieved_at=datetime.now(timezone.utc),
-                    metadata=dict(item.metadata),
+                    metadata=metadata,
                 )
             except (TypeError, ValueError):
                 rejected += 1
