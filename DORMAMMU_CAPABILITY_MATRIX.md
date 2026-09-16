@@ -6,7 +6,7 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 
 `BLOCKED` is used only where an external dependency prevents safe progress.
 
-**Current checkpoint:** Categories 1–27 are complete and locked at their defined repository boundaries. Ω.1 bounded distributed mission coordination is complete and locked. Production readiness remains unclaimed.
+**Current checkpoint:** Categories 1–27 are complete and locked at their defined repository boundaries. Ω.1 bounded distributed mission coordination is complete and locked. The new human ecosystem/distribution/media surface is recorded as a requirement/design and is not claimed implemented. Production readiness remains unclaimed.
 
 | Category | Capability | Status | Repository boundary / evidence | Key limitation |
 |---|---|---|---|---|
@@ -34,10 +34,21 @@ This matrix is an engineering checkpoint, not a feature wish-list. Status claims
 | 22 | Human–DORMAMMU Collaboration | COMPLETE / LOCKED | Scoped collaboration, owner control and safe human interaction boundaries | Production multi-channel integration remains future work |
 | 23 | Long-Running Mission System | COMPLETE / LOCKED | Bounded mission lifecycle, persistence, recovery, and Ω.1 atomic worker coordination | Production distributed scheduling remains future work |
 | 24 | Ecosystem & Multi-Agent Coordination | COMPLETE / LOCKED | Scoped agent coordination, contracts and failure boundaries | Heterogeneous production agent fleet remains future work |
-| 25 | Real-World Action Infrastructure | COMPLETE / LOCKED | Provider-independent action contracts, permission-gated execution, deterministic fallback, dry-run, idempotency, verification and audit; PR #88 / CI #1181 | No platform credentials/OAuth, distributed exactly-once side effects, rollback of external transactions, or unrestricted financial authority |
-| 26 | Global Intelligence & Continuous Discovery | COMPLETE / LOCKED | Bounded multi-source discovery rounds, health/failure isolation, scope/freshness gates, deterministic deduplication and scheduling boundary; PR #88 / CI #1181 | No unrestricted polling, global coverage, source reputation engine, or automatic truth admission |
-| 27 | DORMAMMU Ecosystem Evolution | COMPLETE / LOCKED | Bounded orchestration of verified learning proposals into evaluated, reversible ecosystem changes with capability-health gating and rollback; Category 27 PR evidence recorded in status/state | No self-authorized code/security/authority changes, automatic installation, spending, publication, or unrestricted self-modification |
-| Ω.1 | Bounded Distributed Mission Coordination | COMPLETE / LOCKED | Atomic SQLite worker leases, expiry takeover, renewal, ownership-checked checkpoint/failure completion; PR #90 / CI #1209 / main run #1210 | Not production-grade multi-host scheduling; requires operational deployment evidence |
+| 25 | Real-World Action Infrastructure | COMPLETE / LOCKED | Provider-independent action contracts, permission-gated execution, deterministic fallback, dry-run, idempotency, verification and audit | No platform credentials/OAuth, distributed exactly-once side effects, rollback of external transactions, or unrestricted financial authority |
+| 26 | Global Intelligence & Continuous Discovery | COMPLETE / LOCKED | Bounded multi-source discovery rounds, health/failure isolation, scope/freshness gates, deterministic deduplication and scheduling boundary | No unrestricted polling, global coverage, source reputation engine, or automatic truth admission |
+| 27 | DORMAMMU Ecosystem Evolution | COMPLETE / LOCKED | Bounded orchestration of verified learning proposals into evaluated, reversible ecosystem changes with capability-health gating and rollback | No self-authorized code/security/authority changes, automatic installation, spending, publication, or unrestricted self-modification |
+| Ω.1 | Bounded Distributed Mission Coordination | COMPLETE / LOCKED | Atomic SQLite worker leases, expiry takeover, renewal, ownership-checked checkpoint/failure completion | Not production-grade multi-host scheduling; requires operational deployment evidence |
+| Ω.H | Human Ecosystem, Distribution & Media | REQUIREMENT / DESIGNED | `DORMAMMU_HUMAN_ECOSYSTEM_DISTRIBUTION_MEDIA.md` and `DORMAMMU_HUMAN_ECOSYSTEM_REQUIREMENTS.md` define natural chat, tenant-isolated connections, cross-domain channel/social distribution, legitimate self/product promotion, user channel management, economic separation, and video/audio/image/PDF workflows | No live social/channel integrations, production media workers, credential vault implementation for this surface, or production distribution/monetization evidence yet |
+
+## Ω.H design boundary
+
+The human ecosystem surface is additive. It does not reopen locked foundations or create a new authority system.
+
+Natural chat is a communication layer; personality does not grant authority. External accounts are tenant-scoped capabilities. User and owner connections must be isolated, and raw credentials must remain inside protected secret boundaries. Distribution is provider-adapter based and can span social networks, messaging channels, communities, websites, publications, marketplaces, and future surfaces. Growth must remain genuine and non-deceptive.
+
+Media/document workflows cover authorized acquisition, inspection, extraction/understanding, transformation/editing, verification/quality, packaging, and distribution for video, audio, images, PDFs, and future formats. Acquisition must respect access controls, licensing, copyright, DRM, privacy, and provider rules.
+
+User earnings and DORMAMMU revenue remain separate accounting scopes. Payment, identity verification, CAPTCHA/OTP, provider security controls, and other consequential authorization boundaries are never bypassed.
 
 ## Ω.1 completion boundary
 
