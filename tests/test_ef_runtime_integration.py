@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from devintel.capabilities.contracts import ResourceDescriptor, ResourceKind
-from devintel.providers.contracts import ProviderCapability, ProviderHealth
+from devintel.providers.contracts import ProviderHealth
 from devintel.providers.live import GenerationRequest, GenerationResponse, ResearchRequest, ResearchResult
 from devintel.runtime import DORMAMMURuntime
 
@@ -12,12 +12,10 @@ class ResearchProvider:
     def health(self):
         return ProviderHealth(self.provider_id, True, "ready")
 
-    def research(self, request: ResearchRequest):
+    def search(self, request: ResearchRequest):
         return (
             ResearchResult(
-                self.provider_id,
-                True,
-                url="https://example.com/evidence",
+                "https://example.com/evidence",
                 title="Evidence",
                 content="A bounded research document.",
                 source="Example Publisher",
@@ -32,7 +30,7 @@ class GenerationProvider:
         return ProviderHealth(self.provider_id, True, "ready")
 
     def generate(self, request: GenerationRequest):
-        return GenerationResponse(self.provider_id, True, output="generated")
+        return GenerationResponse("generated", self.provider_id)
 
 
 def test_runtime_acquisition_preserves_provenance_and_verified_claims():
@@ -94,7 +92,7 @@ def test_runtime_resource_execution_releases_lease():
             )
         )
         result = runtime.execute_generation_with_resource(
-            GenerationRequest("test", 16),
+            GenerationRequest("test", max_tokens=16),
             resource_kind=ResourceKind.API,
         )
         assert result.result.success
@@ -109,7 +107,7 @@ def test_runtime_resource_execution_fails_closed_without_capacity():
     runtime = DORMAMMURuntime()
     try:
         runtime.register_generation_provider("test-generation", GenerationProvider(), priority=1)
-        result = runtime.execute_generation_with_resource(GenerationRequest("test", 16))
+        result = runtime.execute_generation_with_resource(GenerationRequest("test", max_tokens=16))
         assert not result.result.success
         assert "resource" in result.result.error
         assert result.reservation_id is None
