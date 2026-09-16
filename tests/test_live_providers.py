@@ -56,7 +56,7 @@ def test_generation_falls_back_after_provider_failure():
     result = router.generate(GenerationRequest("say hello"))
     assert result.success
     assert result.provider_id == "good-gen"
-    assert router.status(ProviderCapability.GENERATION)[0][3] == 1
+    assert dict((provider_id, failures) for provider_id, _, _, failures in router.status(ProviderCapability.GENERATION))["broken-gen"] == 1
 
 
 def test_research_falls_back_on_invalid_provider_output():
@@ -102,7 +102,7 @@ def test_generation_rejects_output_identity_spoofing_and_falls_back():
     result = router.generate(GenerationRequest("hello"))
     assert result.success
     assert result.provider_id == "good-gen"
-    assert router.status(ProviderCapability.GENERATION)[0][3] == 1
+    assert dict((provider_id, failures) for provider_id, _, _, failures in router.status(ProviderCapability.GENERATION))["mismatch-gen"] == 1
 
 
 def test_router_bounds_fallback_attempts():
@@ -111,5 +111,5 @@ def test_router_bounds_fallback_attempts():
     router.register("good-gen", GoodGeneration(), ProviderCapability.GENERATION, priority=2)
     result = router.generate(GenerationRequest("hello"))
     assert not result.success
-    assert router.status(ProviderCapability.GENERATION)[0][3] == 1
-    assert router.status(ProviderCapability.GENERATION)[1][3] == 0
+    assert dict((provider_id, failures) for provider_id, _, _, failures in router.status(ProviderCapability.GENERATION))["broken-gen"] == 1
+    assert dict((provider_id, failures) for provider_id, _, _, failures in router.status(ProviderCapability.GENERATION))["good-gen"] == 0
