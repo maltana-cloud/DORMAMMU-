@@ -30,7 +30,7 @@ from ..modules.security.orchestrator import SecurityOrchestrator
 from ..modules.security.recovery import CryptographicRecovery, RecoveryRequest
 from ..modules.specialists.education import EducationSpecialist
 from ..operations.telemetry import OperationObservation, OperationalTelemetryStore
-from ..providers.contracts import ProviderCapability, ProviderResult
+from ..providers.contracts import ProviderCapability
 from ..providers.live import GenerationRequest, ProviderRouter, ResearchRequest
 from ..providers.live_adapters import configured_live_providers
 from ..providers.registry import ProviderRegistry
@@ -183,3 +183,6 @@ class DORMAMMURuntime:
     def mentor_prompt(self, profile: TeachingProfile, goal: str, progress: Any = None) -> str: return self.teaching.mentor_prompt(profile, goal, progress)
     def generate(self, request: GenerationRequest): return self.live_providers.generate(request)
     def research(self, request: ResearchRequest): return self.live_providers.research(request)
+
+
+DEVINTELRuntime = DORMAMMURuntime
