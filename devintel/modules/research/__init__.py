@@ -14,6 +14,7 @@ from .verification import ProvenanceVerifier, ResearchVerifier, VerificationResu
 from .domain_expansion import DomainAssessment, DomainEvidence, DomainExpander, DomainProposal
 from .domain_registry import DomainRecord, DomainRegistry
 from .discovery import DiscoveryProvider, DiscoveryResult, ResearchDiscoveryEngine
+from .acquisition import EvidenceAcquisition, EvidenceAcquisitionGateway
 
 __all__ = [
     "ResearchCandidate", "ResearchDocument", "ResearchObservation", "canonicalize_url", "content_digest",
@@ -25,4 +26,5 @@ __all__ = [
     "VerifiedClaim", "Contradiction", "SynthesisSignal", "SynthesisResult", "KnowledgeSynthesisEngine",
     "DomainAssessment", "DomainEvidence", "DomainExpander", "DomainProposal", "DomainRecord", "DomainRegistry",
     "DiscoveryProvider", "DiscoveryResult", "ResearchDiscoveryEngine",
+    "EvidenceAcquisition", "EvidenceAcquisitionGateway",
 ]
