@@ -36,7 +36,7 @@ def test_uncertain_contradictions_do_not_become_mission_proposals():
     )
     result = IntelligenceFrontier().derive(synthesis, scope_id="market")
 
-    assert all(candidate.confidence <= 0.49 for candidate in result.objective_candidates)
+    assert result.problems.uncertainty.startswith("high:")
     assert result.mission_proposals == ()
 
 
