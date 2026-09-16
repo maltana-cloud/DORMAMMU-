@@ -41,3 +41,37 @@ def test_source_policy_bounds_results():
     knowledge.admit("scope", [verified(str(i), "status", "ready", .9) for i in range(5)])
     source = KnowledgeObjectiveSource(knowledge, policy=KnowledgeObjectivePolicy(max_candidates=2))
     assert len(source.candidates("scope")) == 2
+
+
+def test_source_turns_verified_conflicts_into_resolution_objective():
+    store = KnowledgeStore()
+    knowledge = KnowledgeIntelligence(store)
+    knowledge.admit("scope", [
+        verified("system", "status", "ready", .95),
+        verified("system", "status", "blocked", .90),
+    ])
+    source = KnowledgeObjectiveSource(knowledge)
+    candidates = source.candidates("scope")
+    assert len(candidates) == 1
+    assert candidates[0].source == "verified-knowledge-conflict"
+    assert candidates[0].objective.startswith("resolve conflicting verified knowledge")
+    assert len(candidates[0].evidence_cycle_ids) == 2
+
+
+def test_source_can_exclude_conflict_objectives():
+    store = KnowledgeStore()
+    knowledge = KnowledgeIntelligence(store)
+    knowledge.admit("scope", [
+        verified("system", "status", "ready", .95),
+        verified("system", "status", "blocked", .90),
+    ])
+    source = KnowledgeObjectiveSource(knowledge, policy=KnowledgeObjectivePolicy(include_conflicts=False))
+    assert source.candidates("scope") == ()
+
+
+def test_source_rejects_blank_scope():
+    store = KnowledgeStore()
+    source = KnowledgeObjectiveSource(KnowledgeIntelligence(store))
+    import pytest
+    with pytest.raises(ValueError):
+        source.candidates(" ")

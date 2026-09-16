@@ -91,15 +91,19 @@ class _ProviderSlot:
 class ProviderRouter:
     """Bounded, deterministic provider router with safe fallback.
 
-    A failed provider is skipped for the remainder of the call and marked
-    unavailable after the failure. Registration is host-controlled. Provider
-    output is returned as an envelope and is not treated as verified truth.
+    A provider is eligible only while registered, enabled, and healthy. A
+    failed provider is skipped for the remainder of the call and its failure
+    counter is recorded. Routing is bounded by ``max_attempts`` and never
+    treats provider output as verified truth.
     """
 
-    def __init__(self, max_providers: int = 256) -> None:
+    def __init__(self, max_providers: int = 256, *, max_attempts: int = 3) -> None:
         if max_providers < 1:
             raise ValueError("max_providers must be positive")
+        if int(max_attempts) < 1:
+            raise ValueError("max_attempts must be positive")
         self._max = max_providers
+        self._max_attempts = int(max_attempts)
         self._slots: dict[tuple[ProviderCapability, str], _ProviderSlot] = {}
         self._lock = RLock()
 
@@ -116,6 +120,11 @@ class ProviderRouter:
             raise TypeError("generation provider must implement generate")
         if capability is ProviderCapability.RESEARCH and not hasattr(provider, "search"):
             raise TypeError("research provider must implement search")
+        if not hasattr(provider, "health"):
+            raise TypeError("provider must implement health")
+        actual_id = getattr(provider, "provider_id", provider_id)
+        if actual_id != provider_id:
+            raise ValueError("provider_id must match provider.provider_id")
         with self._lock:
             key = (capability, provider_id)
             if key not in self._slots and len(self._slots) >= self._max:
@@ -143,29 +152,51 @@ class ProviderRouter:
             slots = [slot for (cap, _), slot in self._slots.items() if cap is capability and not slot.disabled]
             return sorted(slots, key=lambda slot: (slot.priority, slot.provider.provider_id))
 
+    def _record_failure(self, slot: _ProviderSlot) -> None:
+        with self._lock:
+            slot.failures += 1
+
     def generate(self, request: GenerationRequest) -> ProviderResult:
         last_error = "no generation provider available"
+        attempted = 0
         for slot in self._candidates(ProviderCapability.GENERATION):
+            if attempted >= self._max_attempts:
+                break
+            attempted += 1
             try:
                 health = slot.provider.health()
+                if not isinstance(health, ProviderHealth):
+                    raise TypeError("provider health returned invalid result")
+                if health.provider_id != slot.provider.provider_id:
+                    raise ValueError("provider health identity mismatch")
                 if not health.healthy:
                     last_error = health.message or "provider unhealthy"
                     continue
                 output = slot.provider.generate(request)
                 if not isinstance(output, GenerationResponse):
                     raise TypeError("generation provider returned invalid response")
-                return ProviderResult(output.provider_id, True, output)
+                if output.provider_id != slot.provider.provider_id:
+                    raise ValueError("generation provider identity mismatch")
+                return ProviderResult(slot.provider.provider_id, True, output)
             except Exception as exc:
-                slot.failures += 1
+                self._record_failure(slot)
                 last_error = str(exc) or exc.__class__.__name__
                 continue
         return ProviderResult("provider-router", False, error=last_error)
 
     def research(self, request: ResearchRequest) -> ProviderResult:
         last_error = "no research provider available"
+        attempted = 0
         for slot in self._candidates(ProviderCapability.RESEARCH):
+            if attempted >= self._max_attempts:
+                break
+            attempted += 1
             try:
                 health = slot.provider.health()
+                if not isinstance(health, ProviderHealth):
+                    raise TypeError("provider health returned invalid result")
+                if health.provider_id != slot.provider.provider_id:
+                    raise ValueError("provider health identity mismatch")
                 if not health.healthy:
                     last_error = health.message or "provider unhealthy"
                     continue
@@ -174,7 +205,7 @@ class ProviderRouter:
                     raise TypeError("research provider returned invalid result")
                 return ProviderResult(slot.provider.provider_id, True, output)
             except Exception as exc:
-                slot.failures += 1
+                self._record_failure(slot)
                 last_error = str(exc) or exc.__class__.__name__
                 continue
         return ProviderResult("provider-router", False, error=last_error)
