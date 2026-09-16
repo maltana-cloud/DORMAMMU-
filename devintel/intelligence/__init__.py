@@ -7,6 +7,7 @@ from .global_discovery import DiscoveryRound, GlobalDiscoveryEngine, GlobalDisco
 from .knowledge import KnowledgeConflict, KnowledgeIntelligence, KnowledgeItem, KnowledgeQuery
 from .problem_opportunity import ProblemOpportunityCandidate, ProblemOpportunityEngine, ProblemOpportunityResult
 from .gap_missions import GapMissionEngine, MissionProposal
+from .objective_sources import KnowledgeObjectivePolicy, KnowledgeObjectiveSource
 
 __all__ = [
     "CollaborationRequest", "CollaborationResponse", "CollaborationStatus", "HumanCollaborationEngine",
@@ -16,4 +17,5 @@ __all__ = [
     "KnowledgeConflict", "KnowledgeIntelligence", "KnowledgeItem", "KnowledgeQuery",
     "ProblemOpportunityCandidate", "ProblemOpportunityEngine", "ProblemOpportunityResult",
     "GapMissionEngine", "MissionProposal",
+    "KnowledgeObjectivePolicy", "KnowledgeObjectiveSource",
 ]
