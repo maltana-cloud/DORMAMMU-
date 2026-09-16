@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import os
 from typing import Any, Sequence
 from ..autonomy.engine import AutonomousEngine, Observer, Planner, Verifier, Recorder
+from ..autonomy.resource_runtime import ResourceAwareAutonomousEngine
 from ..autonomy.store import AutonomousCycleStore
 from ..autonomy.learning_store import LearningStore
 from ..autonomy.contracts import Observation
@@ -147,6 +148,7 @@ class DORMAMMURuntime:
     def plan_objective(self, objective: Objective, tasks: tuple[TaskSpec, ...]) -> ExecutivePlan: return self.executive.plan(objective, tasks)
     def run_objective(self, objective: Objective, tasks: tuple[TaskSpec, ...], **kwargs: Any) -> ExecutiveResult: return self.executive.execute(objective, tasks, **kwargs)
     def autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None, *, improver=None, max_actions: int = 32) -> AutonomousEngine: return AutonomousEngine(self.orchestrator, observer, planner, verifier, recorder or self.autonomy_store.record, improver, max_actions=max_actions)
+    def resource_aware_autonomous_engine(self, observer: Observer, planner: Planner, verifier: Verifier, recorder: Recorder | None = None, *, improver=None, max_actions: int = 32) -> ResourceAwareAutonomousEngine: return ResourceAwareAutonomousEngine(self.orchestrator, self.resource_manager, observer, planner, verifier, recorder or self.autonomy_store.record, improver, max_actions=max_actions)
     def autonomous_education_feedback(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None, *, improver=None, max_actions: int = 32) -> AutonomousEngine: return self.autonomous_engine(self.education_feedback_observer, planner, verifier, recorder, improver=improver, max_actions=max_actions)
     def autonomous_capability_inventory(self, planner: Planner, verifier: Verifier, recorder: Recorder | None = None, *, improver=None, max_actions: int = 32) -> AutonomousEngine: return self.autonomous_engine(self.capability_observations, planner, verifier, recorder, improver=improver, max_actions=max_actions)
     def education_integration(self, **adapters: object) -> EducationSubsystemIntegration: return EducationSubsystemIntegration(**adapters)
