@@ -25,7 +25,7 @@ from ..modules.education.outcomes import EducationFeedbackBridge, OutcomeEngine,
 from ..modules.education.teaching import TeachingEngine, TeachingProfile, TeachingResponse
 from ..modules.monitoring.engine import MonitoringEngine
 from ..modules.plugins.service import PluginService
-from ..modules.research import KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim, EvidenceAcquisitionGateway, EvidenceAcquisition, InMemoryResearchStore, ResearchPipeline, ResearchDocument, ResearchObservation, VerificationResult, Claim
+from ..modules.research import KnowledgeSynthesisEngine, SynthesisResult, VerifiedClaim, EvidenceAcquisitionGateway, EvidenceAcquisition, SQLiteResearchStore, ResearchPipeline, ResearchDocument, ResearchObservation, VerificationResult, Claim
 from ..modules.security.orchestrator import SecurityOrchestrator
 from ..modules.security.recovery import CryptographicRecovery, RecoveryRequest
 from ..modules.specialists.education import EducationSpecialist
@@ -46,7 +46,7 @@ class RuntimeSnapshot:
     audit_events: int
 class DORMAMMURuntime:
     """Single composition root for DORMAMMU bounded subsystems."""
-    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", memory_store_path: str = ":memory:", authority_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
+    def __init__(self, *, lifecycle_store_path: str = ":memory:", operation_store_path: str = ":memory:", resource_lease_store_path: str = ":memory:", autonomy_store_path: str = ":memory:", learning_store_path: str = ":memory:", memory_store_path: str = ":memory:", authority_store_path: str = ":memory:", creative_lineage_store_path: str = ":memory:", frontier_store_path: str = ":memory:", research_store_path: str = ":memory:", recovery_secret: bytes | None = None, canary_policy: CanaryPolicy | None = None) -> None:
         self.context = RuntimeContext(); self.audit = AuditLog(); self.orchestrator = Orchestrator(runtime=self.context, audit=self.audit)
         secret = recovery_secret
         if secret is None and os.environ.get("DORMAMMU_RECOVERY_SECRET"): secret = bytes.fromhex(os.environ["DORMAMMU_RECOVERY_SECRET"])
@@ -59,7 +59,7 @@ class DORMAMMURuntime:
         self.specialist_router = SpecialistRouter(); self.outcome_routing = OutcomeAwareRoutingService(self.specialist_router, self.learning_store)
         self.nl_goal_interpreter = ProviderSemanticNaturalLanguageInterpreter(self.live_providers); self.nl_goal_boundary = BoundedNaturalLanguageGoalBoundary(self.nl_goal_interpreter)
         self.executive = ExecutiveEngine(self); self.knowledge_synthesis = KnowledgeSynthesisEngine()
-        self.research_store = InMemoryResearchStore(); self.research_pipeline = ResearchPipeline(store=self.research_store); self.evidence_acquisition = EvidenceAcquisitionGateway(self.live_providers, self.research_store); self.resource_provider_execution = ResourceAwareProviderExecutor(self.live_providers, self.resource_manager)
+        self.research_store = SQLiteResearchStore(research_store_path); self.research_pipeline = ResearchPipeline(store=self.research_store); self.evidence_acquisition = EvidenceAcquisitionGateway(self.live_providers, self.research_store); self.resource_provider_execution = ResourceAwareProviderExecutor(self.live_providers, self.resource_manager)
         self.creative_providers = CreativeProviderRegistry(); self.creative = CreativePipeline(providers=self.creative_providers, lineage=CreativeLineageStore(path=creative_lineage_store_path)); self.creative_context = CreativeContextAdapter(); self.creative_creation = CreativeCreationAdapter()
         self.education = EducationEngine(); self.education_specialist = EducationSpecialist(self.plugins, self.education); self.teaching = TeachingEngine(); self.outcomes = OutcomeEngine(); self.education_feedback = EducationFeedbackBridge(self.outcomes)
         self.frontier = FrontierControlPlane(FrontierJobStore(frontier_store_path)); self.control = OwnerControlCenter(self); self.orchestrator.register("education.record_assessment", self._record_assessment_action)
@@ -152,7 +152,7 @@ class DORMAMMURuntime:
     def frontier_submit(self, **kwargs: Any): return self.frontier.submit(**kwargs)
     def frontier_reflect(self, reflection: FrontierReflection): return self.frontier.reflect(reflection)
     def close(self) -> None:
-        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close(); self.learning_store.close(); self.memory_store.close(); self.authority_store.close()
+        self.frontier.close(); self.creative.close(); self.operation_store.close(); self.lifecycle_store.close(); self.resource_lease_store.close(); self.autonomy_store.close(); self.learning_store.close(); self.memory_store.close(); self.authority_store.close(); self.research_store.close()
     def _record_assessment_action(self, payload: dict[str, Any]) -> dict[str, Any]:
         assessment = payload.get("assessment")
         if not isinstance(assessment, Assessment): raise TypeError("assessment payload is required")
