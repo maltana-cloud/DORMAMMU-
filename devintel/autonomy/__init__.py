@@ -1,6 +1,7 @@
 """Bounded autonomous operation and controlled evolution."""
 from .contracts import AutonomousCycle, AutonomyPhase, Observation
 from .engine import AutonomousEngine
+from .resource_runtime import ResourceAwareAutonomousEngine, ResourceExecution
 from .store import AutonomousCycleStore
 from .supervisor import AutonomyRun, AutonomyRunPolicy, AutonomousSupervisor
 from .learning import OutcomeEvidence, LearningProposal, OutcomeLearner
@@ -11,7 +12,7 @@ from .evolution import EvolutionEngine, EvolutionEvaluation, EvolutionPolicy, Im
 from .evolution_store import EvolutionStore
 
 __all__ = [
-    "AutonomousCycle", "AutonomyPhase", "Observation", "AutonomousEngine", "AutonomousCycleStore",
+    "AutonomousCycle", "AutonomyPhase", "Observation", "AutonomousEngine", "ResourceAwareAutonomousEngine", "ResourceExecution", "AutonomousCycleStore",
     "AutonomyRun", "AutonomyRunPolicy", "AutonomousSupervisor", "OutcomeEvidence", "LearningProposal",
     "OutcomeLearner", "LearningStore", "LearningTransition", "MissionLearningBridge", "NextObjective",
     "NextObjectiveSelector", "ObjectiveCandidate", "EvolutionEngine", "EvolutionEvaluation", "EvolutionPolicy",
